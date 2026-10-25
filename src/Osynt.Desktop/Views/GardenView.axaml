@@ -10,9 +10,9 @@
           </Grid>
           <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" MaxWidth="500">
             <art:PixelArt Width="54" Height="54" HorizontalAlignment="Center" />
-            <TextBlock Text="Your little garden." FontFamily="Georgia, DejaVu Serif" FontSize="30" HorizontalAlignment="Center" />
+            <TextBlock Text="Your garden" FontFamily="Georgia, DejaVu Serif" FontSize="30" HorizontalAlignment="Center" />
             <TextBlock Text="{Binding Garden.LastGrowth}" FontSize="13" Foreground="#8B9D74" HorizontalAlignment="Center" />
-            <TextBlock x:Name="RendererStatus" Text="The interactive 3D garden runs in the Windows build. Launch it with scripts/run-windows.sh from WSL." FontSize="12" TextWrapping="Wrap" TextAlignment="Center" LineHeight="21" Foreground="#9AA58A" />
+            <TextBlock x:Name="RendererStatus" Text="The 3D garden is available in the Windows app." FontSize="12" TextWrapping="Wrap" TextAlignment="Center" LineHeight="21" Foreground="#9AA58A" />
           </StackPanel>
           <ProgressBar Grid.Row="2" Value="{Binding Garden.LevelProgress}" Maximum="100" Height="5" Foreground="#9CB681" Background="#E3EBD6" />
         </Grid>
@@ -21,7 +21,7 @@
     <Border Grid.Row="1" BorderBrush="#E1E6D6" BorderThickness="0,1,0,0" Background="#FFFDF6" Padding="22,15,22,17">
       <Grid RowDefinitions="Auto,Auto" RowSpacing="8">
         <Grid ColumnDefinitions="*,Auto">
-          <TextBlock Text="KEEP SOMETHING GROWING" FontSize="8" FontWeight="SemiBold" LetterSpacing="1.5" Foreground="#95A082" />
+          <TextBlock Text="SEND A REQUEST" FontSize="8" FontWeight="SemiBold" LetterSpacing="1.5" Foreground="#95A082" />
           <TextBlock Grid.Column="1" Text="{Binding Garden.LastGrowth}" FontSize="10" Foreground="#8E9D7B" MaxWidth="340" TextTrimming="CharacterEllipsis" />
         </Grid>
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="9">

@@ -14,10 +14,8 @@ public sealed class LibraryCollection(string name, IEnumerable<LibraryRequest> r
         get => _expanded; set
         {
             Set(ref _expanded, value);
-            Raise(nameof(Chevron));
         }
     }
-    public string Chevron => Expanded ? "⌄" : "›";
     public ICommand ToggleCommand => new ActionCommand(_ => Expanded = !Expanded);
 }
 

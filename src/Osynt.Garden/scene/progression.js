@@ -1,12 +1,12 @@
 export const milestones = [
-  [1, "First roots", "Your first seed takes root."],
-  [5, "Wildflower meadow", "Wildflowers find their way into your garden."],
-  [12, "A little orchard", "Fruit trees and butterflies settle in."],
-  [24, "Still waters", "A pond, lily pads, and a little stone bridge."],
-  [40, "Home, grown", "A cozy cottage with a light in the window."],
-  [75, "Glass & greenery", "A greenhouse for your growing collection."],
-  [120, "Lantern season", "Warm lanterns light up your island."],
-  [200, "Beyond the meadow", "New little islands join your garden."],
+  [1, "First plant", "First seed planted."],
+  [5, "Wildflowers", "Wildflowers unlocked."],
+  [12, "Orchard", "Fruit trees and butterflies unlocked."],
+  [24, "Pond", "Pond and bridge unlocked."],
+  [40, "Cottage", "Garden cottage unlocked."],
+  [75, "Greenhouse", "Greenhouse unlocked."],
+  [120, "Lanterns", "Lanterns unlocked."],
+  [200, "More islands", "New islands unlocked."],
 ];
 
 export function normalizeState(value = {}) {
@@ -20,9 +20,9 @@ export function growthMessage(count) {
   return (
     milestones.find(([at]) => at === count)?.[2] ??
     [
-      "Another little bloom, grown from your work.",
-      "A new seed takes root.",
-      "Your newest plant is reaching for the sun.",
+      "Plant fully grown.",
+      "Seed planted.",
+      "Plant growing.",
     ][count % 3]
   );
 }

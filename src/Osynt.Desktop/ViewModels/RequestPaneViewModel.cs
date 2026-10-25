@@ -89,8 +89,8 @@ public sealed class RequestPaneViewModel : ObservableModel
         {
             var document = _requests.Selected.Document;
             document.Body = JsonPresentation.Format(document.Body);
-            _status.Notice = "JSON, neatly arranged.";
+            _status.Notice = "JSON formatted.";
         }
-        catch (JsonException ex) { _status.Notice = $"A little JSON typo: {ex.Message}"; }
+        catch (JsonException ex) { _status.Notice = $"Invalid JSON: {ex.Message}"; }
     }
 }

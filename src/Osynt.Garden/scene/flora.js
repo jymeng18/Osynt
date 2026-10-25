@@ -15,37 +15,37 @@ const flowers = [
     name: "Sunbeam daisy",
     color: "#fff3c9",
     center: "#d4a35c",
-    detail: "A tiny piece of sunshine. Grown one good response at a time.",
+    detail: "Daisy with cream petals and a yellow center.",
   },
   {
     name: "Blush cosmos",
     color: "#e5a4ac",
     center: "#d8b26b",
-    detail: "Soft petals, strong roots. A reminder to keep making things.",
+    detail: "Cosmos with pink petals.",
   },
   {
     name: "Lavender",
     color: "#ad9ac6",
     center: "#bdaed4",
-    detail: "A quiet little bloom for a busy day.",
+    detail: "Lavender with purple flowers.",
   },
   {
     name: "Golden marigold",
     color: "#e9ba66",
     center: "#ac7940",
-    detail: "Warm, bright, and a little bit wild.",
+    detail: "Marigold with golden petals.",
   },
   {
     name: "Blue forget-me-not",
     color: "#9dc9d0",
     center: "#f1d884",
-    detail: "A small discovery worth keeping.",
+    detail: "Forget-me-not with pale blue petals.",
   },
   {
     name: "Strawberry",
     color: "#fff5d7",
     center: "#e1b95f",
-    detail: "Sweet things grow from steady little efforts.",
+    detail: "Strawberry plant with white flowers.",
   },
 ];
 

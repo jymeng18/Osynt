@@ -61,10 +61,10 @@ export function createUi(actions) {
       const at =
         nextMilestone?.[0] ?? (Math.floor(state.successes / 100) + 1) * 100;
       byId("next-name").textContent =
-        nextMilestone?.[1] ?? "Keep the good things growing";
+        nextMilestone?.[1] ?? "More plants";
       byId("next-description").textContent =
         nextMilestone?.[2] ??
-        "More blooms, more light, and a little more life.";
+        "Successful requests add and grow plants.";
       byId("remaining").textContent = `${at - state.successes} to go`;
       byId("milestone-fraction").textContent = `${state.successes} / ${at}`;
       byId("milestone-progress").style.width =

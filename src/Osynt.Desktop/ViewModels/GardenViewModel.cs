@@ -10,7 +10,7 @@ public sealed class GardenViewModel : ObservableModel
     private readonly WorkspaceStatus _status;
     private GardenState _state;
     private bool _isOpen;
-    private string _lastGrowth = "Every successful request adds a little life.";
+    private string _lastGrowth = "Successful requests grow your garden.";
     public GardenViewModel(GardenService garden, WorkspaceStatus status)
     {
         _garden = garden;

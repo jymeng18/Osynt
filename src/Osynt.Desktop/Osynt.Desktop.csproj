@@ -5,7 +5,7 @@
     <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Product>Osynt</Product>
-    <Description>A cozy little home for your APIs.</Description>
+    <Description>Desktop API client.</Description>
     <ApplicationIcon>Assets/osynt.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>

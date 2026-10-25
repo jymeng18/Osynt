@@ -1,10 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:Osynt.Desktop.ViewModels"
         x:Class="Osynt.Desktop.EnvironmentWindow" Width="680" Height="460" MinWidth="580" MinHeight="400"
-        Title="A little change of scenery · Environment" WindowStartupLocation="CenterOwner">
+        Title="Environment" WindowStartupLocation="CenterOwner">
   <Grid Margin="28" RowDefinitions="Auto,Auto,*,Auto,Auto">
     <StackPanel Spacing="8" Margin="0,0,0,24">
-      <TextBlock Text="A little change of scenery." FontSize="24" FontWeight="SemiBold" />
-      <TextBlock Text="Give your variables a value, then use {{name}} anywhere in a request." FontSize="12" Foreground="#969D87" />
+      <TextBlock Text="Environment variables" FontSize="24" FontWeight="SemiBold" />
+      <TextBlock Text="Use {{name}} to insert a variable in a request." FontSize="12" Foreground="#969D87" />
     </StackPanel>
     <Grid Grid.Row="1" ColumnDefinitions="2*,3*,30" Margin="10,0,0,10"><TextBlock Text="VARIABLE" Classes="caption" /><TextBlock Grid.Column="1" Text="VALUE" Classes="caption" /></Grid>
     <ScrollViewer Grid.Row="2">

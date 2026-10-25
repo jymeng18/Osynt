@@ -97,7 +97,7 @@ public sealed class LibraryViewModel : ObservableModel
 
     private void ClearHistory()
     {
-        if (_status.TrySave(_history.Clear, "History cleared. A fresh start."))
+        if (_status.TrySave(_history.Clear, "History cleared."))
             RefreshHistory();
     }
 
@@ -108,7 +108,7 @@ public sealed class LibraryViewModel : ObservableModel
         var count = 0;
         if (!_status.TrySave(() => count = _collections.Import(json)))
             return;
-        _status.Notice = $"Imported {count} collection(s). Welcome to the garden.";
+        _status.Notice = $"Imported {count} collection(s).";
         RefreshCollections();
     }
 }

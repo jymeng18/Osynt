@@ -74,9 +74,9 @@ public partial class MainWindow : Window
     }
     private async void HelpClicked(object? sender, RoutedEventArgs e)
     {
-        var dialog = new Window { Title = "A few little shortcuts", Width = 420, SizeToContent = SizeToContent.Height, CanResize = false, WindowStartupLocation = WindowStartupLocation.CenterOwner };
+        var dialog = new Window { Title = "Keyboard shortcuts", Width = 420, SizeToContent = SizeToContent.Height, CanResize = false, WindowStartupLocation = WindowStartupLocation.CenterOwner };
         var panel = new StackPanel { Margin = new(30), Spacing = 18 };
-        panel.Children.Add(new TextBlock { Text = "A few little shortcuts", FontSize = 23, FontWeight = FontWeight.SemiBold });
+        panel.Children.Add(new TextBlock { Text = "Keyboard shortcuts", FontSize = 23, FontWeight = FontWeight.SemiBold });
         foreach (var (label, shortcut) in new[] { ("Send / cancel request", "Ctrl / ⌘ + Enter"), ("Save request", "Ctrl / ⌘ + S"), ("New request", "Ctrl / ⌘ + N"), ("Close request tab", "Ctrl / ⌘ + W") })
         {
             var row = new Grid { ColumnDefinitions = new("*,Auto") };
@@ -86,7 +86,7 @@ public partial class MainWindow : Window
             row.Children.Add(key);
             panel.Children.Add(row);
         }
-        var close = new Button { Content = "Happy exploring", HorizontalAlignment = HorizontalAlignment.Right, Classes = { "primary" } };
+        var close = new Button { Content = "Close", HorizontalAlignment = HorizontalAlignment.Right, Classes = { "primary" } };
         close.Click += (_, _) => dialog.Close();
         panel.Children.Add(close);
         dialog.Content = panel;

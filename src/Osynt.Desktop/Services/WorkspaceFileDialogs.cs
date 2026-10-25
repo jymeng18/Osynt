@@ -21,7 +21,7 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
         try
         {
             await owner.Clipboard.SetTextAsync(workspace.Requests.Selected.ResponseDisplay);
-            workspace.Status.Notice = "Response copied. A little discovery to take with you.";
+            workspace.Status.Notice = "Response copied.";
         }
         catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.ExternalException)
         {
@@ -75,7 +75,7 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
                 stream.SetLength(0);
             await using var writer = new StreamWriter(stream, new UTF8Encoding(false));
             await writer.WriteAsync(text);
-            workspace.Status.Notice = $"Saved {file.Name}. A little piece of progress.";
+            workspace.Status.Notice = $"Saved {file.Name}.";
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {

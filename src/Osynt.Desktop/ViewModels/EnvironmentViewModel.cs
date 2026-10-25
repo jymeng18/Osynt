@@ -9,11 +9,11 @@ public sealed class EnvironmentViewModel(EnvironmentService environment, Workspa
     public string DemoBaseUrl => environment.DemoBaseUrl;
     public bool DemoAvailable => DemoBaseUrl.Length > 0;
     public string Label => Variables.GetValueOrDefault("base_url") == DemoBaseUrl && DemoAvailable
-        ? "Little farm · local" : "Custom environment";
+        ? "Local demo" : "Custom environment";
 
     public bool UpdateVariables(IEnumerable<RequestPair> pairs)
     {
-        if (!status.TrySave(() => environment.Update(pairs), "Environment saved. A little change of scenery."))
+        if (!status.TrySave(() => environment.Update(pairs), "Environment saved."))
             return false;
         Raise(nameof(Variables));
         Raise(nameof(Label));

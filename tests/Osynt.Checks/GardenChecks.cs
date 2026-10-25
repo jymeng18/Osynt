@@ -78,7 +78,7 @@ internal static partial class Program
             Equal(2, GardenProgress.Level(5));
             Equal(3, GardenProgress.Level(20));
             Equal(5L, GardenProgress.NextMilestone(1)!.RequiredSuccesses);
-            Equal("Home, grown", GardenProgress.Stage(40));
+            Equal("Cottage", GardenProgress.Stage(40));
             True(GardenProgress.LevelProgress(21) is > 0 and < 100);
             Equal(1_000_001L, GardenProgress.Plants(3_000_001));
         });

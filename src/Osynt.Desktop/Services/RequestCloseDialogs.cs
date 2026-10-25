@@ -12,7 +12,7 @@ public sealed class RequestCloseDialogs(Window owner, WorkspaceViewModel workspa
     {
         if (tab.IsDirty)
         {
-            var choice = await AskToSaveAsync($"Save “{tab.Document.Name}”?", "Give this request a home before closing it.");
+            var choice = await AskToSaveAsync($"Save “{tab.Document.Name}”?", "This request has unsaved changes.");
             if (choice == "cancel")
                 return;
             if (choice == "save")
@@ -27,7 +27,7 @@ public sealed class RequestCloseDialogs(Window owner, WorkspaceViewModel workspa
     }
     public async Task<bool> CanCloseWorkspaceAsync()
     {
-        var choice = await AskToSaveAsync("Tuck your requests away?", "Some requests have unsaved changes. Save them before heading out?");
+        var choice = await AskToSaveAsync("Save changes?", "Save unsaved requests before closing?");
         if (choice == "cancel")
             return false;
         if (choice == "save")
@@ -53,7 +53,7 @@ public sealed class RequestCloseDialogs(Window owner, WorkspaceViewModel workspa
         panel.Children.Add(new TextBlock { Text = title, FontSize = 21, FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap });
         panel.Children.Add(new TextBlock { Text = description, FontSize = 12, Foreground = Brush.Parse("#8D9680"), TextWrapping = TextWrapping.Wrap, LineHeight = 20 });
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, HorizontalAlignment = HorizontalAlignment.Right, Margin = new(0, 10, 0, 0) };
-        foreach (var (label, value) in new[] { ("Keep editing", "cancel"), ("Discard", "discard"), ("Save & close", "save") })
+        foreach (var (label, value) in new[] { ("Cancel", "cancel"), ("Discard", "discard"), ("Save & close", "save") })
         {
             var button = new Button { Content = label };
             if (value == "save")

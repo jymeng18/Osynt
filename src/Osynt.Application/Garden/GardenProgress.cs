@@ -9,21 +9,21 @@ public static class GardenProgress
         get;
     } = Array.AsReadOnly(new[]
     {
-        new GardenMilestone(1, "First roots", "Your first seed takes root."),
-        new GardenMilestone(5, "Wildflower meadow", "Wildflowers find their way into your garden."),
-        new GardenMilestone(12, "A little orchard", "Fruit trees and butterflies settle in."),
-        new GardenMilestone(24, "Still waters", "A pond, lily pads, and a little stone bridge."),
-        new GardenMilestone(40, "Home, grown", "A cozy cottage with a light in the window."),
-        new GardenMilestone(75, "Glass & greenery", "A greenhouse for your growing collection."),
-        new GardenMilestone(120, "Lantern season", "Warm lanterns light up your island."),
-        new GardenMilestone(200, "Beyond the meadow", "New little islands join your garden.")
+        new GardenMilestone(1, "First plant", "First seed planted."),
+        new GardenMilestone(5, "Wildflowers", "Wildflowers unlocked."),
+        new GardenMilestone(12, "Orchard", "Fruit trees and butterflies unlocked."),
+        new GardenMilestone(24, "Pond", "Pond and bridge unlocked."),
+        new GardenMilestone(40, "Cottage", "Garden cottage unlocked."),
+        new GardenMilestone(75, "Greenhouse", "Greenhouse unlocked."),
+        new GardenMilestone(120, "Lanterns", "Lanterns unlocked."),
+        new GardenMilestone(200, "More islands", "New islands unlocked.")
     });
 
     public static int Level(long successes) => 1 + (int)Math.Floor(Math.Sqrt(Math.Max(0, successes) / 5d));
     public static long NextLevelAt(long successes) => 5L * Level(successes) * Level(successes);
     public static long Plants(long successes) => (Math.Max(0, successes) + 2) / 3;
     public static GardenMilestone? NextMilestone(long successes) => Milestones.FirstOrDefault(m => m.RequiredSuccesses > successes);
-    public static string Stage(long successes) => Milestones.LastOrDefault(m => m.RequiredSuccesses <= successes)?.Name ?? "A fresh beginning";
+    public static string Stage(long successes) => Milestones.LastOrDefault(m => m.RequiredSuccesses <= successes)?.Name ?? "No plants yet";
     public static double LevelProgress(long successes)
     {
         var level = Level(successes);
@@ -35,9 +35,9 @@ public static class GardenProgress
         var milestone = Milestones.FirstOrDefault(m => m.RequiredSuccesses == successes);
         return milestone?.Description ?? (successes % 3) switch
         {
-            1 => "A new seed takes root.",
-            2 => "Your newest plant is reaching for the sun.",
-            _ => "Another little bloom, grown from your work."
+            1 => "Seed planted.",
+            2 => "Plant growing.",
+            _ => "Plant fully grown."
         };
     }
 }

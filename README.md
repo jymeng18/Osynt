@@ -1,6 +1,6 @@
 # Osynt 🌱
 
-A cozy desktop API client. Send requests, save collections, and grow a 3D garden with every successful response. No account needed.
+A desktop API client. Send requests, save collections, and grow a 3D garden with every successful response. No account needed.
 
 ![The 3D garden](docs/screenshots/garden-day.png)
 
