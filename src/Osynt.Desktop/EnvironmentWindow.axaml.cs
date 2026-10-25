@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Osynt.Core;
 using Osynt.Desktop.ViewModels;
 
 namespace Osynt.Desktop;
@@ -9,7 +8,7 @@ namespace Osynt.Desktop;
 public partial class EnvironmentWindow : Window
 {
     private readonly WorkspaceViewModel? _workspace;
-    private readonly ObservableCollection<RequestPair> _variables = [];
+    private readonly ObservableCollection<RequestPairViewModel> _variables = [];
     public EnvironmentWindow()
     {
         InitializeComponent();
@@ -21,7 +20,7 @@ public partial class EnvironmentWindow : Window
         foreach (var variable in workspace.Variables) _variables.Add(new() { Key = variable.Key, Value = variable.Value });
     }
     private void AddClicked(object? sender, RoutedEventArgs e) => _variables.Add(new());
-    private void RemoveClicked(object? sender, RoutedEventArgs e) { if (sender is Button { Tag: RequestPair pair }) _variables.Remove(pair); }
+    private void RemoveClicked(object? sender, RoutedEventArgs e) { if (sender is Button { Tag: RequestPairViewModel pair }) _variables.Remove(pair); }
     private void ResetClicked(object? sender, RoutedEventArgs e)
     {
         if (_workspace is not { DemoAvailable: true }) { ErrorLabel.Text = "The local demo is unavailable. Try restarting Osynt."; return; }
@@ -29,7 +28,11 @@ public partial class EnvironmentWindow : Window
     }
     private void SaveClicked(object? sender, RoutedEventArgs e)
     {
-        try { _workspace?.UpdateVariables(_variables); Close(); }
+        try
+        {
+            if (_workspace?.UpdateVariables(_variables.Select(v => v.ToModel())) == true) Close();
+            else ErrorLabel.Text = "The environment could not be saved. Check the workspace file permissions.";
+        }
         catch (ArgumentException ex) { ErrorLabel.Text = ex.Message; }
     }
     private void CancelClicked(object? sender, RoutedEventArgs e) => Close();

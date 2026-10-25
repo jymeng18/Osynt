@@ -1,21 +1,23 @@
+using Osynt.Application.Abstractions;
+using Osynt.Domain.Workspaces;
+
 using System.Text.Json;
 
-namespace Osynt.Core;
+namespace Osynt.Infrastructure.Persistence;
 
-public sealed class WorkspaceStore(string? directory = null)
+public sealed class WorkspaceStore(string? directory = null) : IWorkspaceStore
 {
-    public static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
     public string DirectoryPath { get; } = directory ?? Environment.GetEnvironmentVariable("OSYNT_DATA_DIR") ??
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Osynt");
     public string FilePath => Path.Combine(DirectoryPath, "workspace.json");
     public string? LoadNotice { get; private set; }
 
-    public WorkspaceState Load()
+    public WorkspaceState? Load()
     {
-        if (!File.Exists(FilePath)) return WorkspaceState.CreateDefault();
+        if (!File.Exists(FilePath)) return null;
         try
         {
-            var workspace = JsonSerializer.Deserialize<WorkspaceState>(File.ReadAllText(FilePath), JsonOptions)
+            var workspace = JsonSerializer.Deserialize<WorkspaceState>(File.ReadAllText(FilePath), WorkspaceJson.Options)
                 ?? throw new JsonException("Empty workspace");
             if (workspace.Collections is null || workspace.History is null || workspace.Variables is null ||
                 workspace.Collections.Any(c => c is null || c.Requests is null || c.Requests.Any(r =>
@@ -26,7 +28,7 @@ public sealed class WorkspaceStore(string? directory = null)
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {
             LoadNotice = "Your saved workspace could not be read. It has been left untouched; a fresh workspace is open.";
-            return WorkspaceState.CreateDefault();
+            return null;
         }
     }
 
@@ -39,7 +41,7 @@ public sealed class WorkspaceStore(string? directory = null)
             LoadNotice = null;
         }
         var temporary = FilePath + ".tmp";
-        File.WriteAllText(temporary, JsonSerializer.Serialize(workspace, JsonOptions));
+        File.WriteAllText(temporary, JsonSerializer.Serialize(workspace, WorkspaceJson.Options));
         File.Move(temporary, FilePath, true);
     }
 }

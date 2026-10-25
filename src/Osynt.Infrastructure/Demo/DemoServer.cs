@@ -1,9 +1,11 @@
+using Osynt.Infrastructure.Persistence;
+
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 
-namespace Osynt.Core;
+namespace Osynt.Infrastructure.Demo;
 
 /// <summary>A loopback-only sample API. No external service or account needed.</summary>
 public sealed class DemoServer : IDisposable
@@ -61,7 +63,7 @@ public sealed class DemoServer : IDisposable
                 var body = new byte[bodyLength];
                 await stream.ReadExactlyAsync(body, timeout.Token);
                 var (status, payload) = CreateResponse(method, uri, Encoding.UTF8.GetString(body));
-                var json = JsonSerializer.Serialize(payload, WorkspaceStore.JsonOptions);
+                var json = JsonSerializer.Serialize(payload, WorkspaceJson.Options);
                 var responseBytes = Encoding.UTF8.GetBytes(json);
                 var reason = status switch { 200 => "OK", 201 => "Created", 400 => "Bad Request", 405 => "Method Not Allowed", _ => "Not Found" };
                 var responseHeader = Encoding.ASCII.GetBytes($"HTTP/1.1 {status} {reason}\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: {responseBytes.Length}\r\nX-Powered-By: a little sunshine\r\nX-Osynt-Demo: true\r\nConnection: close\r\n\r\n");

@@ -1,11 +1,14 @@
+using Osynt.Application.Abstractions;
+using Osynt.Domain.Requests;
+
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Osynt.Core;
+namespace Osynt.Infrastructure.Http;
 
-public sealed partial class RequestExecutor(HttpClient client)
+public sealed partial class RequestExecutor(HttpClient client) : IRequestExecutor
 {
     public const int MaxResponseBytes = 5 * 1024 * 1024;
 

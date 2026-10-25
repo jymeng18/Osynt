@@ -1,7 +1,9 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/Osynt.Core/Osynt.Core.csproj" />
+    <Project Path="src/Osynt.Application/Osynt.Application.csproj" />
     <Project Path="src/Osynt.Desktop/Osynt.Desktop.csproj" />
+    <Project Path="src/Osynt.Domain/Osynt.Domain.csproj" />
+    <Project Path="src/Osynt.Infrastructure/Osynt.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Osynt.Checks/Osynt.Checks.csproj" />

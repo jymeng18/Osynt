@@ -1,12 +1,15 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Osynt.Core;
+using Osynt.Application.Workspaces;
+using Osynt.Infrastructure.Demo;
+using Osynt.Infrastructure.Http;
+using Osynt.Infrastructure.Persistence;
 using Osynt.Desktop.ViewModels;
 
 namespace Osynt.Desktop;
 
-public partial class App : Application
+public partial class App : Avalonia.Application
 {
     private DemoServer? _demo;
     private HttpClient? _client;
@@ -21,7 +24,8 @@ public partial class App : Application
             catch (System.Net.Sockets.SocketException) { demoError = "The demo API could not start. You can still send requests to any HTTP API."; }
             _client = new HttpClient(new SocketsHttpHandler { AutomaticDecompression = System.Net.DecompressionMethods.All, PooledConnectionLifetime = TimeSpan.FromMinutes(5) })
             { Timeout = Timeout.InfiniteTimeSpan };
-            var viewModel = new WorkspaceViewModel(new WorkspaceStore(), new RequestExecutor(_client), _demo.BaseUrl);
+            var workspace = new WorkspaceService(new WorkspaceStore(), new JsonCollectionSerializer(), _demo.BaseUrl);
+            var viewModel = new WorkspaceViewModel(workspace, new RequestExecutor(_client));
             if (demoError is not null) viewModel.Notice = demoError;
             desktop.MainWindow = new MainWindow { DataContext = viewModel };
             desktop.Exit += (_, _) => { viewModel.Dispose(); _demo.Dispose(); _client.Dispose(); };

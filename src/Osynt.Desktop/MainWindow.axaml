@@ -1,5 +1,5 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:core="using:Osynt.Core" xmlns:art="using:Osynt.Desktop.Controls"
+        xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
         x:Class="Osynt.Desktop.MainWindow" x:Name="Root" Title="Osynt · A cozy home for your APIs" Icon="/Assets/osynt.ico"
         Width="1440" Height="940" MinWidth="1080" MinHeight="780" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen" ExtendClientAreaToDecorationsHint="True"
@@ -93,7 +93,7 @@
                 <TextBlock Text="Your adventures will appear here.&#10;Send a request to get started." FontSize="11" Foreground="#919783" Margin="10,16" LineHeight="20" IsVisible="{Binding !HasHistory}" />
                 <ItemsControl ItemsSource="{Binding VisibleHistory}">
                   <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="core:HistoryEntry">
+                    <DataTemplate DataType="vm:HistoryItemViewModel">
                       <Button Classes="request" Command="{Binding #Root.DataContext.OpenHistoryCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch">
                         <StackPanel Spacing="5">
                           <Grid ColumnDefinitions="40,*,Auto">
@@ -223,7 +223,7 @@
                 </Grid>
                 <ScrollViewer Grid.Row="1">
                   <ItemsControl ItemsSource="{Binding Selected.Document.Parameters}">
-                    <ItemsControl.ItemTemplate><DataTemplate DataType="core:RequestPair">
+                    <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
                       <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1">
                         <Grid ColumnDefinitions="40,2*,3*,35">
                           <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" />
@@ -243,7 +243,7 @@
               <Grid IsVisible="{Binding HeadersActive}" RowDefinitions="31,*,34">
                 <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9"><TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" /><TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" /></Grid>
                 <ScrollViewer Grid.Row="1"><ItemsControl ItemsSource="{Binding Selected.Document.Headers}">
-                  <ItemsControl.ItemTemplate><DataTemplate DataType="core:RequestPair">
+                  <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
                     <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="40,2*,3*,35">
                       <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" />
                       <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Header name" />
