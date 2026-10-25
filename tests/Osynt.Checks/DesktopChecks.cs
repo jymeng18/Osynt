@@ -208,5 +208,10 @@ internal static partial class Program
             postBitmap.Save(Path.Combine(Path.GetDirectoryName(path)!, "osynt-post-preview.png"));
         }
         window.Close();
+        RunTabCloseChecks(directory, executor, demo);
+        RunFolderDesktopChecks(directory, executor, demo);
+        RunDeletionDesktopChecks(directory, executor, demo);
+        RunRequestRenameDesktopChecks(directory, executor, demo);
+        RunDeletionPreferenceDesktopChecks(directory, executor, demo);
     }
 }

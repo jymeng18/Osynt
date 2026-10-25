@@ -68,6 +68,7 @@ internal static partial class Program
             using var workspace = CreateWorkspace(Path.Combine(directory, "tabs"), executor, demo.BaseUrl);
             workspace.NewRequest();
             var tab = workspace.Requests.Selected;
+            tab.Document.Name = "Unsaved request";
             workspace.Requests.Close(tab);
             True(workspace.Requests.Tabs.Contains(tab));
             workspace.Requests.SaveSelected();

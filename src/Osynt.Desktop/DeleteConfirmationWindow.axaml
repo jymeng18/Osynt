@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Osynt.Desktop.DeleteConfirmationWindow" Title="Delete" Width="440"
+        SizeToContent="Height" CanResize="False" WindowStartupLocation="CenterOwner">
+  <StackPanel Margin="24" Spacing="16">
+    <TextBlock x:Name="Heading" FontSize="21" FontWeight="SemiBold" TextWrapping="Wrap" />
+    <TextBlock x:Name="Description" FontSize="12" TextWrapping="Wrap" LineHeight="20" />
+    <CheckBox x:Name="DontAskAgain" Content="Don't ask again"
+              ToolTip.Tip="Skip confirmations when deleting requests and folders." />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="Cancel" Click="CancelClicked" IsCancel="True" />
+      <Button Content="Delete" Click="DeleteClicked" Background="#A65F4F" Foreground="#FFFDF8" />
+    </StackPanel>
+  </StackPanel>
+</Window>

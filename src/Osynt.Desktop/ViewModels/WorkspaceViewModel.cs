@@ -26,6 +26,8 @@ public sealed class WorkspaceViewModel : IDisposable
         OpenHistoryCommand = new ActionCommand(p => { if (p is HistoryItemViewModel entry) Requests.OpenHistory(entry.Request); });
         Requests.PropertyChanged += SelectionChanged;
         Requests.Saved += Library.RefreshCollections;
+        Library.RequestsDeleted += Requests.DiscardDeleted;
+        Library.RequestRenamed += Requests.RenameOpenRequest;
         Sending.Completed += RefreshAfterSend;
         Library.Select(Requests.Selected.Document.Id);
     }
@@ -129,6 +131,8 @@ public sealed class WorkspaceViewModel : IDisposable
     {
         Requests.PropertyChanged -= SelectionChanged;
         Requests.Saved -= Library.RefreshCollections;
+        Library.RequestsDeleted -= Requests.DiscardDeleted;
+        Library.RequestRenamed -= Requests.RenameOpenRequest;
         Sending.Completed -= RefreshAfterSend;
         Requests.Dispose();
     }

@@ -1,0 +1,13 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Osynt.Desktop.RenameItemWindow" Title="Rename" Width="400"
+        SizeToContent="Height" CanResize="False" WindowStartupLocation="CenterOwner">
+  <StackPanel Margin="24" Spacing="16">
+    <TextBlock x:Name="Heading" FontSize="21" FontWeight="SemiBold" />
+    <TextBox x:Name="NameInput" Watermark="Name" />
+    <TextBlock x:Name="ErrorLabel" TextWrapping="Wrap" Foreground="#B78261" FontSize="11" IsVisible="False" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="Cancel" Click="CancelClicked" IsCancel="True" />
+      <Button Content="Save" Click="SaveClicked" Classes="primary" IsDefault="True" />
+    </StackPanel>
+  </StackPanel>
+</Window>

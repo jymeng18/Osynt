@@ -3,9 +3,10 @@ using System.Windows.Input;
 
 namespace Osynt.Desktop.ViewModels;
 
-public sealed class LibraryCollection(string name, IEnumerable<LibraryRequest> requests) : ObservableModel
+public sealed class LibraryCollection(Guid id, string name, IEnumerable<LibraryRequest> requests) : ObservableModel
 {
     private bool _expanded = true;
+    public Guid Id { get; } = id;
     public string Name { get; } = name;
     public ObservableCollection<LibraryRequest> Requests { get; } = new(requests);
     public int Count => Requests.Count;

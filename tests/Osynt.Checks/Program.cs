@@ -43,6 +43,10 @@ internal static partial class Program
         RunAspNetChecks(executor);
         RunWorkspaceChecks(directory, executor, demo);
         RunApplicationChecks();
+        RunCollectionChecks(directory);
+        RunDeletionChecks(directory);
+        RunRequestRenameChecks(directory);
+        RunDeletionPreferenceChecks();
         RunGardenChecks();
         RunSendWorkflowChecks();
         RunDesktopChecks(directory, executor, demo, args);

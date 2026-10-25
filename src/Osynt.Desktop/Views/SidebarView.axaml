@@ -23,6 +23,12 @@
               <DataTemplate DataType="vm:LibraryCollection">
                 <StackPanel Margin="0,0,0,10">
                   <Button Classes="collection" Command="{Binding ToggleCommand}" HorizontalAlignment="Stretch">
+                    <Button.ContextMenu>
+                      <ContextMenu>
+                        <MenuItem Header="Rename" Click="RenameClicked" Tag="{Binding}" />
+                        <MenuItem Header="Delete" Click="DeleteCollectionClicked" Tag="{Binding}" />
+                      </ContextMenu>
+                    </Button.ContextMenu>
                     <Grid ColumnDefinitions="14,18,*,Auto">
                       <Grid Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <Path Data="M 1,2 L 5,6 L 9,2" Stroke="#8B957C" StrokeThickness="1.5" IsVisible="{Binding Expanded}" />
@@ -40,6 +46,12 @@
                     <ItemsControl.ItemTemplate>
                       <DataTemplate DataType="vm:LibraryRequest">
                         <Button Classes="request" Classes.selected="{Binding IsSelected}" Command="{Binding $parent[Window].DataContext.OpenRequestCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch">
+                          <Button.ContextMenu>
+                            <ContextMenu>
+                              <MenuItem Header="Rename" Click="RenameRequestClicked" Tag="{Binding}" />
+                              <MenuItem Header="Delete" Click="DeleteRequestClicked" Tag="{Binding}" />
+                            </ContextMenu>
+                          </Button.ContextMenu>
                           <Grid ColumnDefinitions="40,*">
                             <TextBlock Text="{Binding Method}" Foreground="{Binding MethodColor}" FontSize="9" FontWeight="Bold" />
                             <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" TextTrimming="CharacterEllipsis" />

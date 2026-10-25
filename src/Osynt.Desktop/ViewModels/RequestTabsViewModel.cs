@@ -46,7 +46,7 @@ public sealed class RequestTabsViewModel : ObservableModel, IDisposable
 
     public void NewRequest()
     {
-        Add(new RequestDocument(), dirty: true);
+        Add(new RequestDocument());
         _status.Notice = "New request";
     }
 
@@ -101,6 +101,22 @@ public sealed class RequestTabsViewModel : ObservableModel, IDisposable
             return;
         tab.IsDirty = false;
         Saved?.Invoke();
+    }
+
+    public void DiscardDeleted(IReadOnlySet<Guid> requestIds)
+    {
+        foreach (var tab in Tabs.Where(t => requestIds.Contains(t.Document.Id)).ToArray())
+            Discard(tab);
+    }
+
+    public void RenameOpenRequest(Guid requestId, string name)
+    {
+        foreach (var tab in Tabs.Where(t => t.Document.Id == requestId))
+        {
+            var wasDirty = tab.IsDirty;
+            tab.Document.Name = name;
+            tab.IsDirty = wasDirty;
+        }
     }
 
     public void Dispose()

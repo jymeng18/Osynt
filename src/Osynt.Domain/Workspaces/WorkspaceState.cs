@@ -5,6 +5,8 @@ namespace Osynt.Domain.Workspaces;
 public sealed class WorkspaceState
 {
     public bool UseLocalDemo { get; set; } = true;
+    public Guid? DefaultCollectionId { get; set; }
+    public bool ConfirmDeletion { get; set; } = true;
     public GardenState? Garden
     {
         get; set;
@@ -16,6 +18,8 @@ public sealed class WorkspaceState
     public WorkspaceState Clone() => new()
     {
         UseLocalDemo = UseLocalDemo,
+        DefaultCollectionId = DefaultCollectionId,
+        ConfirmDeletion = ConfirmDeletion,
         Garden = Garden?.Clone(),
         Variables = new(Variables),
         Collections = Collections.Select(c => c.Clone()).ToList(),

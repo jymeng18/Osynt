@@ -26,6 +26,9 @@ public sealed class LibraryViewModel : ObservableModel
     }
 
     public ObservableCollection<LibraryCollection> Collections { get; } = [];
+    public event Action<IReadOnlySet<Guid>>? RequestsDeleted;
+    public event Action<Guid, string>? RequestRenamed;
+    public bool ConfirmDeletion => _collections.ConfirmDeletion;
     public ObservableCollection<HistoryItemViewModel> History { get; } = [];
     public ICommand NavigationCommand
     {
@@ -68,16 +71,16 @@ public sealed class LibraryViewModel : ObservableModel
 
     public void RefreshCollections()
     {
-        var collapsed = Collections.Where(c => !c.Expanded).Select(c => c.Name).ToHashSet();
+        var collapsed = Collections.Where(c => !c.Expanded).Select(c => c.Id).ToHashSet();
         Collections.Clear();
         foreach (var collection in _collections.GetCollections())
         {
             var requests = collection.Requests.Where(Matches)
                 .Select(r => new LibraryRequest(r) { IsSelected = _selectedId == r.Id }).ToList();
             if (requests.Count > 0 || string.IsNullOrEmpty(Search))
-                Collections.Add(new(collection.Name, requests)
+                Collections.Add(new(collection.Id, collection.Name, requests)
                 {
-                    Expanded = !collapsed.Contains(collection.Name)
+                    Expanded = !collapsed.Contains(collection.Id)
                 });
         }
     }
@@ -102,6 +105,47 @@ public sealed class LibraryViewModel : ObservableModel
     }
 
     public string ExportCollections() => _collections.Export();
+
+    public bool DeleteRequest(Guid requestId, bool dontAskAgain = false)
+    {
+        if (!_status.TrySave(() => _collections.DeleteRequest(requestId, dontAskAgain)))
+            return false;
+        FinishDeletion(new HashSet<Guid> { requestId }, "Request deleted.");
+        return true;
+    }
+
+    public bool DeleteCollection(Guid collectionId, bool dontAskAgain = false)
+    {
+        IReadOnlyList<Guid> deletedRequests = [];
+        if (!_status.TrySave(() => deletedRequests = _collections.DeleteCollection(collectionId, dontAskAgain)))
+            return false;
+        FinishDeletion(deletedRequests.ToHashSet(), "Folder deleted.");
+        return true;
+    }
+
+    private void FinishDeletion(IReadOnlySet<Guid> requestIds, string notice)
+    {
+        RefreshCollections();
+        RequestsDeleted?.Invoke(requestIds);
+        _status.Notice = notice;
+    }
+
+    public bool RenameCollection(Guid collectionId, string name)
+    {
+        if (!_status.TrySave(() => _collections.Rename(collectionId, name), "Folder renamed."))
+            return false;
+        RefreshCollections();
+        return true;
+    }
+
+    public bool RenameRequest(Guid requestId, string name)
+    {
+        if (!_status.TrySave(() => _collections.RenameRequest(requestId, name), "Request renamed."))
+            return false;
+        RequestRenamed?.Invoke(requestId, name.Trim());
+        RefreshCollections();
+        return true;
+    }
 
     public void ImportCollections(string json)
     {
