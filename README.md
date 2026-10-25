@@ -34,14 +34,24 @@ Windows stores the workspace in `%LOCALAPPDATA%\Osynt\workspace.json`. The Windo
 
 ### Try it
 
-The app starts a small **loopback-only Harvest API** on a free port and sends the first sample request. Everything in “The little farm” works without internet access:
+The app opens a blank **GET** request with no query parameters, custom headers, or body. Paste your API URL and press **Send**. Local URLs such as `localhost:8080/health` use HTTP if you omit the scheme. A successful empty health response shows **200 OK** and **No response body**.
+
+The app also starts a small **loopback-only Harvest API** on a free port. Select a sample from “The little farm” and press Send to try it without internet access:
 
 - **Get seasonal crops** — change `season` in Params, or the `{{season}}` environment variable. Try `spring`, `summer`, `fall`, or `winter`.
 - **Meet the villagers** — a friendly GET response.
 - **Plant something new** — POST an editable JSON body and get a `201 Created` response.
 - **Check on the farm** — a small health check.
 
-Paste any `http://` or `https://` URL to use your own API. Choose a method, edit query parameters and headers, and add a text or JSON body. The environment button edits variables used as `{{name}}` in URLs, parameters, headers, and bodies. Use **Use local demo** to switch back.
+Query parameters stay synchronized between the URL and Params table. Pasting another endpoint replaces the previous query parameters; editing, disabling, or deleting a row updates the URL. Repeated keys are supported, and values are encoded once. Standard headers (`Host`, `Accept`, `User-Agent`, and body length) are set automatically. JSON bodies receive `Content-Type: application/json`; explicit header overrides take precedence.
+
+The **Variables** button edits values used as `{{name}}` in URLs, parameters, headers, and bodies. No environment setup is required for a literal URL.
+
+### ASP.NET Core in WSL
+
+Use the exact address and port printed by `dotnet run` under **Now listening on**. A Windows Osynt build can connect to an API in WSL through `http://localhost:<port>/health`; no query parameters or headers are required for an ordinary health endpoint. A connection refusal usually means that nothing is listening at the selected address or port. Osynt displays the failed host and port in the response pane.
+
+If the API uses HTTPS, its WSL development certificate may need to be trusted in Windows as well. Certificate verification remains enabled; use the API's HTTP development address or configure a trusted certificate. See Microsoft's documentation on [WSL networking](https://learn.microsoft.com/en-us/windows/wsl/networking) and [ASP.NET Core development certificates in WSL](https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl#trust-https-certificate-from-windows-subsystem-for-linux).
 
 ### Included in the MVP
 
@@ -63,7 +73,7 @@ Paste any `http://` or `https://` URL to use your own API. Choose a method, edit
 
 ### Storage and scope
 
-Saved collections, environment variables, and request history live in `Osynt/workspace.json` under the operating system's local application data directory (`~/.local/share/Osynt` on most Linux systems). Set `OSYNT_DATA_DIR` to choose another directory. Changes to a request become part of its collection when you click **Save request**. Workspace writes are atomic; unreadable files are backed up before a replacement is written.
+Saved collections, environment variables, and request history live in `Osynt/workspace.json` under the operating system's local application data directory (`~/.local/share/Osynt` on most Linux systems). Set `OSYNT_DATA_DIR` to choose another directory. Changes to a request become part of its collection when you click **Save** beside the request name. Workspace writes are atomic; unreadable files are backed up before a replacement is written.
 
 This is a desktop MVP: no cloud sync, account system, scripts/test runner, OAuth flow, multipart uploads, WebSockets, or Postman collection compatibility yet. You can send API credentials through ordinary headers. Workspace JSON and request history are stored in plain text, including headers and bodies; use disposable credentials while trying the MVP. Response saving exports the displayed text, not binary downloads.
 
@@ -75,7 +85,7 @@ dotnet build --no-restore -m:1
 dotnet run --project tests/Osynt.Checks --no-build
 ```
 
-The integration runner checks request construction, real local GET/POST responses, errors, cancellation, the preview size limit, persistence, import/export, and keyboard interactions in the actual Avalonia window. It returns a nonzero exit code on failure. It needs loopback socket access, but no external API or display server.
+The integration runner checks request construction, bidirectional query editing, blank request defaults, automatic headers, real ASP.NET Core GET/POST and empty health responses, redirects, connection errors, cancellation, persistence, import/export, compact layouts, and keyboard interactions in the actual Avalonia window. It returns a nonzero exit code on failure. It needs loopback socket access, but no external API or display server. The ASP.NET framework reference is confined to the test project.
 
 Render desktop previews with Avalonia's headless Skia renderer:
 

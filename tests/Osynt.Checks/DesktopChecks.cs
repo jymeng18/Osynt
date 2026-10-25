@@ -145,6 +145,30 @@ internal static partial class Program
             Equal(201, sendingTab.Response!.StatusCode);
             Equal(200, uiWorkspace.Selected.Response!.StatusCode);
         });
+        Check("Successful responses without content explicitly show an empty body message", () =>
+        {
+            var previous = uiWorkspace.Selected.Response;
+            uiWorkspace.Selected.Response = new(200, "OK", 1, 0, "", []);
+            Dispatcher.UIThread.RunJobs();
+            True(window.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Text == "No response body").IsEffectivelyVisible);
+            Equal("200 OK", uiWorkspace.Selected.Status);
+            uiWorkspace.Selected.Response = previous;
+        });
+        Check("The compact window keeps request controls and response status on screen", () =>
+        {
+            window.Width = 980;
+            window.Height = 640;
+            Dispatcher.UIThread.RunJobs();
+            AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+            foreach (var name in new[] { "UrlInput", "SendButton", "RequestName" })
+            {
+                var control = window.GetVisualDescendants().OfType<Control>().Single(c => c.Name == name);
+                var origin = control.TranslatePoint(new Point(), window)!.Value;
+                True(origin.X >= 0 && origin.Y >= 0 && origin.X + control.Bounds.Width <= window.Width && origin.Y + control.Bounds.Height <= window.Height);
+            }
+            window.Width = 1280;
+            window.Height = 840;
+        });
         if (args.Contains("--snapshot"))
         {
             var snapshotIndex = Array.IndexOf(args, "--snapshot");
