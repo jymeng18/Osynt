@@ -59,4 +59,20 @@ Render desktop previews with Avalonia's headless Skia renderer:
 dotnet run --project tests/Osynt.Checks -- --snapshot artifacts/osynt-preview.png
 ```
 
-`src/Osynt.Core` contains the HTTP engine, storage, models, and local demo API. `src/Osynt.Desktop` contains the Avalonia UI. `tests/Osynt.Checks` is the integration and rendering runner.
+### Architecture
+
+The dependency direction points inward. Domain and Application have no Avalonia, HTTP client, file-system implementation, or NuGet dependencies.
+
+```text
+Osynt.Domain          Plain request, response, collection, and workspace models
+    ↑
+Osynt.Application     Workspace use cases and ports for storage, HTTP, and serialization
+    ↑
+Osynt.Infrastructure  HttpClient adapter, atomic JSON storage, collection serializer, demo API
+    ↑
+Osynt.Desktop         Avalonia views, editable view models, and native desktop dialogs
+```
+
+`App.axaml.cs` is the composition root: it connects infrastructure implementations to application interfaces. The desktop view models depend on application ports and work with separate editable presentation models; domain entities have no binding notifications. Collection saving, environment changes, history limits, and import/export are application use cases. The sidebar, tabs, request header, editor, and response viewer are separate views. Native file pickers and close dialogs live in desktop services.
+
+`tests/Osynt.Checks` is the integration and rendering runner. Formatting conventions are defined in `.editorconfig`; run `dotnet format whitespace --no-restore` to apply them.

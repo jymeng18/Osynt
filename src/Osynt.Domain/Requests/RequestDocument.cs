@@ -11,7 +11,11 @@ public sealed class RequestDocument
     public List<RequestPair> Headers { get; set; } = [];
     public RequestDocument Clone(bool newId = false) => new()
     {
-        Id = newId ? Guid.NewGuid() : Id, Name = Name, Method = Method, Url = Url, Body = Body,
+        Id = newId ? Guid.NewGuid() : Id,
+        Name = Name,
+        Method = Method,
+        Url = Url,
+        Body = Body,
         Parameters = Parameters.Select(p => p.Clone()).ToList(),
         Headers = Headers.Select(p => p.Clone()).ToList()
     };

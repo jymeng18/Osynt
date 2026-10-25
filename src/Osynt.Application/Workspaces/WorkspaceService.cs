@@ -20,7 +20,10 @@ public sealed class WorkspaceService
         if (_state.UseLocalDemo || string.IsNullOrEmpty(_state.Variables.GetValueOrDefault("base_url")))
             _state.Variables["base_url"] = demoBaseUrl;
     }
-    public string DemoBaseUrl { get; }
+    public string DemoBaseUrl
+    {
+        get;
+    }
     public string StoragePath => _store.FilePath;
     public string? LoadNotice => _store.LoadNotice;
     public IReadOnlyList<RequestCollection> Collections => _state.Collections;
@@ -33,20 +36,39 @@ public sealed class WorkspaceService
         if (collection is null)
         {
             collection = _state.Collections.FirstOrDefault(c => c.Name == "My requests");
-            if (collection is null) { collection = new() { Name = "My requests" }; _state.Collections.Add(collection); }
+            if (collection is null)
+            {
+                collection = new()
+                {
+                    Name = "My requests"
+                };
+                _state.Collections.Add(collection);
+            }
         }
         var index = collection.Requests.FindIndex(r => r.Id == request.Id);
-        if (index < 0) collection.Requests.Add(request.Clone());
-        else collection.Requests[index] = request.Clone();
+        if (index < 0)
+            collection.Requests.Add(request.Clone());
+        else
+            collection.Requests[index] = request.Clone();
         _store.Save(_state);
     }
     public void RecordHistory(RequestDocument request, int statusCode, long elapsedMilliseconds)
     {
-        _state.History.Insert(0, new() { Request = request.Clone(), StatusCode = statusCode, ElapsedMilliseconds = elapsedMilliseconds });
-        if (_state.History.Count > HistoryLimit) _state.History.RemoveRange(HistoryLimit, _state.History.Count - HistoryLimit);
+        _state.History.Insert(0, new()
+        {
+            Request = request.Clone(),
+            StatusCode = statusCode,
+            ElapsedMilliseconds = elapsedMilliseconds
+        });
+        if (_state.History.Count > HistoryLimit)
+            _state.History.RemoveRange(HistoryLimit, _state.History.Count - HistoryLimit);
         _store.Save(_state);
     }
-    public void ClearHistory() { _state.History.Clear(); _store.Save(_state); }
+    public void ClearHistory()
+    {
+        _state.History.Clear();
+        _store.Save(_state);
+    }
     public void UpdateVariables(IEnumerable<RequestPair> pairs)
     {
         var values = pairs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
@@ -62,7 +84,8 @@ public sealed class WorkspaceService
         var collections = _serializer.Deserialize(text);
         foreach (var collection in collections)
         {
-            foreach (var request in collection.Requests) request.Id = Guid.NewGuid();
+            foreach (var request in collection.Requests)
+                request.Id = Guid.NewGuid();
             _state.Collections.Add(collection);
         }
         _store.Save(_state);

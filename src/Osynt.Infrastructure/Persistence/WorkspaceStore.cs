@@ -7,14 +7,21 @@ namespace Osynt.Infrastructure.Persistence;
 
 public sealed class WorkspaceStore(string? directory = null) : IWorkspaceStore
 {
-    public string DirectoryPath { get; } = directory ?? Environment.GetEnvironmentVariable("OSYNT_DATA_DIR") ??
+    public string DirectoryPath
+    {
+        get;
+    } = directory ?? Environment.GetEnvironmentVariable("OSYNT_DATA_DIR") ??
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Osynt");
     public string FilePath => Path.Combine(DirectoryPath, "workspace.json");
-    public string? LoadNotice { get; private set; }
+    public string? LoadNotice
+    {
+        get; private set;
+    }
 
     public WorkspaceState? Load()
     {
-        if (!File.Exists(FilePath)) return null;
+        if (!File.Exists(FilePath))
+            return null;
         try
         {
             var workspace = JsonSerializer.Deserialize<WorkspaceState>(File.ReadAllText(FilePath), WorkspaceJson.Options)

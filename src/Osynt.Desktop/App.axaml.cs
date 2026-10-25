@@ -20,13 +20,19 @@ public partial class App : Avalonia.Application
         {
             _demo = new DemoServer();
             string? demoError = null;
-            try { _demo.Start(); }
+            try
+            {
+                _demo.Start();
+            }
             catch (System.Net.Sockets.SocketException) { demoError = "The demo API could not start. You can still send requests to any HTTP API."; }
             _client = new HttpClient(new SocketsHttpHandler { AutomaticDecompression = System.Net.DecompressionMethods.All, PooledConnectionLifetime = TimeSpan.FromMinutes(5) })
-            { Timeout = Timeout.InfiniteTimeSpan };
+            {
+                Timeout = Timeout.InfiniteTimeSpan
+            };
             var workspace = new WorkspaceService(new WorkspaceStore(), new JsonCollectionSerializer(), _demo.BaseUrl);
             var viewModel = new WorkspaceViewModel(workspace, new RequestExecutor(_client));
-            if (demoError is not null) viewModel.Notice = demoError;
+            if (demoError is not null)
+                viewModel.Notice = demoError;
             desktop.MainWindow = new MainWindow { DataContext = viewModel };
             desktop.Exit += (_, _) => { viewModel.Dispose(); _demo.Dispose(); _client.Dispose(); };
         }

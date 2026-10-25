@@ -9,6 +9,9 @@ public sealed class LibraryRequest(RequestDocument document) : ObservableModel
     public string Name => Document.Name;
     public string Method => Document.Method;
     public string MethodColor => Method switch { "GET" => "#6E8C50", "POST" => "#BD9652", "DELETE" => "#B87966", _ => "#9A85AA" };
-    public bool IsSelected { get => _selected; set => Set(ref _selected, value); }
+    public bool IsSelected
+    {
+        get => _selected; set => Set(ref _selected, value);
+    }
 }
 

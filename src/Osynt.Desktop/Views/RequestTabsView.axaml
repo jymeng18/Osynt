@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
+             x:Class="Osynt.Desktop.Views.RequestTabsView">
+  <Border BorderBrush="#E2E4D9" BorderThickness="0,0,0,1" Background="#F3F3EA">
+    <DockPanel>
+      <Button DockPanel.Dock="Right" Classes="icon" Content="+" FontSize="20" Command="{Binding NewRequestCommand}" Margin="10,0,16,0" ToolTip.Tip="New request" />
+      <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+        <ItemsControl ItemsSource="{Binding Tabs}">
+          <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="vm:RequestTab">
+              <Border BorderBrush="#E2E4D9" BorderThickness="0,0,1,0">
+                <Grid ColumnDefinitions="*,26">
+                  <Button Classes="tab" Classes.selected="{Binding IsSelected}" Command="{Binding $parent[Window].DataContext.SelectTabCommand}" CommandParameter="{Binding}" Height="49">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                      <TextBlock Text="{Binding Document.Method}" Foreground="{Binding MethodColor}" FontWeight="Bold" FontSize="9" />
+                      <TextBlock Text="{Binding TabTitle}" FontSize="11" MaxWidth="165" TextTrimming="CharacterEllipsis" />
+                      <Ellipse Width="5" Height="5" Fill="#B9A16B" IsVisible="{Binding IsDirty}" />
+                    </StackPanel>
+                  </Button>
+                  <Button Grid.Column="1" Classes="icon" Content="×" Click="CloseTabClicked" Tag="{Binding}" Padding="0" Foreground="#A6AB98" ToolTip.Tip="Close request">
+                    <Button.ContextMenu><ContextMenu><MenuItem Header="Discard changes and close" Click="DiscardTabClicked" Tag="{Binding}" /></ContextMenu></Button.ContextMenu>
+                  </Button>
+                  <Border Grid.ColumnSpan="2" Height="2" Background="#809565" VerticalAlignment="Top" IsVisible="{Binding IsSelected}" IsHitTestVisible="False" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </DockPanel>
+  </Border>
+</UserControl>

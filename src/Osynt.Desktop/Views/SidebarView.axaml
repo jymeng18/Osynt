@@ -1,0 +1,103 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
+             x:Class="Osynt.Desktop.Views.SidebarView">
+  <Border Background="#F1F2E8" BorderBrush="#E0E3D6" BorderThickness="0,0,1,0">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto">
+      <StackPanel Margin="24,26,20,22">
+        <StackPanel Orientation="Horizontal" Spacing="9">
+          <art:PixelArt Width="39" Height="39" />
+          <TextBlock Text="osynt" FontSize="32" FontWeight="SemiBold" Foreground="#4C6340" LetterSpacing="-1.4" />
+          <Border Background="#E6E9D9" CornerRadius="4" Padding="6,3" VerticalAlignment="Center" Margin="4,6,0,0">
+            <TextBlock Text="BLOOM v0.1" FontSize="8" LetterSpacing="0.8" Foreground="#809069" FontWeight="SemiBold" />
+          </Border>
+        </StackPanel>
+        <TextBlock Text="Small requests. Good things." Foreground="#929682" FontSize="11" Margin="3,9,0,0" />
+      </StackPanel>
+      <TextBox Grid.Row="1" x:Name="SearchBox" Text="{Binding Search}" Watermark="Find a request…" Margin="19,0,19,18" Background="#FAFAF3" Padding="11,9">
+        <TextBox.InnerLeftContent><TextBlock Text="⌕" FontSize="19" Margin="9,0,0,0" Foreground="#9BA18B" /></TextBox.InnerLeftContent>
+      </TextBox>
+      <Border Grid.Row="2" Background="#E6E9DD" CornerRadius="7" Margin="19,0,19,19" Padding="3">
+        <Grid ColumnDefinitions="*,*">
+          <Button Classes="nav" Classes.selected="{Binding ShowCollections}" Content="Collections" Command="{Binding NavigationCommand}" CommandParameter="Collections" HorizontalAlignment="Stretch" />
+          <Button Grid.Column="1" Classes="nav" Classes.selected="{Binding ShowHistory}" Content="History" Command="{Binding NavigationCommand}" CommandParameter="History" HorizontalAlignment="Stretch" />
+        </Grid>
+      </Border>
+      <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="25,0,20,9">
+        <TextBlock Classes="caption" Text="YOUR COLLECTIONS" IsVisible="{Binding ShowCollections}" />
+        <TextBlock Classes="caption" Text="RECENT REQUESTS" IsVisible="{Binding ShowHistory}" />
+        <Button Grid.Column="1" Classes="icon" Content="+" FontSize="19" Command="{Binding NewRequestCommand}" ToolTip.Tip="New request · Ctrl+N" />
+      </Grid>
+      <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" Margin="14,0,12,10">
+        <Grid>
+          <ItemsControl ItemsSource="{Binding Collections}" IsVisible="{Binding ShowCollections}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="vm:LibraryCollection">
+                <StackPanel Margin="0,0,0,10">
+                  <Button Classes="collection" Command="{Binding ToggleCommand}" HorizontalAlignment="Stretch">
+                    <Grid ColumnDefinitions="15,23,*,Auto">
+                      <TextBlock Text="{Binding Chevron}" Foreground="#8B957C" />
+                      <TextBlock Grid.Column="1" Text="▱" Foreground="#A58E63" FontSize="18" />
+                      <TextBlock Grid.Column="2" Text="{Binding Name}" FontSize="12" />
+                      <TextBlock Grid.Column="3" Text="{Binding Count}" FontSize="10" Foreground="#9BA18D" Margin="4,0" />
+                    </Grid>
+                  </Button>
+                  <ItemsControl ItemsSource="{Binding Requests}" IsVisible="{Binding Expanded}" Margin="12,0,0,0">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate DataType="vm:LibraryRequest">
+                        <Button Classes="request" Classes.selected="{Binding IsSelected}" Command="{Binding $parent[Window].DataContext.OpenRequestCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch">
+                          <Grid ColumnDefinitions="42,*">
+                            <TextBlock Text="{Binding Method}" Foreground="{Binding MethodColor}" FontSize="9" FontWeight="Bold" />
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11" TextTrimming="CharacterEllipsis" />
+                          </Grid>
+                        </Button>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <StackPanel IsVisible="{Binding ShowHistory}">
+            <TextBlock Text="Your adventures will appear here.&#10;Send a request to get started." FontSize="11" Foreground="#919783" Margin="10,16" LineHeight="20" IsVisible="{Binding !HasHistory}" />
+            <ItemsControl ItemsSource="{Binding VisibleHistory}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="vm:HistoryItemViewModel">
+                  <Button Classes="request" Command="{Binding $parent[Window].DataContext.OpenHistoryCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch">
+                    <StackPanel Spacing="5">
+                      <Grid ColumnDefinitions="40,*,Auto">
+                        <TextBlock Text="{Binding Request.Method}" FontSize="9" Foreground="#748A5B" FontWeight="Bold" />
+                        <TextBlock Grid.Column="1" Text="{Binding Request.Name}" FontSize="11" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="2" Text="{Binding StatusLabel}" FontSize="9" Foreground="#929780" />
+                      </Grid>
+                      <TextBlock Text="{Binding TimeLabel}" FontSize="9" Foreground="#A3A793" Margin="40,0,0,0" />
+                    </StackPanel>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Content="Clear history" FontSize="10" Foreground="#929783" Command="{Binding ClearHistoryCommand}" IsVisible="{Binding HasHistory}" Margin="5,12" />
+          </StackPanel>
+        </Grid>
+      </ScrollViewer>
+      <StackPanel Grid.Row="5" Margin="21,0,21,16" Spacing="14">
+        <Button Classes="outline" Command="{Binding NewRequestCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12,10">
+          <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="+" FontSize="16" /><TextBlock Text="New request" FontSize="11" /></StackPanel>
+        </Button>
+        <Grid ColumnDefinitions="*,*">
+          <Button Content="↙  Import" Click="ImportClicked" FontSize="10" HorizontalAlignment="Stretch" />
+          <Button Grid.Column="1" Content="↗  Export" Click="ExportClicked" FontSize="10" HorizontalAlignment="Stretch" />
+        </Grid>
+        <Border Background="#E8EBD9" CornerRadius="7" Padding="13,12">
+          <StackPanel Spacing="5">
+            <TextBlock Text="A little space to grow." Foreground="#66744F" FontSize="11" FontWeight="Medium" />
+            <TextBlock Text="Your requests stay on this device.&#10;No accounts. Just you and your APIs." Foreground="#92967F" FontSize="10" LineHeight="17" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+      <Grid Grid.Row="6" Height="158">
+        <art:PixelArt Kind="landscape" Height="128" VerticalAlignment="Bottom" />
+        <TextBlock Text="a good day to make something" FontSize="9" Foreground="#8F9B7D" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,4,0,0" />
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

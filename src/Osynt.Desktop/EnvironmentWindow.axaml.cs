@@ -17,21 +17,46 @@ public partial class EnvironmentWindow : Window
     public EnvironmentWindow(WorkspaceViewModel workspace) : this()
     {
         _workspace = workspace;
-        foreach (var variable in workspace.Variables) _variables.Add(new() { Key = variable.Key, Value = variable.Value });
+        foreach (var variable in workspace.Variables)
+            _variables.Add(new()
+            {
+                Key = variable.Key,
+                Value = variable.Value
+            });
     }
     private void AddClicked(object? sender, RoutedEventArgs e) => _variables.Add(new());
-    private void RemoveClicked(object? sender, RoutedEventArgs e) { if (sender is Button { Tag: RequestPairViewModel pair }) _variables.Remove(pair); }
+    private void RemoveClicked(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: RequestPairViewModel pair })
+            _variables.Remove(pair);
+    }
     private void ResetClicked(object? sender, RoutedEventArgs e)
     {
-        if (_workspace is not { DemoAvailable: true }) { ErrorLabel.Text = "The local demo is unavailable. Try restarting Osynt."; return; }
-        _variables.Clear(); _variables.Add(new() { Key = "base_url", Value = _workspace.DemoBaseUrl }); _variables.Add(new() { Key = "season", Value = "spring" });
+        if (_workspace is not { DemoAvailable: true })
+        {
+            ErrorLabel.Text = "The local demo is unavailable. Try restarting Osynt.";
+            return;
+        }
+        _variables.Clear();
+        _variables.Add(new()
+        {
+            Key = "base_url",
+            Value = _workspace.DemoBaseUrl
+        });
+        _variables.Add(new()
+        {
+            Key = "season",
+            Value = "spring"
+        });
     }
     private void SaveClicked(object? sender, RoutedEventArgs e)
     {
         try
         {
-            if (_workspace?.UpdateVariables(_variables.Select(v => v.ToModel())) == true) Close();
-            else ErrorLabel.Text = "The environment could not be saved. Check the workspace file permissions.";
+            if (_workspace?.UpdateVariables(_variables.Select(v => v.ToModel())) == true)
+                Close();
+            else
+                ErrorLabel.Text = "The environment could not be saved. Check the workspace file permissions.";
         }
         catch (ArgumentException ex) { ErrorLabel.Text = ex.Message; }
     }

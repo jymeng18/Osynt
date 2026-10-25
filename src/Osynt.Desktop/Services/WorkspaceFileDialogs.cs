@@ -1,0 +1,85 @@
+using System.Text;
+using System.Text.Json;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
+using Osynt.Desktop.ViewModels;
+
+namespace Osynt.Desktop.Services;
+
+/// <summary>Desktop clipboard and file pickers. File-system concerns stay outside presentation models.</summary>
+public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel workspace)
+{
+    private static readonly FilePickerFileType JsonFile = new("JSON files") { Patterns = ["*.json"] };
+    public static WorkspaceFileDialogs? For(Control view) =>
+        TopLevel.GetTopLevel(view) is { } owner && view.DataContext is WorkspaceViewModel workspace
+            ? new(owner, workspace) : null;
+
+    public async Task CopyResponseAsync()
+    {
+        if (!workspace.Selected.HasResponse || owner.Clipboard is null)
+            return;
+        try
+        {
+            await owner.Clipboard.SetTextAsync(workspace.Selected.ResponseDisplay);
+            workspace.Notice = "Response copied. A little discovery to take with you.";
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.ExternalException)
+        {
+            workspace.Notice = "Could not reach the clipboard. Try Save response instead.";
+        }
+    }
+    public Task SaveResponseAsync()
+    {
+        if (workspace.Selected.Response is not { } response)
+            return Task.CompletedTask;
+        var name = response.Body.TrimStart().StartsWith('{') || response.Body.TrimStart().StartsWith('[') ? "response.json" : "response.txt";
+        return SaveTextAsync("Save response", name, workspace.Selected.ResponseDisplay);
+    }
+    public Task ExportAsync() => SaveTextAsync("Export Osynt collections", "osynt-collections.json", workspace.ExportCollections());
+    public async Task ImportAsync()
+    {
+        try
+        {
+            var files = await owner.StorageProvider.OpenFilePickerAsync(new()
+            {
+                Title = "Import Osynt collections",
+                AllowMultiple = false,
+                FileTypeFilter = [JsonFile]
+            });
+            if (files.Count == 0)
+                return;
+            await using var stream = await files[0].OpenReadAsync();
+            using var reader = new StreamReader(stream);
+            workspace.ImportCollections(await reader.ReadToEndAsync());
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException)
+        {
+            workspace.Notice = $"Could not import this file. Choose an Osynt collection JSON export. {ex.Message}";
+        }
+    }
+    private async Task SaveTextAsync(string title, string name, string text)
+    {
+        try
+        {
+            var file = await owner.StorageProvider.SaveFilePickerAsync(new()
+            {
+                Title = title,
+                SuggestedFileName = name,
+                DefaultExtension = Path.GetExtension(name).TrimStart('.'),
+                FileTypeChoices = [JsonFile, FilePickerFileTypes.All]
+            });
+            if (file is null)
+                return;
+            await using var stream = await file.OpenWriteAsync();
+            if (stream.CanSeek)
+                stream.SetLength(0);
+            await using var writer = new StreamWriter(stream, new UTF8Encoding(false));
+            await writer.WriteAsync(text);
+            workspace.Notice = $"Saved {file.Name}. A little piece of progress.";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            workspace.Notice = $"Could not save this file: {ex.Message}";
+        }
+    }
+}

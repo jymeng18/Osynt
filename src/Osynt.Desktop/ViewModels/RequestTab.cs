@@ -15,8 +15,14 @@ public sealed class RequestTab : ObservableModel, IDisposable
     private string _error = "";
     private ResponseData? _response;
     private readonly HashSet<RequestPairViewModel> _observedPairs = [];
-    public RequestEditorViewModel Document { get; }
-    public CancellationTokenSource? Cancellation { get; set; }
+    public RequestEditorViewModel Document
+    {
+        get;
+    }
+    public CancellationTokenSource? Cancellation
+    {
+        get; set;
+    }
     public RequestTab(RequestDocument document, bool dirty = false)
     {
         Document = new RequestEditorViewModel(document);
@@ -26,16 +32,55 @@ public sealed class RequestTab : ObservableModel, IDisposable
         Document.Headers.CollectionChanged += PairsChanged;
         ObservePairs();
     }
-    public bool IsDirty { get => _dirty; set { Set(ref _dirty, value); Raise(nameof(TabTitle)); } }
-    public bool IsSelected { get => _selected; set => Set(ref _selected, value); }
-    public bool IsSending { get => _sending; set { Set(ref _sending, value); RaiseResponseProperties(); } }
-    public bool Raw { get => _raw; set { Set(ref _raw, value); Raise(nameof(ResponseDisplay)); Raise(nameof(Pretty)); } }
+    public bool IsDirty
+    {
+        get => _dirty; set
+        {
+            Set(ref _dirty, value);
+            Raise(nameof(TabTitle));
+        }
+    }
+    public bool IsSelected
+    {
+        get => _selected; set => Set(ref _selected, value);
+    }
+    public bool IsSending
+    {
+        get => _sending; set
+        {
+            Set(ref _sending, value);
+            RaiseResponseProperties();
+        }
+    }
+    public bool Raw
+    {
+        get => _raw; set
+        {
+            Set(ref _raw, value);
+            Raise(nameof(ResponseDisplay));
+            Raise(nameof(Pretty));
+        }
+    }
     public bool Pretty => !Raw;
     public string TabTitle => Document.Name;
     public string MethodColor => Document.Method switch { "GET" => "#6E8C50", "POST" => "#BD9652", "DELETE" => "#B87966", _ => "#9A85AA" };
     public bool HasBody => !string.IsNullOrEmpty(Document.Body);
-    public ResponseData? Response { get => _response; set { Set(ref _response, value); RaiseResponseProperties(); } }
-    public string Error { get => _error; set { Set(ref _error, value); RaiseResponseProperties(); } }
+    public ResponseData? Response
+    {
+        get => _response; set
+        {
+            Set(ref _response, value);
+            RaiseResponseProperties();
+        }
+    }
+    public string Error
+    {
+        get => _error; set
+        {
+            Set(ref _error, value);
+            RaiseResponseProperties();
+        }
+    }
     public bool HasError => Error.Length > 0;
     public bool HasResponse => Response is not null && !HasError;
     public bool ShowEmpty => !HasResponse && !HasError;
@@ -51,9 +96,14 @@ public sealed class RequestTab : ObservableModel, IDisposable
     {
         get
         {
-            if (Response is null) return "";
-            if (Raw) return Response.Body;
-            try { return JsonPresentation.Format(Response.Body); }
+            if (Response is null)
+                return "";
+            if (Raw)
+                return Response.Body;
+            try
+            {
+                return JsonPresentation.Format(Response.Body);
+            }
             catch (JsonException) { return Response.Body; }
         }
     }
@@ -63,20 +113,35 @@ public sealed class RequestTab : ObservableModel, IDisposable
     private void RaiseResponseProperties()
     {
         foreach (var name in new[] { nameof(HasResponse), nameof(ShowEmpty), nameof(HasError), nameof(IsSuccess), nameof(IsFailure), nameof(Status),
-            nameof(Duration), nameof(Size), nameof(SendLabel), nameof(EmptyTitle), nameof(EmptyHint), nameof(ResponseDisplay), nameof(ResponseHeaders), nameof(Truncated) }) Raise(name);
+            nameof(Duration), nameof(Size), nameof(SendLabel), nameof(EmptyTitle), nameof(EmptyHint), nameof(ResponseDisplay), nameof(ResponseHeaders), nameof(Truncated) })
+            Raise(name);
     }
     private void DocumentChanged(object? sender, PropertyChangedEventArgs e)
     {
         IsDirty = true;
-        Raise(nameof(TabTitle)); Raise(nameof(MethodColor)); Raise(nameof(HasBody));
+        Raise(nameof(TabTitle));
+        Raise(nameof(MethodColor));
+        Raise(nameof(HasBody));
     }
-    private void PairsChanged(object? sender, NotifyCollectionChangedEventArgs e) { ObservePairs(); IsDirty = true; }
+    private void PairsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        ObservePairs();
+        IsDirty = true;
+    }
     private void PairChanged(object? sender, PropertyChangedEventArgs e) => IsDirty = true;
     private void ObservePairs()
     {
         var current = Document.Parameters.Concat(Document.Headers).ToHashSet();
-        foreach (var old in _observedPairs.Except(current).ToArray()) { old.PropertyChanged -= PairChanged; _observedPairs.Remove(old); }
-        foreach (var pair in current.Except(_observedPairs).ToArray()) { pair.PropertyChanged += PairChanged; _observedPairs.Add(pair); }
+        foreach (var old in _observedPairs.Except(current).ToArray())
+        {
+            old.PropertyChanged -= PairChanged;
+            _observedPairs.Remove(old);
+        }
+        foreach (var pair in current.Except(_observedPairs).ToArray())
+        {
+            pair.PropertyChanged += PairChanged;
+            _observedPairs.Add(pair);
+        }
     }
     public void Dispose()
     {
@@ -84,7 +149,8 @@ public sealed class RequestTab : ObservableModel, IDisposable
         Document.PropertyChanged -= DocumentChanged;
         Document.Parameters.CollectionChanged -= PairsChanged;
         Document.Headers.CollectionChanged -= PairsChanged;
-        foreach (var pair in _observedPairs) pair.PropertyChanged -= PairChanged;
+        foreach (var pair in _observedPairs)
+            pair.PropertyChanged -= PairChanged;
     }
 }
 

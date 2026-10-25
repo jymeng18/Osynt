@@ -47,15 +47,18 @@ public sealed class DemoServer : IDisposable
                 var single = new byte[1];
                 while (header.Length < 16384)
                 {
-                    if (await stream.ReadAsync(single, timeout.Token) == 0) return;
+                    if (await stream.ReadAsync(single, timeout.Token) == 0)
+                        return;
                     header.WriteByte(single[0]);
                     var bytes = header.GetBuffer();
                     var length = (int)header.Length;
-                    if (length >= 4 && bytes[length - 4] == 13 && bytes[length - 3] == 10 && bytes[length - 2] == 13 && bytes[length - 1] == 10) break;
+                    if (length >= 4 && bytes[length - 4] == 13 && bytes[length - 3] == 10 && bytes[length - 2] == 13 && bytes[length - 1] == 10)
+                        break;
                 }
                 var lines = Encoding.ASCII.GetString(header.ToArray()).Split("\r\n");
                 var requestLine = lines[0].Split(' ');
-                if (requestLine.Length < 2) return;
+                if (requestLine.Length < 2)
+                    return;
                 var uri = new Uri(BaseUrl + requestLine[1]);
                 var method = requestLine[0];
                 var contentLength = lines.FirstOrDefault(l => l.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase))?.Split(':', 2)[1].Trim();
@@ -65,10 +68,18 @@ public sealed class DemoServer : IDisposable
                 var (status, payload) = CreateResponse(method, uri, Encoding.UTF8.GetString(body));
                 var json = JsonSerializer.Serialize(payload, WorkspaceJson.Options);
                 var responseBytes = Encoding.UTF8.GetBytes(json);
-                var reason = status switch { 200 => "OK", 201 => "Created", 400 => "Bad Request", 405 => "Method Not Allowed", _ => "Not Found" };
+                var reason = status switch
+                {
+                    200 => "OK",
+                    201 => "Created",
+                    400 => "Bad Request",
+                    405 => "Method Not Allowed",
+                    _ => "Not Found"
+                };
                 var responseHeader = Encoding.ASCII.GetBytes($"HTTP/1.1 {status} {reason}\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: {responseBytes.Length}\r\nX-Powered-By: a little sunshine\r\nX-Osynt-Demo: true\r\nConnection: close\r\n\r\n");
                 await stream.WriteAsync(responseHeader, timeout.Token);
-                if (method != "HEAD") await stream.WriteAsync(responseBytes, timeout.Token);
+                if (method != "HEAD")
+                    await stream.WriteAsync(responseBytes, timeout.Token);
             }
             catch (Exception ex) when (ex is IOException or OperationCanceledException or SocketException or UriFormatException) { }
         }
@@ -78,17 +89,33 @@ public sealed class DemoServer : IDisposable
     {
         if (uri.AbsolutePath == "/v1/plant")
         {
-            if (method != "POST") return (405, new { error = "Use POST to plant a crop." });
+            if (method != "POST")
+                return (405, new
+                {
+                    error = "Use POST to plant a crop."
+                });
             try
             {
                 using var document = JsonDocument.Parse(body);
                 if (document.RootElement.ValueKind != JsonValueKind.Object)
-                    return (400, new { error = "Send a JSON object with crop and quantity." });
-                return (201, new { message = "A little care goes a long way.", planted = document.RootElement.Clone(), watered = true });
+                    return (400, new
+                    {
+                        error = "Send a JSON object with crop and quantity."
+                    });
+                return (201, new
+                {
+                    message = "A little care goes a long way.",
+                    planted = document.RootElement.Clone(),
+                    watered = true
+                });
             }
             catch (JsonException) { return (400, new { error = "Your seeds need valid JSON. Try {\"crop\":\"strawberry\",\"quantity\":12}." }); }
         }
-        if (method is not ("GET" or "HEAD")) return (405, new { error = "This little path accepts GET and HEAD." });
+        if (method is not ("GET" or "HEAD"))
+            return (405, new
+            {
+                error = "This little path accepts GET and HEAD."
+            });
         if (uri.AbsolutePath == "/v1/harvest")
         {
             var season = uri.Query.TrimStart('?').Split('&').Select(q => q.Split('=', 2))
@@ -101,17 +128,40 @@ public sealed class DemoServer : IDisposable
                 "winter" => [new Crop("winter root", 70, 7), new Crop("crystal fruit", 150, 7)],
                 _ => [new Crop("strawberry", 120, 8), new Crop("cauliflower", 175, 12), new Crop("parsnip", 35, 4)]
             };
-            return (200, new { season, farm = "Sunbeam Acres", crops, total = crops.Length, message = "Good things take a little growing." });
+            return (200, new
+            {
+                season,
+                farm = "Sunbeam Acres",
+                crops,
+                total = crops.Length,
+                message = "Good things take a little growing."
+            });
         }
-        if (uri.AbsolutePath == "/v1/villagers") return (200, new
+        if (uri.AbsolutePath == "/v1/villagers")
+            return (200, new
+            {
+                villagers = new[] { new { name = "Maple", role = "beekeeper", favorite = "wildflower honey" }, new { name = "Clover", role = "gardener", favorite = "strawberries" } },
+                message = "There is always room for a new friend."
+            });
+        if (uri.AbsolutePath == "/v1/health")
+            return (200, new
+            {
+                status = "growing nicely",
+                sunshine = true,
+                version = "1.0.0"
+            });
+        return (404, new
         {
-            villagers = new[] { new { name = "Maple", role = "beekeeper", favorite = "wildflower honey" }, new { name = "Clover", role = "gardener", favorite = "strawberries" } },
-            message = "There is always room for a new friend."
+            error = "This path has not been planted yet.",
+            paths = new[] { "/v1/harvest", "/v1/villagers", "/v1/plant", "/v1/health" }
         });
-        if (uri.AbsolutePath == "/v1/health") return (200, new { status = "growing nicely", sunshine = true, version = "1.0.0" });
-        return (404, new { error = "This path has not been planted yet.", paths = new[] { "/v1/harvest", "/v1/villagers", "/v1/plant", "/v1/health" } });
     }
 
     private sealed record Crop(string name, int sell_price, int growth_days);
-    public void Dispose() { _stop.Cancel(); _listener.Stop(); _stop.Dispose(); }
+    public void Dispose()
+    {
+        _stop.Cancel();
+        _listener.Stop();
+        _stop.Dispose();
+    }
 }

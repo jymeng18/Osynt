@@ -69,7 +69,8 @@ public sealed partial class RequestExecutor(HttpClient client) : IRequestExecuto
             while (body.Length <= MaxResponseBytes)
             {
                 var count = await stream.ReadAsync(buffer.AsMemory(0, (int)Math.Min(buffer.Length, MaxResponseBytes + 1 - body.Length)), timeout.Token);
-                if (count == 0) break;
+                if (count == 0)
+                    break;
                 body.Write(buffer, 0, count);
             }
             var truncated = body.Length > MaxResponseBytes;
@@ -89,7 +90,10 @@ public sealed partial class RequestExecutor(HttpClient client) : IRequestExecuto
 
     private static Encoding GetEncoding(MediaTypeHeaderValue? type)
     {
-        try { return string.IsNullOrEmpty(type?.CharSet) ? Encoding.UTF8 : Encoding.GetEncoding(type.CharSet.Trim('"')); }
+        try
+        {
+            return string.IsNullOrEmpty(type?.CharSet) ? Encoding.UTF8 : Encoding.GetEncoding(type.CharSet.Trim('"'));
+        }
         catch (ArgumentException) { return Encoding.UTF8; }
     }
 

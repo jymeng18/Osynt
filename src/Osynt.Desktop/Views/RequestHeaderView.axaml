@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
+             x:Class="Osynt.Desktop.Views.RequestHeaderView">
+  <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,23">
+    <StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8" Margin="1,0,0,10">
+        <TextBlock Text="Collections" FontSize="10" Foreground="#A0A28E" />
+        <TextBlock Text="/" Foreground="#C1C3B2" FontSize="10" />
+        <TextBlock Text="{Binding CollectionLabel}" FontSize="10" Foreground="#869276" />
+      </StackPanel>
+      <TextBox x:Name="RequestName" Classes="title" Text="{Binding Selected.Document.Name}" MaxWidth="640" HorizontalAlignment="Left" Watermark="Name your request" ToolTip.Tip="Click to rename this request" />
+      <TextBlock Text="A little curiosity. A little code. See what comes back." Foreground="#9B9C8C" FontSize="11" Margin="1,6,0,0" />
+    </StackPanel>
+    <StackPanel Grid.Column="1" HorizontalAlignment="Right" Spacing="17">
+      <Button Classes="outline" Click="EnvironmentClicked" Padding="11,8" ToolTip.Tip="Edit environment variables">
+        <StackPanel Orientation="Horizontal" Spacing="8"><Ellipse Width="6" Height="6" Fill="#8B9F6D" /><TextBlock Text="{Binding EnvironmentLabel}" FontSize="10" /><TextBlock Text="⌄" Foreground="#9AA18B" /></StackPanel>
+      </Button>
+      <Button Classes="outline" Command="{Binding SaveCommand}" HorizontalAlignment="Right" Padding="12,7" ToolTip.Tip="Save request · Ctrl+S">
+        <StackPanel Orientation="Horizontal" Spacing="7"><TextBlock Text="▣" Foreground="#89967A" /><TextBlock Text="Save request" FontSize="10" /><TextBlock Text="Ctrl S" FontSize="8" Foreground="#B0B4A3" Margin="5,0,0,0" /></StackPanel>
+      </Button>
+    </StackPanel>
+  </Grid>
+</UserControl>
