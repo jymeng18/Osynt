@@ -16,5 +16,6 @@ internal static class WorkspaceSchema
     public static bool IsValid(WorkspaceState state) =>
         state is { Collections: not null, History: not null, Variables: not null } &&
         state.Collections.All(IsValid) && state.History.All(h => h is not null && IsValid(h.Request)) &&
+        (state.Garden is null || state.Garden.SuccessfulRequests >= 0 && state.Garden.Atmosphere is "day" or "dusk") &&
         state.Variables.All(v => !string.IsNullOrWhiteSpace(v.Key) && v.Value is not null);
 }

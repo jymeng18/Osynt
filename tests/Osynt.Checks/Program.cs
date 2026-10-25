@@ -42,6 +42,7 @@ internal static partial class Program
         RunAspNetChecks(executor);
         RunWorkspaceChecks(directory, executor, demo);
         RunApplicationChecks();
+        RunGardenChecks();
         RunDesktopChecks(directory, executor, demo, args);
         Console.WriteLine($"\n{_passed} checks passed; {_failed} failed.");
         return _failed == 0 ? 0 : 1;

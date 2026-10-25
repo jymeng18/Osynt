@@ -1,6 +1,7 @@
 using Osynt.Application.Abstractions;
 using Osynt.Domain.Requests;
 using Osynt.Domain.Workspaces;
+using Osynt.Domain.Garden;
 
 namespace Osynt.Application.Workspaces;
 
@@ -16,6 +17,11 @@ public sealed class WorkspaceService
         _store = store;
         _serializer = serializer;
         _state = store.Load() ?? StarterWorkspace.Create();
+        // Migrate older workspaces once, from the successes still available in their history.
+        _state.Garden ??= new GardenState
+        {
+            SuccessfulRequests = _state.History.LongCount(h => h.StatusCode is >= 200 and < 300)
+        };
         DemoBaseUrl = demoBaseUrl;
         if (_state.UseLocalDemo || string.IsNullOrEmpty(_state.Variables.GetValueOrDefault("base_url")))
             _state.Variables["base_url"] = demoBaseUrl;
@@ -29,6 +35,7 @@ public sealed class WorkspaceService
     public IReadOnlyList<RequestCollection> Collections => _state.Collections;
     public IReadOnlyList<HistoryEntry> History => _state.History;
     public IReadOnlyDictionary<string, string> Variables => _state.Variables;
+    public GardenState Garden => _state.Garden!.Clone();
 
     public void SaveRequest(RequestDocument request)
     {
@@ -64,6 +71,8 @@ public sealed class WorkspaceService
                 StatusCode = statusCode,
                 ElapsedMilliseconds = elapsedMilliseconds
             });
+            if (statusCode is >= 200 and < 300)
+                state.Garden!.Grow(DateTimeOffset.Now);
             if (state.History.Count > HistoryLimit)
                 state.History.RemoveRange(HistoryLimit, state.History.Count - HistoryLimit);
         });
@@ -71,6 +80,16 @@ public sealed class WorkspaceService
     public void ClearHistory()
     {
         Commit(state => state.History.Clear());
+    }
+    public void UpdateGardenPreferences(string atmosphere, bool reducedMotion)
+    {
+        if (atmosphere is not ("day" or "dusk"))
+            throw new ArgumentException("Choose day or dusk.");
+        Commit(state =>
+        {
+            state.Garden!.Atmosphere = atmosphere;
+            state.Garden.ReducedMotion = reducedMotion;
+        });
     }
     public void UpdateVariables(IEnumerable<RequestPair> pairs)
     {
