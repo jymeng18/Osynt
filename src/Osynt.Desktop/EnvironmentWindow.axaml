@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:core="using:Osynt.Core"
+        x:Class="Osynt.Desktop.EnvironmentWindow" Width="680" Height="460" MinWidth="580" MinHeight="400"
+        Title="A little change of scenery · Environment" WindowStartupLocation="CenterOwner">
+  <Grid Margin="28" RowDefinitions="Auto,Auto,*,Auto,Auto">
+    <StackPanel Spacing="8" Margin="0,0,0,24">
+      <TextBlock Text="A little change of scenery." FontSize="24" FontWeight="SemiBold" />
+      <TextBlock Text="Give your variables a value, then use {{name}} anywhere in a request." FontSize="12" Foreground="#969D87" />
+    </StackPanel>
+    <Grid Grid.Row="1" ColumnDefinitions="2*,3*,30" Margin="10,0,0,10"><TextBlock Text="VARIABLE" Classes="caption" /><TextBlock Grid.Column="1" Text="VALUE" Classes="caption" /></Grid>
+    <ScrollViewer Grid.Row="2">
+      <ItemsControl x:Name="VariableList"><ItemsControl.ItemTemplate><DataTemplate DataType="core:RequestPair">
+        <Grid ColumnDefinitions="2*,3*,30" ColumnSpacing="8" Margin="0,0,0,8">
+          <TextBox Text="{Binding Key}" Watermark="name" />
+          <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="value" />
+          <Button Grid.Column="2" Classes="icon" Content="×" Tag="{Binding}" Click="RemoveClicked" />
+        </Grid>
+      </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    </ScrollViewer>
+    <TextBlock Grid.Row="3" x:Name="ErrorLabel" TextWrapping="Wrap" Foreground="#B78261" FontSize="11" Margin="0,8" />
+    <Grid Grid.Row="4" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="9" Margin="0,16,0,0">
+      <Button Content="+ Variable" Click="AddClicked" />
+      <Button Grid.Column="1" Content="Use local demo" Click="ResetClicked" Foreground="#8B9A77" FontSize="11" />
+      <Button Grid.Column="3" Content="Cancel" Click="CancelClicked" />
+      <Button Grid.Column="4" Classes="primary" Content="Save environment" Click="SaveClicked" />
+    </Grid>
+  </Grid>
+</Window>

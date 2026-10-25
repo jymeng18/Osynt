@@ -1,0 +1,71 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Styles.Resources>
+    <SolidColorBrush x:Key="Parchment">#F9F7F1</SolidColorBrush>
+    <SolidColorBrush x:Key="Paper">#FFFDF8</SolidColorBrush>
+    <SolidColorBrush x:Key="Ink">#3F493B</SolidColorBrush>
+    <SolidColorBrush x:Key="Muted">#939184</SolidColorBrush>
+    <SolidColorBrush x:Key="Line">#E4E3D7</SolidColorBrush>
+    <SolidColorBrush x:Key="Sage">#657E50</SolidColorBrush>
+    <Color x:Key="SystemAccentColor">#657E50</Color>
+    <Color x:Key="SystemAccentColorDark1">#526B40</Color>
+    <Color x:Key="SystemAccentColorLight1">#819569</Color>
+    <SolidColorBrush x:Key="TextControlBackground">#FFFDF8</SolidColorBrush>
+    <SolidColorBrush x:Key="TextControlBackgroundPointerOver">#FFFDF8</SolidColorBrush>
+    <SolidColorBrush x:Key="TextControlBackgroundFocused">#FFFDF8</SolidColorBrush>
+    <SolidColorBrush x:Key="TextControlBorderBrushFocused">#819569</SolidColorBrush>
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked">#71875A</SolidColorBrush>
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver">#5E7548</SolidColorBrush>
+  </Styles.Resources>
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="avares://Avalonia.Fonts.Inter/Assets#Inter" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{StaticResource Ink}" />
+    <Setter Property="Background" Value="{StaticResource Parchment}" />
+  </Style>
+  <Style Selector="TextBlock"><Setter Property="VerticalAlignment" Value="Center" /></Style>
+  <Style Selector="TextBlock.muted"><Setter Property="Foreground" Value="{StaticResource Muted}" /></Style>
+  <Style Selector="TextBlock.caption">
+    <Setter Property="FontSize" Value="10" /><Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="LetterSpacing" Value="1.5" /><Setter Property="Foreground" Value="#939184" />
+  </Style>
+  <Style Selector="TextBlock.mono"><Setter Property="FontFamily" Value="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" /><Setter Property="FontSize" Value="12" /></Style>
+  <Style Selector="Button">
+    <Setter Property="Cursor" Value="Hand" /><Setter Property="CornerRadius" Value="6" />
+    <Setter Property="FontSize" Value="12" /><Setter Property="Padding" Value="12,8" />
+    <Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{StaticResource Ink}" />
+  </Style>
+  <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#EAEDE0" /></Style>
+  <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#DDE4CE" /></Style>
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="#6A8054" /><Setter Property="Foreground" Value="#FFFDF5" />
+    <Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Padding" Value="23,12" />
+    <Setter Property="BorderThickness" Value="1,1,1,3" /><Setter Property="BorderBrush" Value="#4C663E" />
+  </Style>
+  <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#587143" /></Style>
+  <Style Selector="Button.outline"><Setter Property="BorderThickness" Value="1" /><Setter Property="BorderBrush" Value="#DCDFD1" /><Setter Property="Background" Value="#FFFDF8" /></Style>
+  <Style Selector="Button.icon"><Setter Property="Padding" Value="6" /><Setter Property="MinWidth" Value="28" /><Setter Property="HorizontalContentAlignment" Value="Center" /></Style>
+  <Style Selector="Button.nav"><Setter Property="HorizontalContentAlignment" Value="Center" /><Setter Property="Padding" Value="12,9" /><Setter Property="Foreground" Value="#8F9281" /></Style>
+  <Style Selector="Button.nav.selected"><Setter Property="Background" Value="#FFFDF8" /><Setter Property="Foreground" Value="#586C45" /><Setter Property="FontWeight" Value="SemiBold" /></Style>
+  <Style Selector="Button.collection"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="7,12,5,9" /><Setter Property="FontWeight" Value="Medium" /></Style>
+  <Style Selector="Button.request"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="10,10" /><Setter Property="Margin" Value="0,2" /></Style>
+  <Style Selector="Button.request.selected"><Setter Property="Background" Value="#E5EBD8" /><Setter Property="Foreground" Value="#4B6039" /></Style>
+  <Style Selector="Button.tab"><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="18,16" /><Setter Property="Foreground" Value="#98998B" /></Style>
+  <Style Selector="Button.tab.selected"><Setter Property="Background" Value="#FFFDF8" /><Setter Property="Foreground" Value="#465B36" /></Style>
+  <Style Selector="Button.section"><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="2,14,2,12" /><Setter Property="Margin" Value="0,0,28,0" /><Setter Property="Foreground" Value="#8E9384" /><Setter Property="BorderThickness" Value="0,0,0,2" /><Setter Property="BorderBrush" Value="Transparent" /></Style>
+  <Style Selector="Button.section.selected"><Setter Property="Foreground" Value="#5A7147" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="BorderBrush" Value="#748B5C" /></Style>
+  <Style Selector="Button.segment"><Setter Property="Padding" Value="10,5" /><Setter Property="Foreground" Value="#92978A" /></Style>
+  <Style Selector="Button.segment.selected"><Setter Property="Background" Value="#E6ECD9" /><Setter Property="Foreground" Value="#5A7147" /></Style>
+  <Style Selector="TextBox">
+    <Setter Property="CornerRadius" Value="5" /><Setter Property="BorderBrush" Value="#E1E3D8" />
+    <Setter Property="BorderThickness" Value="1" /><Setter Property="Background" Value="#FFFDF8" />
+    <Setter Property="Padding" Value="10,8" /><Setter Property="CaretBrush" Value="#6A8054" />
+    <Setter Property="SelectionBrush" Value="#DDE7CD" /><Setter Property="FontSize" Value="12" />
+  </Style>
+  <Style Selector="TextBox.cell"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="10,11" /><Setter Property="FontFamily" Value="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" /></Style>
+  <Style Selector="TextBox.title"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="FontSize" Value="26" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Padding" Value="0,4" /><Setter Property="Foreground" Value="#424D3B" /></Style>
+  <Style Selector="TextBox.code"><Setter Property="FontFamily" Value="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" /><Setter Property="FontSize" Value="12" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="Padding" Value="0" /></Style>
+  <Style Selector="ComboBox"><Setter Property="CornerRadius" Value="5" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="#5E7C48" /></Style>
+  <Style Selector="CheckBox"><Setter Property="MinWidth" Value="0" /><Setter Property="MinHeight" Value="0" /><Setter Property="VerticalAlignment" Value="Center" /></Style>
+  <Style Selector="ToolTip"><Setter Property="Background" Value="#424D3B" /><Setter Property="Foreground" Value="#FFFDF8" /></Style>
+</Styles>
