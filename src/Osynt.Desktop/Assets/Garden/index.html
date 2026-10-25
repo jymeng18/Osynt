@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'"
+    />
+    <title>Osynt · Your living garden</title>
+    <link rel="stylesheet" href="garden.css" />
+  </head>
+  <body class="bg-parchment font-sans antialiased">
+    <div
+      id="dashboard"
+      class="grid h-full grid-rows-[auto_minmax(0,1fr)_auto] gap-4 p-5"
+    >
+      <header class="flex items-center justify-between gap-5 px-1">
+        <div class="flex items-center gap-3">
+          <button
+            id="back"
+            class="grid h-8 w-8 place-items-center rounded-lg border border-[#e1e5d8] bg-[#fffdf6] text-lg text-fern transition hover:bg-[#eaf0df]"
+            aria-label="Back to requests"
+            title="Back to requests"
+          >
+            ←
+          </button>
+          <div>
+            <p class="text-[8px] font-semibold tracking-[.2em] text-[#9ba68d]">
+              GROWN FROM YOUR GOOD WORK
+            </p>
+            <h1
+              class="mt-1 font-garden text-[27px] leading-none tracking-[-.03em] text-olive-ink"
+            >
+              Your little garden.
+            </h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-5 text-right">
+          <div>
+            <strong
+              id="success-count"
+              class="block text-xl font-medium tracking-tight text-olive-ink"
+              >0</strong
+            ><span class="text-[9px] text-[#929d85]">successful requests</span>
+          </div>
+          <span class="h-7 w-px bg-[#dfe5d6]"></span>
+          <div>
+            <strong
+              id="plant-count"
+              class="block text-xl font-medium tracking-tight text-olive-ink"
+              >0</strong
+            ><span class="text-[9px] text-[#929d85]">plants grown</span>
+          </div>
+          <div
+            class="ml-1 rounded-xl border border-[#dce5cf] bg-[#edf2e3] px-3 py-2 text-left"
+          >
+            <span
+              class="block text-[8px] font-semibold tracking-[.13em] text-[#91a078]"
+              >GARDEN LEVEL</span
+            ><strong id="level" class="text-base font-medium text-fern"
+              >01</strong
+            >
+          </div>
+        </div>
+      </header>
+      <main
+        id="garden"
+        aria-label="Interactive 3D garden. Drag to orbit, scroll to zoom, or use the camera controls."
+      >
+        <canvas id="scene" aria-label="Your garden island"></canvas>
+        <div class="vignette" aria-hidden="true"></div>
+        <div class="scene-label">
+          <span class="live-dot"></span
+          ><span id="scene-name">SUNBEAM SANCTUARY</span>
+        </div>
+        <div class="atmosphere" role="group" aria-label="Garden atmosphere">
+          <button
+            id="day"
+            class="active"
+            title="Golden daylight"
+            aria-label="Daylight"
+            aria-pressed="true"
+          >
+            ☀ <span>Daylight</span>
+          </button>
+          <button
+            id="dusk"
+            title="Fireflies and lantern light"
+            aria-label="Dusk"
+            aria-pressed="false"
+          >
+            ☾ <span>Dusk</span>
+          </button>
+        </div>
+        <div id="growth" role="status" aria-live="polite">
+          <span class="growth-icon">✦</span>
+          <div>
+            <strong id="growth-title">A little more life.</strong
+            ><small id="growth-detail">+1 growth · successful request</small>
+          </div>
+        </div>
+        <aside id="plant-card" hidden>
+          <span class="eyebrow">GROWING IN YOUR GARDEN</span>
+          <h2 id="plant-name"></h2>
+          <p id="plant-detail"></p>
+          <button id="close-plant" aria-label="Close plant details">×</button>
+        </aside>
+        <div class="scene-footer">
+          <span><i></i>Every good response leaves a little life behind.</span
+          ><span class="gesture-hint"
+            >Drag to orbit <b>·</b> Scroll to zoom</span
+          >
+        </div>
+        <div class="camera-controls" role="group" aria-label="Camera controls">
+          <button id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button
+          ><button id="zoom-out" aria-label="Zoom out" title="Zoom out">
+            −
+          </button>
+          <span></span
+          ><button
+            id="reset-camera"
+            aria-label="Reset camera"
+            title="Reset camera"
+          >
+            ⌂
+          </button>
+          <span></span
+          ><button
+            id="motion"
+            aria-label="Reduce motion"
+            title="Reduce motion"
+            aria-pressed="false"
+          >
+            ≈
+          </button>
+        </div>
+        <div id="loading">
+          <div class="loader-sprout">♧</div>
+          <strong>A little world is waking up.</strong
+          ><span>Preparing your garden</span>
+        </div>
+        <div id="render-error" hidden>
+          <strong>Your garden is safe.</strong>
+          <p id="render-error-detail">
+            The 3D renderer couldn't start. Try enabling graphics acceleration
+            in Windows.
+          </p>
+        </div>
+      </main>
+      <footer
+        class="flex items-center justify-between gap-4 rounded-xl border border-[#e3e7da] bg-[#fffdf7] px-5 py-3"
+      >
+        <div class="flex items-center gap-3">
+          <span
+            class="grid h-9 w-9 place-items-center rounded-lg bg-[#f3edda] text-xl text-[#b6a370]"
+            >✧</span
+          >
+          <div>
+            <span
+              class="text-[8px] font-semibold tracking-[.14em] text-[#9fa78e]"
+              >A LITTLE SOMETHING TO GROW TOWARD</span
+            >
+            <p id="next-name" class="mt-1 text-xs font-medium text-olive-ink">
+              First roots
+            </p>
+            <p id="next-description" class="mt-0.5 text-[10px] text-[#929d85]">
+              One successful request. One little beginning.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-5">
+          <div class="w-32">
+            <div class="mb-1.5 flex justify-between text-[9px] text-[#929d85]">
+              <span id="remaining">1 to go</span
+              ><span id="milestone-fraction">0 / 1</span>
+            </div>
+            <div class="h-1.5 overflow-hidden rounded-full bg-[#eaf0df]">
+              <div
+                id="milestone-progress"
+                class="h-full rounded-full bg-[#91a875] transition-all duration-700"
+              ></div>
+            </div>
+          </div>
+          <button
+            id="open-milestones"
+            class="rounded-lg border border-[#e1e5d8] px-3 py-2 text-[10px] text-[#839574] transition hover:bg-[#edf2e3]"
+          >
+            Milestones ↗
+          </button>
+        </div>
+      </footer>
+    </div>
+    <dialog
+      id="milestones"
+      class="m-auto w-[470px] rounded-2xl border border-[#dce5d1] bg-[#fffdf5] p-7 text-olive-ink shadow-2xl backdrop:bg-[#283d2a]/20 backdrop:backdrop-blur-sm"
+    >
+      <div class="mb-5 flex items-center justify-between">
+        <div>
+          <p class="text-[8px] font-semibold tracking-[.17em] text-[#9aa78a]">
+            ONE GOOD RESPONSE AT A TIME
+          </p>
+          <h2 class="mt-2 font-garden text-2xl">A garden to grow into.</h2>
+        </div>
+        <button
+          id="close-milestones"
+          aria-label="Close milestones"
+          class="h-8 w-8 rounded-lg text-xl text-[#94a180] hover:bg-[#edf2e3]"
+        >
+          ×
+        </button>
+      </div>
+      <div id="milestone-list" class="space-y-1"></div>
+      <p class="mt-5 text-[10px] leading-relaxed text-[#98a28a]">
+        Every 2xx response adds growth. Your garden stays with you, even when
+        you clear request history.
+      </p>
+    </dialog>
+    <script src="garden.js" defer></script>
+  </body>
+</html>

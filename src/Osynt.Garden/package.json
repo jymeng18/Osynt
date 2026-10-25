@@ -1,0 +1,22 @@
+{
+  "name": "osynt-garden",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node --test tests/*.test.mjs",
+    "check:browser": "node tests/browser.mjs",
+    "format": "prettier --write *.mjs *.css *.html scene/*.js tests/*.mjs"
+  },
+  "dependencies": {
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "esbuild": "0.28.2",
+    "playwright": "1.64.1",
+    "prettier": "3.9.10",
+    "tailwindcss": "4.3.3"
+  }
+}

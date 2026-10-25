@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "./scene.css";
+@source "./index.html";
+@source "./scene/ui.js";
+@theme {
+  --color-fern: #607a50;
+  --color-olive-ink: #3f503b;
+  --color-parchment: #f8f7f0;
+  --font-sans: Inter, "Segoe UI", sans-serif;
+  --font-garden: Georgia, "Times New Roman", serif;
+}
