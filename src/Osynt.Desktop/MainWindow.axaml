@@ -1,6 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:core="using:Osynt.Core" xmlns:art="using:Osynt.Desktop.Controls"
-        x:Class="Osynt.Desktop.MainWindow" x:Name="Root" Title="Osynt · A cozy home for your APIs"
+        x:Class="Osynt.Desktop.MainWindow" x:Name="Root" Title="Osynt · A cozy home for your APIs" Icon="/Assets/osynt.ico"
         Width="1440" Height="940" MinWidth="1080" MinHeight="780" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen" ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaTitleBarHeightHint="38">

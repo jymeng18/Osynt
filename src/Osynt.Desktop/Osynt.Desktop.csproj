@@ -6,8 +6,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Product>Osynt</Product>
     <Description>A cozy little home for your APIs.</Description>
+    <ApplicationIcon>Assets/osynt.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <AvaloniaResource Include="Assets/**" />
     <ProjectReference Include="../Osynt.Core/Osynt.Core.csproj" />
     <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
