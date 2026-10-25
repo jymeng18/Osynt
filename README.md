@@ -2,11 +2,35 @@
 
 A cozy, local-first HTTP client built with **Avalonia and .NET 10**. Postman-style essentials, with parchment, sage green, and an original pixel-art farm. No account or login required.
 
+![Osynt desktop preview](docs/screenshots/osynt-preview.png)
+
 ```sh
 dotnet run --project src/Osynt.Desktop
 ```
 
 Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). Runs on Windows, macOS, and Linux desktops. On Linux, use an X11 or XWayland session with the usual Avalonia native dependencies (fontconfig, libICE, libSM, libX11, and libXi).
+
+### Develop in WSL, run on Windows 11
+
+From the WSL checkout:
+
+```sh
+bash scripts/publish-windows.sh
+bash scripts/run-windows.sh
+```
+
+This builds and launches a **native Windows app**, using Windows interop rather than WSLg. The portable executable is `artifacts/windows/win-x64/Osynt.Desktop.exe`. The build script also prints its Windows Explorer path. You can copy the executable to a Windows folder and double-click it; the self-contained build includes .NET and Avalonia's native libraries, so Windows does not need an SDK or runtime installation. Native libraries extract to Windows' temporary directory on first launch.
+
+For Windows on ARM, publish with `bash scripts/publish-windows.sh win-arm64` and open the executable in `artifacts/windows/win-arm64/`.
+
+You can also build from a Windows checkout with the .NET 10 SDK in PowerShell:
+
+```powershell
+.\scripts\Publish-Windows.ps1
+.\artifacts\windows\win-x64\Osynt.Desktop.exe
+```
+
+Windows stores the workspace in `%LOCALAPPDATA%\Osynt\workspace.json`. The Windows and WSL versions have separate local workspaces; use Osynt collection export/import to move requests between them.
 
 ### Try it
 
