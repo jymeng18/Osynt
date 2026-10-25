@@ -73,7 +73,19 @@
           <Button Content="Import" Click="ImportClicked" FontSize="11" HorizontalAlignment="Stretch" ToolTip.Tip="Import Osynt collections" />
           <Button Grid.Column="1" Content="Export" Click="ExportClicked" FontSize="11" HorizontalAlignment="Stretch" />
         </Grid>
-        <art:PixelArt Kind="landscape" Height="82" Opacity="0.85" />
+        <Button x:Name="OpenGardenButton" Command="{Binding OpenGardenCommand}" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch" Background="#E8EEDC" BorderBrush="#DDE5CF" BorderThickness="1"
+                CornerRadius="9" Margin="12,0,12,14" Padding="13,12" ToolTip.Tip="Open your 3D garden · Ctrl+G">
+          <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="7">
+              <art:PixelArt Width="18" Height="18" />
+              <TextBlock Grid.Column="1" Text="Your garden" FontSize="12" FontWeight="Medium" />
+              <TextBlock Grid.Column="2" Text="↗" Foreground="#90A276" />
+            </Grid>
+            <TextBlock Grid.Row="1" Text="{Binding Garden.Summary}" FontSize="10" Foreground="#8B9A77" />
+            <ProgressBar Grid.Row="2" Value="{Binding Garden.LevelProgress}" Maximum="100" Height="4" Foreground="#96AC79" Background="#D9E3CA" />
+          </Grid>
+        </Button>
       </StackPanel>
     </Grid>
   </Border>

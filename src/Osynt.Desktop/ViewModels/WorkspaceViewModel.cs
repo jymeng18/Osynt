@@ -19,6 +19,22 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
     private string _responsePane = "Body";
     private bool _history;
     public ObservableCollection<LibraryCollection> Collections { get; } = [];
+    public GardenViewModel Garden
+    {
+        get;
+    }
+    public ICommand OpenGardenCommand
+    {
+        get;
+    }
+    public ICommand CloseGardenCommand
+    {
+        get;
+    }
+    public ICommand SendGardenDemoCommand
+    {
+        get;
+    }
     public ObservableCollection<RequestTab> Tabs { get; } = [];
     public ObservableCollection<HistoryItemViewModel> History { get; } = [];
     public IReadOnlyList<string> Methods => RequestMethods.All;
@@ -138,9 +154,13 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
     {
         _workspace = workspace;
         _executor = executor;
+        Garden = new GardenViewModel(workspace.Garden);
+        OpenGardenCommand = new ActionCommand(_ => Garden.IsOpen = true);
+        CloseGardenCommand = new ActionCommand(_ => Garden.IsOpen = false);
+        SendGardenDemoCommand = new ActionCommand(_ => _ = SendGardenDemoAsync());
         foreach (var history in workspace.History)
             History.Add(new(history));
-        OpenRequestCommand = new ActionCommand(p => { if (p is LibraryRequest request) Open(request.Document); });
+        OpenRequestCommand = new ActionCommand(p => { if (p is LibraryRequest request) { Open(request.Document); Garden.IsOpen = false; } });
         SelectTabCommand = new ActionCommand(p => { if (p is RequestTab tab) Selected = tab; });
         CloseTabCommand = new ActionCommand(p => { if (p is RequestTab tab) Close(tab); });
         NewRequestCommand = new ActionCommand(_ => NewRequest());
@@ -168,6 +188,7 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
 
     public void NewRequest()
     {
+        Garden.IsOpen = false;
         var tab = new RequestTab(new RequestDocument(), true);
         Tabs.Add(tab);
         Selected = tab;
@@ -233,8 +254,8 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
         try
         {
             tab.Response = await _executor.SendAsync(snapshot, variables, tab.Cancellation.Token);
-            AddHistory(snapshot, tab.Response.StatusCode, tab.Response.ElapsedMilliseconds);
-            Notice = $"{snapshot.Method} {snapshot.Url} · {tab.Response.StatusCode} {tab.Response.Reason}";
+            if (AddHistory(snapshot, tab.Response.StatusCode, tab.Response.ElapsedMilliseconds))
+                Notice = $"{snapshot.Method} {snapshot.Url} · {tab.Response.StatusCode} {tab.Response.Reason}";
         }
         catch (OperationCanceledException) { tab.Error = "Request cancelled."; Notice = "Request cancelled"; }
         catch (Exception ex) when (ex is HttpRequestException or ArgumentException or TimeoutException or InvalidOperationException or IOException)
@@ -246,10 +267,37 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
         finally { tab.IsSending = false; tab.Cancellation.Dispose(); tab.Cancellation = null; }
     }
 
-    private void AddHistory(RequestDocument request, int code, long elapsed)
+    private bool AddHistory(RequestDocument request, int code, long elapsed)
     {
-        TryPersist(() => _workspace.RecordHistory(request, code, elapsed), null);
+        var saved = TryPersist(() => _workspace.RecordHistory(request, code, elapsed), null);
+        Garden.Refresh(_workspace.Garden);
         RefreshHistory();
+        return saved;
+    }
+    public bool UpdateGardenPreferences(string atmosphere, bool reducedMotion)
+    {
+        if (!TryPersist(() => _workspace.UpdateGardenPreferences(atmosphere, reducedMotion), null))
+            return false;
+        Garden.Refresh(_workspace.Garden);
+        return true;
+    }
+    private async Task SendGardenDemoAsync()
+    {
+        if (!DemoAvailable)
+        {
+            Notice = "The local demo is unavailable. You can send a request to your own API instead.";
+            return;
+        }
+        if (Selected.IsSending)
+            return;
+        var existing = Tabs.FirstOrDefault(t => t.Document.Name == "Garden health check" && t.Document.Url == DemoBaseUrl + "/v1/health");
+        if (existing is null)
+        {
+            existing = new RequestTab(new RequestDocument { Name = "Garden health check", Url = DemoBaseUrl + "/v1/health" });
+            Tabs.Add(existing);
+        }
+        Selected = existing;
+        await SendSelectedAsync();
     }
     private void RefreshHistory()
     {

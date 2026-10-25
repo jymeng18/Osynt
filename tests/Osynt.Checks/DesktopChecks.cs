@@ -169,6 +169,25 @@ internal static partial class Program
             window.Width = 1280;
             window.Height = 840;
         });
+        Check("Garden navigation preserves requests and a real demo success grants growth", () =>
+        {
+            var previousTab = uiWorkspace.Selected;
+            var previousGrowth = uiWorkspace.Garden.Successes;
+            var open = window.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "OpenGardenButton");
+            Click(window, open);
+            True(uiWorkspace.Garden.IsOpen);
+            var demoButton = window.GetVisualDescendants().OfType<Button>().Single(c => c.Command == uiWorkspace.SendGardenDemoCommand);
+            Click(window, demoButton);
+            PumpUntil(() => !uiWorkspace.Selected.IsSending);
+            Equal(200, uiWorkspace.Selected.Response!.StatusCode);
+            Equal(previousGrowth + 1, uiWorkspace.Garden.Successes);
+            True(uiWorkspace.Garden.IsOpen);
+            var demoTab = uiWorkspace.Selected;
+            uiWorkspace.CloseGardenCommand.Execute(null);
+            True(uiWorkspace.Garden.ShowRequests);
+            uiWorkspace.DiscardTab(demoTab);
+            uiWorkspace.Selected = previousTab;
+        });
         if (args.Contains("--snapshot"))
         {
             var snapshotIndex = Array.IndexOf(args, "--snapshot");

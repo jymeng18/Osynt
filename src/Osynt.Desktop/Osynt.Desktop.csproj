@@ -15,5 +15,10 @@
     <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.22" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" GeneratePathProperty="true" ExcludeAssets="build;buildTransitive" />
+    <Reference Include="Microsoft.Web.WebView2.Core">
+      <HintPath>$(PkgMicrosoft_Web_WebView2)/lib_manual/netcoreapp3.0/Microsoft.Web.WebView2.Core.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 </Project>
