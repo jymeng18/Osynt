@@ -7,5 +7,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Osynt.Checks/Osynt.Checks.csproj" />
+    <Project Path="tests/Osynt.WindowsProbe/Osynt.WindowsProbe.csproj" />
   </Folder>
 </Solution>

@@ -88,7 +88,7 @@ public sealed class WindowsGardenHost : NativeControlHost
             browser.ProcessFailed += (_, _) => RendererFailed?.Invoke(this, "The garden renderer stopped. Close and reopen Osynt to reconnect.");
             browser.Navigate(Origin + "/index.html");
         }
-        catch (Exception error) when (error is COMException or WebView2RuntimeNotFoundException or DllNotFoundException or IOException or UnauthorizedAccessException or InvalidOperationException)
+        catch (Exception error) when (error is COMException or WebView2RuntimeNotFoundException or DllNotFoundException or IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
         {
             if (generation == _generation)
                 RendererFailed?.Invoke(this, "The 3D garden needs the Microsoft Edge WebView2 Runtime. Your requests and garden progress are still saved. " + error.Message);

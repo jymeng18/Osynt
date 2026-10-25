@@ -1,6 +1,8 @@
 # Osynt 🌱
 
-A cozy, local-first HTTP client built with **Avalonia and .NET 10**. Postman-style essentials, with parchment, sage green, and an original pixel-art farm. No account or login required.
+A cozy, local-first HTTP client built with **Avalonia and .NET 10**. Postman-style essentials, with a living 3D garden that grows from successful requests. No account or login required.
+
+![The 3D garden at 75 successful requests](docs/screenshots/garden-day.png)
 
 ![Osynt desktop preview](docs/screenshots/osynt-preview.png)
 
@@ -47,6 +49,25 @@ Query parameters stay synchronized between the URL and Params table. Pasting ano
 
 The **Variables** button edits values used as `{{name}}` in URLs, parameters, headers, and bodies. No environment setup is required for a literal URL.
 
+### Grow your garden
+
+Click **Your garden** in the sidebar or press **Ctrl / ⌘ + G**. Every completed **2xx response** adds one growth point. Plants grow from seed to sprout to bloom over three successes. Failed, cancelled, and non-2xx requests do not grant growth. You can keep sending your current request from the garden, or click **Try demo** to send a real GET request to the local Harvest API.
+
+| Successful requests | New life |
+| --- | --- |
+| 1 | First seed |
+| 5 | Wildflower meadow |
+| 12 | Orchard and butterflies |
+| 24 | Pond, lily pads, and a little bridge |
+| 40 | Cottage with glowing windows and chimney smoke |
+| 75 | Greenhouse |
+| 120 | Lanterns |
+| 200+ | Additional garden islands |
+
+Drag to orbit, scroll to zoom, or use the camera buttons. Click a plant to inspect it. **Dusk** brings out fireflies and warm window light; the motion button turns off wind, fluttering, and particle animations. Atmosphere and motion preferences save locally. Growth survives restarts and clearing request history. Existing workspaces receive credit for 2xx responses still present in their history when first migrated.
+
+The garden uses real Three.js geometry, soft shadows, multisample antialiasing, bloom, animated water, drifting particles, and spring growth animations. Tailwind styles the garden dashboard. The interactive renderer runs in the **native Windows build through WebView2**, using bundled local assets and no CDN or external page requests. Windows needs the [WebView2 Runtime](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution), normally present on Windows 11. The WSL/Linux UI displays saved garden progress; launch the Windows build for the interactive scene. Detailed visible geometry is bounded to keep rendering responsive while lifetime progress continues accumulating.
+
 ### ASP.NET Core in WSL
 
 Use the exact address and port printed by `dotnet run` under **Now listening on**. A Windows Osynt build can connect to an API in WSL through `http://localhost:<port>/health`; no query parameters or headers are required for an ordinary health endpoint. A connection refusal usually means that nothing is listening at the selected address or port. Osynt displays the failed host and port in the response pane.
@@ -70,6 +91,7 @@ If the API uses HTTPS, its WSL development certificate may need to be trusted in
 | Ctrl / ⌘ + S | Save request |
 | Ctrl / ⌘ + N | New request |
 | Ctrl / ⌘ + W | Close request tab |
+| Ctrl / ⌘ + G | Open garden |
 
 ### Storage and scope
 
@@ -110,3 +132,16 @@ Osynt.Desktop         Avalonia views, editable view models, and native desktop d
 `App.axaml.cs` is the composition root: it connects infrastructure implementations to application interfaces. The desktop view models depend on application ports and work with separate editable presentation models; domain entities have no binding notifications. Collection saving, environment changes, history limits, and import/export are application use cases. The sidebar, tabs, request header, editor, and response viewer are separate views. Native file pickers and close dialogs live in desktop services.
 
 `tests/Osynt.Checks` is the integration and rendering runner. Formatting conventions are defined in `.editorconfig`; run `dotnet format whitespace --no-restore` to apply them.
+
+`src/Osynt.Garden` contains the modular Three.js scene and Tailwind dashboard. The generated, offline bundle is checked into `src/Osynt.Desktop/Assets/Garden`, so ordinary .NET builds and the Windows executable need no Node installation. After editing renderer source:
+
+```sh
+cd src/Osynt.Garden
+npm ci
+npm run build
+npm run check
+npm exec playwright install chromium
+npm run check:browser
+```
+
+The browser checks render real WebGL frames, verify camera controls, day/dusk, reduced motion, growth particles, and shader errors, and save previews under `artifacts/garden`. `tests/Osynt.WindowsProbe` separately verifies the actual native WebView2 host and single-file DLL loading in an offscreen Windows window, without altering the user's garden. It accepts a PNG output path and exits after verification.
