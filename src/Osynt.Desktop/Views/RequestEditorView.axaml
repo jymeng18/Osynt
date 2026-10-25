@@ -1,83 +1,81 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
-             x:Class="Osynt.Desktop.Views.RequestEditorView">
+     xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
+     x:Class="Osynt.Desktop.Views.RequestEditorView">
   <Grid RowDefinitions="Auto,Auto,*">
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="10" Margin="0,0,0,9">
-              <Border BorderBrush="#DCE1CF" BorderThickness="1" CornerRadius="7" Background="#FFFDF8">
-                <Grid ColumnDefinitions="104,1,*">
-                  <ComboBox x:Name="MethodPicker" ItemsSource="{Binding Methods}" SelectedItem="{Binding Selected.Document.Method}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="14,11" />
-                  <Border Grid.Column="1" Background="#E6E8DD" Margin="0,11" />
-                  <TextBox Grid.Column="2" x:Name="UrlInput" Text="{Binding Selected.Document.Url}" Watermark="https://your-little-api.com" BorderThickness="0" FontFamily="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" Padding="15,14" FontSize="12" Background="Transparent" VerticalContentAlignment="Center" />
-                </Grid>
-              </Border>
-              <Button Grid.Column="1" x:Name="SendButton" Classes="primary" Command="{Binding SendCommand}" MinWidth="145" ToolTip.Tip="Send request · Ctrl+Enter">
-                <StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="{Binding Selected.SendLabel}" /><TextBlock Text="↗" FontSize="17" /></StackPanel>
-              </Button>
-            </Grid>
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="10" Margin="0,0,0,9">
+      <Border BorderBrush="#DCE1CF" BorderThickness="1" CornerRadius="7" Background="#FFFDF8">
+        <Grid ColumnDefinitions="104,1,*">
+          <ComboBox x:Name="MethodPicker" ItemsSource="{Binding Methods}" SelectedItem="{Binding Selected.Document.Method}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Padding="14,11" />
+          <Border Grid.Column="1" Background="#E6E8DD" Margin="0,11" />
+          <TextBox Grid.Column="2" x:Name="UrlInput" Text="{Binding Selected.Document.Url}" Watermark="Enter a URL, e.g. http://localhost:8080/health" BorderThickness="0" FontFamily="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" Padding="14,11" FontSize="12" Background="Transparent" VerticalContentAlignment="Center" />
+        </Grid>
+      </Border>
+      <Button Grid.Column="1" x:Name="SendButton" Classes="primary" Command="{Binding SendCommand}" MinWidth="104" ToolTip.Tip="Send request · Ctrl+Enter">
+        <StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="{Binding Selected.SendLabel}" /><TextBlock Text="↗" FontSize="15" /></StackPanel>
+      </Button>
+    </Grid>
 
-            <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
-              <StackPanel Orientation="Horizontal">
-                <Button Classes="section" Classes.selected="{Binding ParamsActive}" Command="{Binding EditorCommand}" CommandParameter="Params">
-                  <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Params" /><TextBlock Text="{Binding Selected.Document.Parameters.Count}" FontSize="9" Foreground="#9AA68C" /></StackPanel>
-                </Button>
-                <Button Classes="section" Classes.selected="{Binding HeadersActive}" Command="{Binding EditorCommand}" CommandParameter="Headers">
-                  <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Headers" /><TextBlock Text="{Binding Selected.Document.Headers.Count}" FontSize="9" Foreground="#9AA68C" /></StackPanel>
-                </Button>
-                <Button Classes="section" Classes.selected="{Binding BodyActive}" Content="Body" Command="{Binding EditorCommand}" CommandParameter="Body" />
-                <Button Classes="section" Classes.selected="{Binding NotesActive}" Content="Field notes" Command="{Binding EditorCommand}" CommandParameter="About" />
-              </StackPanel>
-              <TextBlock Grid.Column="1" Text="A PLACE FOR THE DETAILS" Classes="caption" FontSize="8" LetterSpacing="1" />
-            </Grid>
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+      <StackPanel Orientation="Horizontal">
+        <Button Classes="section" Classes.selected="{Binding ParamsActive}" Command="{Binding EditorCommand}" CommandParameter="Params">
+          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Params" /><TextBlock Text="{Binding Selected.Document.Parameters.Count}" FontSize="9" Foreground="#9AA68C" /></StackPanel>
+        </Button>
+        <Button Classes="section" Classes.selected="{Binding HeadersActive}" Command="{Binding EditorCommand}" CommandParameter="Headers">
+          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Headers" /><TextBlock Text="{Binding Selected.Document.Headers.Count}" FontSize="9" Foreground="#9AA68C" /></StackPanel>
+        </Button>
+        <Button Classes="section" Classes.selected="{Binding BodyActive}" Content="Body" Command="{Binding EditorCommand}" CommandParameter="Body" />
 
-            <Border Grid.Row="2" BorderBrush="#E1E5D7" BorderThickness="1" CornerRadius="0,6,6,6" Background="#FFFDF8" ClipToBounds="True">
-              <Grid>
-                <Grid IsVisible="{Binding ParamsActive}" RowDefinitions="31,*,34">
-                  <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9">
-                    <TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" />
-                    <TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" />
+      </StackPanel>
+    </Grid>
+
+    <Border Grid.Row="2" BorderBrush="#E1E5D7" BorderThickness="1" CornerRadius="0,6,6,6" Background="#FFFDF8" ClipToBounds="True">
+      <Grid>
+        <Grid IsVisible="{Binding ParamsActive}" RowDefinitions="31,*,34">
+          <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9">
+            <TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" />
+            <TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" />
+          </Grid>
+          <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Selected.Document.Parameters}">
+              <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
+                <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1">
+                  <Grid ColumnDefinitions="40,2*,3*,35">
+                    <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" />
+                    <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Parameter" />
+                    <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Value or {{variable}}" Foreground="#9B936F" />
+                    <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.RemovePairCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove parameter" Foreground="#B6BAA9" />
                   </Grid>
-                  <ScrollViewer Grid.Row="1">
-                    <ItemsControl ItemsSource="{Binding Selected.Document.Parameters}">
-                      <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
-                        <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1">
-                          <Grid ColumnDefinitions="40,2*,3*,35">
-                            <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" />
-                            <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Parameter" />
-                            <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Value or {{variable}}" Foreground="#9B936F" />
-                            <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.RemovePairCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove parameter" Foreground="#B6BAA9" />
-                          </Grid>
-                        </Border>
-                      </DataTemplate></ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                  </ScrollViewer>
-                  <Grid Grid.Row="2" ColumnDefinitions="Auto,*" Margin="9,0">
-                    <Button Content="+  Add parameter" Command="{Binding AddPairCommand}" FontSize="10" Foreground="#8A9A76" Padding="8,5" />
-                    <TextBlock Grid.Column="1" Text="Variables are little shortcuts. Try {{season}}." FontSize="9" Foreground="#AFB29F" HorizontalAlignment="Right" Margin="0,0,8,0" />
-                  </Grid>
-                </Grid>
-                <Grid IsVisible="{Binding HeadersActive}" RowDefinitions="31,*,34">
-                  <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9"><TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" /><TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" /></Grid>
-                  <ScrollViewer Grid.Row="1"><ItemsControl ItemsSource="{Binding Selected.Document.Headers}">
-                    <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
-                      <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="40,2*,3*,35">
-                        <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" />
-                        <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Header name" />
-                        <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Header value" />
-                        <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.RemovePairCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove header" Foreground="#B6BAA9" />
-                      </Grid></Border>
-                    </DataTemplate></ItemsControl.ItemTemplate>
-                  </ItemsControl></ScrollViewer>
-                  <Button Grid.Row="2" Content="+  Add header" Command="{Binding AddPairCommand}" FontSize="10" Foreground="#8A9A76" Margin="9,0" Padding="8,5" />
-                </Grid>
-                <Grid IsVisible="{Binding BodyActive}" RowDefinitions="31,*">
-                  <Grid Background="#F1F3E9" ColumnDefinitions="*,Auto"><TextBlock Text="REQUEST BODY · RAW TEXT / JSON" Classes="caption" FontSize="8" Margin="15,0" /><Button Grid.Column="1" Content="{}{ }  Format JSON" Command="{Binding FormatBodyCommand}" FontSize="10" Foreground="#899774" Padding="12,5" /></Grid>
-                  <TextBox Grid.Row="1" x:Name="BodyInput" Classes="code" Text="{Binding Selected.Document.Body}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap" Watermark="Plant a little JSON here…" Padding="16,12" Foreground="#748461" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                </Grid>
-                <StackPanel IsVisible="{Binding NotesActive}" Margin="20,18" Spacing="8">
-                  <TextBlock Text="A few notes from the garden" FontWeight="Medium" FontSize="13" Foreground="#6F8259" />
-                  <TextBlock Text="Use {{base_url}} for your API address, and {{season}} for a change of scenery.&#10;Edit variables in the environment menu. Add an Authorization header if your API needs one.&#10;The local Harvest API supports spring, summer, fall, and winter. Try POST /v1/plant, too." FontSize="11" LineHeight="21" Foreground="#939A85" TextWrapping="Wrap" />
-                </StackPanel>
-              </Grid>
-            </Border>
+                </Border>
+              </DataTemplate></ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+          <Grid Grid.Row="2" ColumnDefinitions="Auto,*" Margin="9,0">
+            <Button Content="+  Add parameter" Command="{Binding AddPairCommand}" FontSize="10" Foreground="#8A9A76" Padding="8,5" />
+          </Grid>
+        </Grid>
+        <Grid IsVisible="{Binding HeadersActive}" RowDefinitions="31,*,34">
+          <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9"><TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" /><TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" /></Grid>
+          <ScrollViewer Grid.Row="1"><ItemsControl ItemsSource="{Binding Selected.Document.Headers}">
+            <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
+              <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="40,2*,3*,35">
+                <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" />
+                <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Header name" />
+                <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Header value" />
+                <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.RemovePairCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove header" Foreground="#B6BAA9" />
+              </Grid></Border>
+            </DataTemplate></ItemsControl.ItemTemplate>
+          </ItemsControl></ScrollViewer>
+          <Grid Grid.Row="2" ColumnDefinitions="Auto,*" Margin="9,0">
+            <Button Content="+  Add header" Command="{Binding AddPairCommand}" FontSize="11" Foreground="#74875E" Padding="8,5" />
+            <TextBlock Grid.Column="1" Text="Standard headers are added automatically" FontSize="10" Foreground="#929B84" HorizontalAlignment="Right" Margin="8,0" />
+          </Grid>
+        </Grid>
+        <Grid IsVisible="{Binding BodyActive}" RowDefinitions="31,*">
+          <Grid Background="#F1F3E9" ColumnDefinitions="*,Auto"><TextBlock Text="JSON BODY" Classes="caption" FontSize="8" Margin="15,0" /><Button Grid.Column="1" Content="{}{ }  Format JSON" Command="{Binding FormatBodyCommand}" FontSize="10" Foreground="#899774" Padding="12,5" /></Grid>
+          <TextBox Grid.Row="1" x:Name="BodyInput" Classes="code" Text="{Binding Selected.Document.Body}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap" Watermark="Enter JSON…" Padding="16,12" Foreground="#748461" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        </Grid>
+
+      </Grid>
+    </Border>
   </Grid>
 </UserControl>

@@ -38,6 +38,8 @@ internal static partial class Program
         var variables = new Dictionary<string, string> { ["base_url"] = demo.BaseUrl, ["season"] = "summer" };
 
         RunRequestChecks(demo, executor, variables);
+        RunRequestEditingChecks();
+        RunAspNetChecks(executor);
         RunWorkspaceChecks(directory, executor, demo);
         RunApplicationChecks();
         RunDesktopChecks(directory, executor, demo, args);

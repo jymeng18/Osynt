@@ -23,7 +23,7 @@
     <Setter Property="Background" Value="{StaticResource Parchment}" />
   </Style>
   <Style Selector="TextBlock"><Setter Property="VerticalAlignment" Value="Center" /></Style>
-  <Style Selector="TextBlock.muted"><Setter Property="Foreground" Value="{StaticResource Muted}" /></Style>
+  <Style Selector="TextBlock.muted"><Setter Property="Foreground" Value="#818775" /></Style>
   <Style Selector="TextBlock.caption">
     <Setter Property="FontSize" Value="10" /><Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="LetterSpacing" Value="1.5" /><Setter Property="Foreground" Value="#939184" />
@@ -50,9 +50,9 @@
   <Style Selector="Button.collection"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="7,12,5,9" /><Setter Property="FontWeight" Value="Medium" /></Style>
   <Style Selector="Button.request"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="10,10" /><Setter Property="Margin" Value="0,2" /></Style>
   <Style Selector="Button.request.selected"><Setter Property="Background" Value="#E5EBD8" /><Setter Property="Foreground" Value="#4B6039" /></Style>
-  <Style Selector="Button.tab"><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="18,16" /><Setter Property="Foreground" Value="#98998B" /></Style>
+  <Style Selector="Button.tab"><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="14,12" /><Setter Property="Foreground" Value="#828775" /></Style>
   <Style Selector="Button.tab.selected"><Setter Property="Background" Value="#FFFDF8" /><Setter Property="Foreground" Value="#465B36" /></Style>
-  <Style Selector="Button.section"><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="2,14,2,12" /><Setter Property="Margin" Value="0,0,28,0" /><Setter Property="Foreground" Value="#8E9384" /><Setter Property="BorderThickness" Value="0,0,0,2" /><Setter Property="BorderBrush" Value="Transparent" /></Style>
+  <Style Selector="Button.section"><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="2,10,2,9" /><Setter Property="Margin" Value="0,0,24,0" /><Setter Property="Foreground" Value="#818775" /><Setter Property="BorderThickness" Value="0,0,0,2" /><Setter Property="BorderBrush" Value="Transparent" /></Style>
   <Style Selector="Button.section.selected"><Setter Property="Foreground" Value="#5A7147" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="BorderBrush" Value="#748B5C" /></Style>
   <Style Selector="Button.segment"><Setter Property="Padding" Value="10,5" /><Setter Property="Foreground" Value="#92978A" /></Style>
   <Style Selector="Button.segment.selected"><Setter Property="Background" Value="#E6ECD9" /><Setter Property="Foreground" Value="#5A7147" /></Style>
@@ -63,7 +63,7 @@
     <Setter Property="SelectionBrush" Value="#DDE7CD" /><Setter Property="FontSize" Value="12" />
   </Style>
   <Style Selector="TextBox.cell"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="10,11" /><Setter Property="FontFamily" Value="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" /></Style>
-  <Style Selector="TextBox.title"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="FontSize" Value="26" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Padding" Value="0,4" /><Setter Property="Foreground" Value="#424D3B" /></Style>
+  <Style Selector="TextBox.title"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="FontSize" Value="19" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Padding" Value="0,4" /><Setter Property="Foreground" Value="#424D3B" /></Style>
   <Style Selector="TextBox.code"><Setter Property="FontFamily" Value="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" /><Setter Property="FontSize" Value="12" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="Padding" Value="0" /></Style>
   <Style Selector="ComboBox"><Setter Property="CornerRadius" Value="5" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="#5E7C48" /></Style>
   <Style Selector="CheckBox"><Setter Property="MinWidth" Value="0" /><Setter Property="MinHeight" Value="0" /><Setter Property="VerticalAlignment" Value="Center" /></Style>

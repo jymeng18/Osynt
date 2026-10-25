@@ -42,8 +42,23 @@ internal static partial class Program
         var window = new MainWindow { DataContext = uiWorkspace };
         window.Show();
         PumpUntil(() => !uiWorkspace.Selected.IsSending);
-        Check("Desktop opens with a real successful local demo response", () =>
+        Check("Desktop opens with a blank GET and no demo parameters or body", () =>
         {
+            Equal("GET", uiWorkspace.Selected.Document.Method);
+            Equal("", uiWorkspace.Selected.Document.Url);
+            Equal(0, uiWorkspace.Selected.Document.Parameters.Count);
+            Equal(0, uiWorkspace.Selected.Document.Headers.Count);
+            Equal("", uiWorkspace.Selected.Document.Body);
+            True(!uiWorkspace.Selected.HasResponse);
+        });
+        Check("Desktop sample GET sends successfully when requested", () =>
+        {
+            var initial = uiWorkspace.Selected;
+            uiWorkspace.Open(uiWorkspace.Collections[0].Requests[0].Document);
+            uiWorkspace.DiscardTab(initial);
+            Dispatcher.UIThread.RunJobs();
+            Click(window, window.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "SendButton"));
+            PumpUntil(() => !uiWorkspace.Selected.IsSending);
             Equal(200, uiWorkspace.Selected.Response?.StatusCode ?? 0);
             True(window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "Get seasonal crops"));
             True(window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "UrlInput").Text!.Contains("{{base_url}}"));
@@ -71,6 +86,8 @@ internal static partial class Program
             window.KeyReleaseQwerty(PhysicalKey.N, RawInputModifiers.Control);
             Dispatcher.UIThread.RunJobs();
             Equal(count + 1, uiWorkspace.Tabs.Count);
+            Equal("", uiWorkspace.Selected.Document.Url);
+            Equal(0, uiWorkspace.Selected.Document.Parameters.Count);
             uiWorkspace.Selected.Document.Name = "Keyboard garden";
             window.KeyPressQwerty(PhysicalKey.S, RawInputModifiers.Control);
             window.KeyReleaseQwerty(PhysicalKey.S, RawInputModifiers.Control);

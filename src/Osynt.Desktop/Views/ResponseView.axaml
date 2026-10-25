@@ -2,42 +2,51 @@
              xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
              x:Class="Osynt.Desktop.Views.ResponseView">
   <Border BorderBrush="#E0E4D6" BorderThickness="1" CornerRadius="7" Background="#FFFDF8" ClipToBounds="True">
-    <Grid RowDefinitions="48,*,34">
+    <Grid RowDefinitions="42,*,Auto">
       <Border Background="#F2F4EA" BorderBrush="#E5E8DC" BorderThickness="0,0,0,1">
         <Grid ColumnDefinitions="Auto,*,Auto" Margin="17,0">
-          <StackPanel Orientation="Horizontal" Spacing="9"><art:PixelArt Kind="mail" Width="18" Height="18" /><TextBlock Text="Response" FontSize="12" FontWeight="SemiBold" /></StackPanel>
-          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="18" HorizontalAlignment="Right" IsVisible="{Binding Selected.HasResponse}" Margin="15,0,20,0">
+          <StackPanel Orientation="Horizontal" Spacing="9"><TextBlock Text="Response" FontSize="12" FontWeight="SemiBold" /></StackPanel>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14" HorizontalAlignment="Right" IsVisible="{Binding Selected.HasResponse}" Margin="15,0,20,0">
           <Border Background="#E2EBD7" CornerRadius="4" Padding="8,4" VerticalAlignment="Center" IsVisible="{Binding Selected.IsSuccess}"><TextBlock Text="{Binding Selected.Status}" Foreground="#66804C" FontSize="10" FontWeight="Medium" /></Border>
           <Border Background="#F1E1D5" CornerRadius="4" Padding="8,4" VerticalAlignment="Center" IsVisible="{Binding Selected.IsFailure}"><TextBlock Text="{Binding Selected.Status}" Foreground="#A47856" FontSize="10" /></Border>
             <TextBlock Text="{Binding Selected.Duration}" FontSize="10" Foreground="#929A82" />
             <TextBlock Text="{Binding Selected.Size}" FontSize="10" Foreground="#929A82" />
           </StackPanel>
-        <Button Grid.Column="2" Classes="icon" Content="Copy" FontSize="9" Click="CopyResponseClicked" IsEnabled="{Binding Selected.HasResponse}" ToolTip.Tip="Copy response" Foreground="#96A087" />
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5">
+            <Button Classes="icon" Content="Copy" FontSize="11" Click="CopyResponseClicked" IsEnabled="{Binding Selected.HasResponse}" ToolTip.Tip="Copy response" />
+            <Button Classes="icon" Content="Save" FontSize="11" Click="SaveResponseClicked" IsEnabled="{Binding Selected.HasResponse}" ToolTip.Tip="Save response to a file" />
+          </StackPanel>
         </Grid>
       </Border>
       <Grid Grid.Row="1">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" IsVisible="{Binding Selected.ShowEmpty}">
-          <art:PixelArt Width="43" Height="43" HorizontalAlignment="Center" Opacity="0.7" />
+          <art:PixelArt Width="30" Height="30" HorizontalAlignment="Center" Opacity="0.7" />
           <TextBlock Text="{Binding Selected.EmptyTitle}" Foreground="#84956F" HorizontalAlignment="Center" FontSize="15" />
-          <TextBlock Text="{Binding Selected.EmptyHint}" Foreground="#ADB29F" HorizontalAlignment="Center" FontSize="10" />
+          <TextBlock Text="{Binding Selected.EmptyHint}" Foreground="#ADB29F" HorizontalAlignment="Center" FontSize="11" />
         </StackPanel>
         <StackPanel IsVisible="{Binding Selected.HasError}" VerticalAlignment="Center" Margin="35" Spacing="12">
-          <TextBlock Text="A little bump in the path." Foreground="#A58260" FontSize="18" FontWeight="Medium" />
+          <TextBlock Text="Request could not be sent" Foreground="#A58260" FontSize="18" FontWeight="Medium" />
           <SelectableTextBlock Text="{Binding Selected.Error}" Foreground="#9A9380" FontSize="12" TextWrapping="Wrap" />
-          <TextBlock Text="Check your URL, environment variables, and connection. Then try again." Foreground="#AFB09B" FontSize="10" />
+          <TextBlock Text="Check the address and try again." Foreground="#AFB09B" FontSize="11" />
         </StackPanel>
-        <Grid IsVisible="{Binding Selected.HasResponse}" RowDefinitions="41,*">
+        <Grid IsVisible="{Binding Selected.HasResponse}" RowDefinitions="38,*">
           <Grid ColumnDefinitions="*,Auto" Margin="17,0">
             <StackPanel Orientation="Horizontal">
               <Button Classes="section" Classes.selected="{Binding ResponseBodyActive}" Content="Body" Command="{Binding ResponsePaneCommand}" CommandParameter="Body" Padding="0,11" Margin="0,0,20,0" FontSize="10" />
               <Button Classes="section" Classes.selected="{Binding ResponseHeadersActive}" Content="Headers" Command="{Binding ResponsePaneCommand}" CommandParameter="Headers" Padding="0,11" FontSize="10" />
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="3" IsVisible="{Binding ResponseBodyActive}">
-              <Button Classes="segment" Classes.selected="{Binding Selected.Pretty}" Content="Pretty" Command="{Binding PrettyCommand}" CommandParameter="Pretty" FontSize="9" />
-              <Button Classes="segment" Classes.selected="{Binding Selected.Raw}" Content="Raw" Command="{Binding PrettyCommand}" CommandParameter="Raw" FontSize="9" />
+              <Button Classes="segment" Classes.selected="{Binding Selected.Pretty}" Content="Pretty" Command="{Binding PrettyCommand}" CommandParameter="Pretty" FontSize="11" />
+              <Button Classes="segment" Classes.selected="{Binding Selected.Raw}" Content="Raw" Command="{Binding PrettyCommand}" CommandParameter="Raw" FontSize="11" />
             </StackPanel>
           </Grid>
-          <art:CodeViewer Grid.Row="1" Code="{Binding Selected.ResponseDisplay}" Highlight="{Binding Selected.Pretty}" IsVisible="{Binding ResponseBodyActive}" />
+          <Grid Grid.Row="1" IsVisible="{Binding ResponseBodyActive}">
+            <art:CodeViewer Code="{Binding Selected.ResponseDisplay}" Highlight="{Binding Selected.Pretty}" IsVisible="{Binding Selected.ShowResponseBody}" />
+            <StackPanel IsVisible="{Binding Selected.EmptyResponseBody}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+              <TextBlock Text="No response body" FontSize="14" Foreground="#7E8D6D" HorizontalAlignment="Center" />
+              <TextBlock Text="The server returned no content. Check the status and headers above." FontSize="11" Foreground="#929A85" />
+            </StackPanel>
+          </Grid>
           <ScrollViewer Grid.Row="1" IsVisible="{Binding ResponseHeadersActive}" Margin="17,8">
             <ItemsControl ItemsSource="{Binding Selected.ResponseHeaders}"><ItemsControl.ItemTemplate><DataTemplate>
               <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1" Padding="3,9"><Grid ColumnDefinitions="210,*"><TextBlock Text="{Binding Key}" FontSize="11" Foreground="#8C8090" /><SelectableTextBlock Grid.Column="1" Text="{Binding Value}" FontSize="11" Foreground="#849374" TextWrapping="Wrap" /></Grid></Border>
@@ -45,12 +54,8 @@
           </ScrollViewer>
         </Grid>
       </Grid>
-      <Border Grid.Row="2" BorderBrush="#EDF0E5" BorderThickness="0,1,0,0">
-        <Grid ColumnDefinitions="*,Auto" Margin="16,0">
-          <TextBlock Text="Every response is a little discovery." FontSize="9" Foreground="#A6AD96" />
-          <TextBlock Grid.Column="1" Text="Response limited to 5 MB" Foreground="#AA8B5D" FontSize="9" IsVisible="{Binding Selected.Truncated}" />
-          <Button Grid.Column="1" Content="↧  Save response" Click="SaveResponseClicked" FontSize="9" Foreground="#94A07F" Padding="6,5" IsVisible="{Binding Selected.HasResponse}" />
-        </Grid>
+      <Border Grid.Row="2" IsVisible="{Binding Selected.Truncated}" Background="#F6EEDB" Padding="14,8">
+        <TextBlock Text="Response preview limited to 5 MB." Foreground="#9A7948" FontSize="11" />
       </Border>
     </Grid>
   </Border>

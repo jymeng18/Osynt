@@ -2,39 +2,28 @@
              xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
              x:Class="Osynt.Desktop.Views.SidebarView">
   <Border Background="#F1F2E8" BorderBrush="#E0E3D6" BorderThickness="0,0,1,0">
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto">
-      <StackPanel Margin="24,26,20,22">
-        <StackPanel Orientation="Horizontal" Spacing="9">
-          <art:PixelArt Width="39" Height="39" />
-          <TextBlock Text="osynt" FontSize="32" FontWeight="SemiBold" Foreground="#4C6340" LetterSpacing="-1.4" />
-          <Border Background="#E6E9D9" CornerRadius="4" Padding="6,3" VerticalAlignment="Center" Margin="4,6,0,0">
-            <TextBlock Text="BLOOM v0.1" FontSize="8" LetterSpacing="0.8" Foreground="#809069" FontWeight="SemiBold" />
-          </Border>
-        </StackPanel>
-        <TextBlock Text="Small requests. Good things." Foreground="#929682" FontSize="11" Margin="3,9,0,0" />
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+      <StackPanel Orientation="Horizontal" Spacing="9" Margin="20,20,20,20">
+        <art:PixelArt Width="27" Height="27" />
+        <TextBlock Text="osynt" FontSize="24" FontWeight="SemiBold" Foreground="#4C6340" LetterSpacing="-0.8" />
       </StackPanel>
-      <TextBox Grid.Row="1" x:Name="SearchBox" Text="{Binding Search}" Watermark="Find a request…" Margin="19,0,19,18" Background="#FAFAF3" Padding="11,9">
+      <TextBox Grid.Row="1" x:Name="SearchBox" Text="{Binding Search}" Watermark="Find a request…" Margin="14,0,14,14" Background="#FAFAF3" Padding="9,7">
         <TextBox.InnerLeftContent><TextBlock Text="⌕" FontSize="19" Margin="9,0,0,0" Foreground="#9BA18B" /></TextBox.InnerLeftContent>
       </TextBox>
-      <Border Grid.Row="2" Background="#E6E9DD" CornerRadius="7" Margin="19,0,19,19" Padding="3">
+      <Border Grid.Row="2" Background="#E6E9DD" CornerRadius="7" Margin="14,0,14,12" Padding="3">
         <Grid ColumnDefinitions="*,*">
           <Button Classes="nav" Classes.selected="{Binding ShowCollections}" Content="Collections" Command="{Binding NavigationCommand}" CommandParameter="Collections" HorizontalAlignment="Stretch" />
           <Button Grid.Column="1" Classes="nav" Classes.selected="{Binding ShowHistory}" Content="History" Command="{Binding NavigationCommand}" CommandParameter="History" HorizontalAlignment="Stretch" />
         </Grid>
       </Border>
-      <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="25,0,20,9">
-        <TextBlock Classes="caption" Text="YOUR COLLECTIONS" IsVisible="{Binding ShowCollections}" />
-        <TextBlock Classes="caption" Text="RECENT REQUESTS" IsVisible="{Binding ShowHistory}" />
-        <Button Grid.Column="1" Classes="icon" Content="+" FontSize="19" Command="{Binding NewRequestCommand}" ToolTip.Tip="New request · Ctrl+N" />
-      </Grid>
-      <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" Margin="14,0,12,10">
+      <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Margin="8,0,8,10">
         <Grid>
           <ItemsControl ItemsSource="{Binding Collections}" IsVisible="{Binding ShowCollections}">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="vm:LibraryCollection">
                 <StackPanel Margin="0,0,0,10">
                   <Button Classes="collection" Command="{Binding ToggleCommand}" HorizontalAlignment="Stretch">
-                    <Grid ColumnDefinitions="15,23,*,Auto">
+                    <Grid ColumnDefinitions="14,18,*,Auto">
                       <TextBlock Text="{Binding Chevron}" Foreground="#8B957C" />
                       <TextBlock Grid.Column="1" Text="▱" Foreground="#A58E63" FontSize="18" />
                       <TextBlock Grid.Column="2" Text="{Binding Name}" FontSize="12" />
@@ -45,9 +34,9 @@
                     <ItemsControl.ItemTemplate>
                       <DataTemplate DataType="vm:LibraryRequest">
                         <Button Classes="request" Classes.selected="{Binding IsSelected}" Command="{Binding $parent[Window].DataContext.OpenRequestCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch">
-                          <Grid ColumnDefinitions="42,*">
+                          <Grid ColumnDefinitions="40,*">
                             <TextBlock Text="{Binding Method}" Foreground="{Binding MethodColor}" FontSize="9" FontWeight="Bold" />
-                            <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" TextTrimming="CharacterEllipsis" />
                           </Grid>
                         </Button>
                       </DataTemplate>
@@ -79,25 +68,13 @@
           </StackPanel>
         </Grid>
       </ScrollViewer>
-      <StackPanel Grid.Row="5" Margin="21,0,21,16" Spacing="14">
-        <Button Classes="outline" Command="{Binding NewRequestCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12,10">
-          <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="+" FontSize="16" /><TextBlock Text="New request" FontSize="11" /></StackPanel>
-        </Button>
-        <Grid ColumnDefinitions="*,*">
-          <Button Content="↙  Import" Click="ImportClicked" FontSize="10" HorizontalAlignment="Stretch" />
-          <Button Grid.Column="1" Content="↗  Export" Click="ExportClicked" FontSize="10" HorizontalAlignment="Stretch" />
+      <StackPanel Grid.Row="4">
+        <Grid ColumnDefinitions="*,*" Margin="14,0,14,10">
+          <Button Content="Import" Click="ImportClicked" FontSize="11" HorizontalAlignment="Stretch" ToolTip.Tip="Import Osynt collections" />
+          <Button Grid.Column="1" Content="Export" Click="ExportClicked" FontSize="11" HorizontalAlignment="Stretch" />
         </Grid>
-        <Border Background="#E8EBD9" CornerRadius="7" Padding="13,12">
-          <StackPanel Spacing="5">
-            <TextBlock Text="A little space to grow." Foreground="#66744F" FontSize="11" FontWeight="Medium" />
-            <TextBlock Text="Your requests stay on this device.&#10;No accounts. Just you and your APIs." Foreground="#92967F" FontSize="10" LineHeight="17" />
-          </StackPanel>
-        </Border>
+        <art:PixelArt Kind="landscape" Height="82" Opacity="0.85" />
       </StackPanel>
-      <Grid Grid.Row="6" Height="158">
-        <art:PixelArt Kind="landscape" Height="128" VerticalAlignment="Bottom" />
-        <TextBlock Text="a good day to make something" FontSize="9" Foreground="#8F9B7D" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,4,0,0" />
-      </Grid>
     </Grid>
   </Border>
 </UserControl>

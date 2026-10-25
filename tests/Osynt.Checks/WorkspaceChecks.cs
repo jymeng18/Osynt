@@ -54,6 +54,7 @@ internal static partial class Program
         Check("Editing a request leaves its saved collection unchanged until Save", () =>
         {
             using var workspace = CreateWorkspace(Path.Combine(directory, "editing"), executor, demo.BaseUrl);
+            workspace.Open(workspace.Collections[0].Requests[0].Document);
             var original = workspace.Collections[0].Requests[0].Name;
             workspace.Selected.Document.Name = "My new crop";
             True(workspace.Selected.IsDirty);

@@ -11,10 +11,10 @@
             <DataTemplate DataType="vm:RequestTab">
               <Border BorderBrush="#E2E4D9" BorderThickness="0,0,1,0">
                 <Grid ColumnDefinitions="*,26">
-                  <Button Classes="tab" Classes.selected="{Binding IsSelected}" Command="{Binding $parent[Window].DataContext.SelectTabCommand}" CommandParameter="{Binding}" Height="49">
+                  <Button Classes="tab" Classes.selected="{Binding IsSelected}" Command="{Binding $parent[Window].DataContext.SelectTabCommand}" CommandParameter="{Binding}" Height="42">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                       <TextBlock Text="{Binding Document.Method}" Foreground="{Binding MethodColor}" FontWeight="Bold" FontSize="9" />
-                      <TextBlock Text="{Binding TabTitle}" FontSize="11" MaxWidth="165" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{Binding TabTitle}" FontSize="12" MaxWidth="165" TextTrimming="CharacterEllipsis" />
                       <Ellipse Width="5" Height="5" Fill="#B9A16B" IsVisible="{Binding IsDirty}" />
                     </StackPanel>
                   </Button>

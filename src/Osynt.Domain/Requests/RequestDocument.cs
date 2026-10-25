@@ -5,7 +5,7 @@ public sealed class RequestDocument
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = "Untitled request";
     public string Method { get; set; } = "GET";
-    public string Url { get; set; } = "{{base_url}}/v1/harvest";
+    public string Url { get; set; } = "";
     public string Body { get; set; } = "";
     public List<RequestPair> Parameters { get; set; } = [];
     public List<RequestPair> Headers { get; set; } = [];

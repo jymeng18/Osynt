@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -17,11 +18,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        Opened += async (_, _) =>
-        {
-            if (Workspace is { DemoAvailable: true } workspace && workspace.Variables.GetValueOrDefault("base_url") == workspace.DemoBaseUrl && workspace.Selected.Document.Url.StartsWith("{{base_url}}", StringComparison.Ordinal))
-                await workspace.SendSelectedAsync();
-        };
+        FitWorkingArea();
         Closing += WindowClosing;
         KeyDown += async (_, e) =>
         {
@@ -31,6 +28,19 @@ public partial class MainWindow : Window
                 await new RequestCloseDialogs(this, Workspace).CloseRequestAsync(Workspace.Selected);
             }
         };
+    }
+    private void FitWorkingArea()
+    {
+        if (Avalonia.Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime)
+            return;
+        if (Screens.Primary is not { } screen)
+            return;
+        var width = screen.WorkingArea.Width / screen.Scaling;
+        var height = screen.WorkingArea.Height / screen.Scaling;
+        MinWidth = Math.Min(MinWidth, width);
+        MinHeight = Math.Min(MinHeight, height);
+        Width = Math.Clamp(width * 0.9, MinWidth, Width);
+        Height = Math.Clamp(height * 0.9, MinHeight, Height);
     }
     private void TitleBarPressed(object? sender, PointerPressedEventArgs e)
     {

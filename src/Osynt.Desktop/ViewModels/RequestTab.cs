@@ -89,9 +89,11 @@ public sealed class RequestTab : ObservableModel, IDisposable
     public string Status => Response is null ? "" : $"{Response.StatusCode} {Response.Reason}";
     public string Duration => Response is null ? "" : $"{Response.ElapsedMilliseconds} ms";
     public string Size => Response is null ? "" : Response.SizeBytes < 1024 ? $"{Response.SizeBytes} B" : $"{Response.SizeBytes / 1024d:0.0} KB";
-    public string SendLabel => IsSending ? "Cancel" : "Send request";
-    public string EmptyTitle => IsSending ? "Off on a little adventure…" : "Good things start with a request.";
-    public string EmptyHint => IsSending ? "Waiting for your API to send something back." : "Hit Send request and see what grows.  Ctrl + Enter works, too.";
+    public string SendLabel => IsSending ? "Cancel" : "Send";
+    public string EmptyTitle => IsSending ? "Sending request…" : "Ready for your next request";
+    public string EmptyHint => IsSending ? "Waiting for a response." : "Enter a URL and press Send.  Ctrl + Enter";
+    public bool EmptyResponseBody => HasResponse && Response!.Body.Length == 0;
+    public bool ShowResponseBody => HasResponse && !EmptyResponseBody;
     public string ResponseDisplay
     {
         get
@@ -113,7 +115,7 @@ public sealed class RequestTab : ObservableModel, IDisposable
     private void RaiseResponseProperties()
     {
         foreach (var name in new[] { nameof(HasResponse), nameof(ShowEmpty), nameof(HasError), nameof(IsSuccess), nameof(IsFailure), nameof(Status),
-            nameof(Duration), nameof(Size), nameof(SendLabel), nameof(EmptyTitle), nameof(EmptyHint), nameof(ResponseDisplay), nameof(ResponseHeaders), nameof(Truncated) })
+            nameof(Duration), nameof(Size), nameof(SendLabel), nameof(EmptyTitle), nameof(EmptyHint), nameof(ResponseDisplay), nameof(ResponseHeaders), nameof(Truncated), nameof(EmptyResponseBody), nameof(ShowResponseBody) })
             Raise(name);
     }
     private void DocumentChanged(object? sender, PropertyChangedEventArgs e)
@@ -151,6 +153,7 @@ public sealed class RequestTab : ObservableModel, IDisposable
         Document.Headers.CollectionChanged -= PairsChanged;
         foreach (var pair in _observedPairs)
             pair.PropertyChanged -= PairChanged;
+        Document.Dispose();
     }
 }
 

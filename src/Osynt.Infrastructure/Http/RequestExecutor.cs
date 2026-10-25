@@ -44,6 +44,10 @@ public sealed class RequestExecutor(HttpClient client) : IRequestExecutor
         {
             throw new TimeoutException("This request took longer than 30 seconds. Check the address and try again.");
         }
+        catch (HttpRequestException error)
+        {
+            throw RequestFailureMessages.Explain(error, request.RequestUri!);
+        }
     }
 
     private static Encoding GetEncoding(MediaTypeHeaderValue? type)

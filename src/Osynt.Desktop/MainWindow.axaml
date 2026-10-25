@@ -1,9 +1,9 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="using:Osynt.Desktop.Views" xmlns:art="using:Osynt.Desktop.Controls"
         x:Class="Osynt.Desktop.MainWindow" x:Name="Root" Title="Osynt · A cozy home for your APIs" Icon="/Assets/osynt.ico"
-        Width="1440" Height="940" MinWidth="1080" MinHeight="780" UseLayoutRounding="True"
+        Width="1280" Height="840" MinWidth="980" MinHeight="640" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen" ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaTitleBarHeightHint="38">
+        ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaTitleBarHeightHint="36">
   <Window.KeyBindings>
     <KeyBinding Gesture="Ctrl+Enter" Command="{Binding SendCommand}" />
     <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
@@ -12,18 +12,18 @@
     <KeyBinding Gesture="Meta+S" Command="{Binding SaveCommand}" />
     <KeyBinding Gesture="Meta+N" Command="{Binding NewRequestCommand}" />
   </Window.KeyBindings>
-  <Grid RowDefinitions="38,*,28">
+  <Grid RowDefinitions="36,*,24">
     <!-- Quiet, custom desktop chrome. -->
     <Border Background="#EEEFE4" BorderBrush="#DDDFD2" BorderThickness="0,0,0,1" PointerPressed="TitleBarPressed">
-      <Grid ColumnDefinitions="260,*,Auto">
+      <Grid ColumnDefinitions="224,*,Auto">
         <StackPanel Orientation="Horizontal" Spacing="7" Margin="19,0">
           <art:PixelArt Width="15" Height="15" />
           <TextBlock Text="osynt" FontWeight="SemiBold" FontSize="11" Foreground="#66745A" />
           <TextBlock Text="/" Foreground="#B5BAA7" Margin="5,0" />
-          <TextBlock Text="Personal workspace" FontSize="10" Foreground="#919783" />
+          <TextBlock Text="Workspace" FontSize="11" Foreground="#818775" />
         </StackPanel>
-        <TextBlock Grid.Column="1" Text="A cozy home for your APIs" FontSize="10" Foreground="#929883" HorizontalAlignment="Center" />
         <StackPanel Grid.Column="2" Orientation="Horizontal">
+          <Button Classes="icon" Width="36" Content="?" Click="HelpClicked" ToolTip.Tip="Keyboard shortcuts" />
           <Button Classes="icon" Width="43" Content="−" Click="MinimizeClicked" ToolTip.Tip="Minimize" />
           <Button Classes="icon" Width="43" Content="□" Click="MaximizeClicked" ToolTip.Tip="Maximize or restore" />
           <Button Classes="icon" Width="43" Content="×" Click="CloseClicked" ToolTip.Tip="Close" />
@@ -31,30 +31,25 @@
       </Grid>
     </Border>
 
-    <Grid Grid.Row="1" ColumnDefinitions="260,*">
+    <Grid Grid.Row="1" ColumnDefinitions="224,*">
       <views:SidebarView />
-      <Grid Grid.Column="1" RowDefinitions="49,*">
+      <Grid Grid.Column="1" RowDefinitions="42,*">
         <views:RequestTabsView />
-        <Grid Grid.Row="1" RowDefinitions="Auto,271,10,*,Auto" Margin="30,24,30,15">
+        <Grid Grid.Row="1" RowDefinitions="Auto,232,8,*" Margin="22,16,22,16">
           <views:RequestHeaderView />
           <views:RequestEditorView Grid.Row="1" />
           <GridSplitter Grid.Row="2" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" Background="Transparent" VerticalAlignment="Stretch">
             <GridSplitter.Template><ControlTemplate><Grid Background="Transparent"><Border Height="2" Width="30" Background="#D8DECC" CornerRadius="1" HorizontalAlignment="Center" VerticalAlignment="Center" /></Grid></ControlTemplate></GridSplitter.Template>
           </GridSplitter>
           <views:ResponseView Grid.Row="3" />
-          <Grid Grid.Row="4" ColumnDefinitions="*,Auto" Margin="0,15,0,0">
-            <StackPanel Orientation="Horizontal" Spacing="7"><art:PixelArt Kind="sun" Width="14" Height="14" /><TextBlock Text="Take your time. Good things are growing." FontSize="10" Foreground="#A7AB96" /></StackPanel>
-            <Button Grid.Column="1" Content="Keyboard shortcuts  ↗" Click="HelpClicked" Padding="0" FontSize="9" Foreground="#A4AA94" />
-          </Grid>
         </Grid>
       </Grid>
     </Grid>
 
     <Border Grid.Row="2" BorderBrush="#DDE2D0" BorderThickness="0,1,0,0" Background="#EBEFE1">
-      <Grid ColumnDefinitions="Auto,*,Auto" Margin="16,0">
-        <StackPanel Orientation="Horizontal" Spacing="7"><Ellipse Width="5" Height="5" Fill="#8CA16D" /><TextBlock Text="All local. All yours." FontSize="9" Foreground="#81916D" /></StackPanel>
-        <TextBlock Grid.Column="1" Text="{Binding Notice}" FontSize="9" Foreground="#98A087" Margin="24,0" TextTrimming="CharacterEllipsis" />
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6"><TextBlock Text="made for curious minds" FontSize="9" Foreground="#A0A68E" /><TextBlock Text="♥" Foreground="#B8AC8D" FontSize="10" /></StackPanel>
+      <Grid ColumnDefinitions="*,Auto" Margin="16,0">
+        <TextBlock Text="{Binding Notice}" FontSize="10" Foreground="#7C896F" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Notice}" />
+        <TextBlock Grid.Column="1" Text="Local workspace" FontSize="10" Foreground="#8D987E" Margin="15,0,0,0" />
       </Grid>
     </Border>
   </Grid>

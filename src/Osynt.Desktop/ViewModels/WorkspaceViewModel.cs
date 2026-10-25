@@ -14,7 +14,7 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
     private readonly IRequestExecutor _executor;
     private RequestTab _selected = null!;
     private string _search = "";
-    private string _notice = "Your little workspace is ready. Make yourself at home.";
+    private string _notice = "Ready";
     private string _editor = "Params";
     private string _responsePane = "Body";
     private bool _history;
@@ -55,7 +55,6 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
     public bool ParamsActive => _editor == "Params";
     public bool HeadersActive => _editor == "Headers";
     public bool BodyActive => _editor == "Body";
-    public bool NotesActive => _editor == "About";
     public bool ResponseBodyActive => _responsePane == "Body";
     public bool ResponseHeadersActive => _responsePane == "Headers";
     public RequestTab Selected
@@ -147,7 +146,7 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
         NewRequestCommand = new ActionCommand(_ => NewRequest());
         SaveCommand = new ActionCommand(_ => SaveSelected());
         SendCommand = new ActionCommand(_ => _ = SendSelectedAsync());
-        EditorCommand = new ActionCommand(p => { _editor = p?.ToString() ?? "Params"; foreach (var name in new[] { nameof(ParamsActive), nameof(HeadersActive), nameof(BodyActive), nameof(NotesActive) }) Raise(name); });
+        EditorCommand = new ActionCommand(p => { _editor = p?.ToString() ?? "Params"; foreach (var name in new[] { nameof(ParamsActive), nameof(HeadersActive), nameof(BodyActive) }) Raise(name); });
         ResponsePaneCommand = new ActionCommand(p => { _responsePane = p?.ToString() ?? "Body"; Raise(nameof(ResponseBodyActive)); Raise(nameof(ResponseHeadersActive)); });
         AddPairCommand = new ActionCommand(_ => (HeadersActive ? Selected.Document.Headers : Selected.Document.Parameters).Add(new()));
         RemovePairCommand = new ActionCommand(p => { if (p is RequestPairViewModel pair) { Selected.Document.Parameters.Remove(pair); Selected.Document.Headers.Remove(pair); } });
@@ -160,8 +159,7 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
         });
         PrettyCommand = new ActionCommand(p => Selected.Raw = p?.ToString() == "Raw");
         FormatBodyCommand = new ActionCommand(_ => FormatBody());
-        var first = _workspace.Collections.SelectMany(c => c.Requests).FirstOrDefault() ?? new RequestDocument();
-        Tabs.Add(new RequestTab(first.Clone()));
+        Tabs.Add(new RequestTab(new RequestDocument()));
         Selected = Tabs[0];
         RefreshLibrary();
         if (workspace.LoadNotice is not null)
@@ -173,7 +171,7 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
         var tab = new RequestTab(new RequestDocument(), true);
         Tabs.Add(tab);
         Selected = tab;
-        Notice = "A blank page, a new possibility. Save your request when it feels right.";
+        Notice = "New request";
     }
     public void Open(RequestDocument document)
     {
@@ -212,7 +210,7 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
         if (string.IsNullOrWhiteSpace(Selected.Document.Name))
             Selected.Document.Name = "Untitled request";
         if (TryPersist(() => _workspace.SaveRequest(Selected.Document.Clone()),
-            $"Saved “{Selected.Document.Name}”. Tucked away for next time."))
+            $"Saved {Selected.Document.Name}"))
             Selected.IsDirty = false;
         RefreshLibrary();
         Raise(nameof(CollectionLabel));
@@ -236,14 +234,14 @@ public sealed class WorkspaceViewModel : ObservableModel, IDisposable
         {
             tab.Response = await _executor.SendAsync(snapshot, variables, tab.Cancellation.Token);
             AddHistory(snapshot, tab.Response.StatusCode, tab.Response.ElapsedMilliseconds);
-            Notice = tab.Response.IsSuccess ? "Request delivered. A little progress, beautifully grown." : "Your API sent a response. There might be a little tending to do.";
+            Notice = $"{snapshot.Method} {snapshot.Url} · {tab.Response.StatusCode} {tab.Response.Reason}";
         }
-        catch (OperationCanceledException) { tab.Error = "Request cancelled. Take your time; your API will be here."; Notice = "Request cancelled."; }
+        catch (OperationCanceledException) { tab.Error = "Request cancelled."; Notice = "Request cancelled"; }
         catch (Exception ex) when (ex is HttpRequestException or ArgumentException or TimeoutException or InvalidOperationException or IOException)
         {
             tab.Error = ex.Message;
             AddHistory(snapshot, 0, 0);
-            Notice = "A little bump in the path. Check the request details and try again.";
+            Notice = "Request failed — see the response pane for details";
         }
         finally { tab.IsSending = false; tab.Cancellation.Dispose(); tab.Cancellation = null; }
     }

@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="../../src/Osynt.Desktop/Osynt.Desktop.csproj" />
     <PackageReference Include="Avalonia.Headless" Version="11.3.22" />
   </ItemGroup>

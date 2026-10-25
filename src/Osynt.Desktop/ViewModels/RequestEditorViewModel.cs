@@ -1,24 +1,33 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using Osynt.Application.Requests;
 using Osynt.Domain.Requests;
 
 namespace Osynt.Desktop.ViewModels;
 
 /// <summary>An editable presentation copy. Domain entities do not know about bindings or notifications.</summary>
-public sealed class RequestEditorViewModel : ObservableModel
+public sealed class RequestEditorViewModel : ObservableModel, IDisposable
 {
     private string _name;
     private string _method;
     private string _url;
     private string _body;
+    private bool _synchronizing;
+    private readonly HashSet<RequestPairViewModel> _observedParameters = [];
     public RequestEditorViewModel(RequestDocument model)
     {
         Id = model.Id;
         _name = model.Name;
         _method = model.Method;
-        _url = model.Url;
         _body = model.Body;
-        Parameters = new(model.Parameters.Select(RequestPairViewModel.FromModel));
+        var rowKeys = model.Parameters.Select(p => p.Key).ToHashSet(StringComparer.Ordinal);
+        Parameters = new(RequestUrl.ParseParameters(model.Url).Where(p => !rowKeys.Contains(p.Key))
+            .Concat(model.Parameters).Select(RequestPairViewModel.FromModel));
+        _url = RequestUrl.WithParameters(model.Url, Parameters.Select(p => p.ToModel()));
         Headers = new(model.Headers.Select(RequestPairViewModel.FromModel));
+        Parameters.CollectionChanged += ParametersChanged;
+        ObserveParameters();
     }
     public Guid Id
     {
@@ -34,7 +43,25 @@ public sealed class RequestEditorViewModel : ObservableModel
     }
     public string Url
     {
-        get => _url; set => Set(ref _url, value);
+        get => _url;
+        set
+        {
+            var previousAddress = RequestUrl.Address(_url);
+            if (!Set(ref _url, value) || _synchronizing)
+                return;
+            _synchronizing = true;
+            try
+            {
+                var disabled = previousAddress == RequestUrl.Address(value)
+                    ? Parameters.Where(p => !p.Enabled).ToArray() : [];
+                Parameters.Clear();
+                foreach (var pair in RequestUrl.ParseParameters(value))
+                    Parameters.Add(RequestPairViewModel.FromModel(pair));
+                foreach (var pair in disabled)
+                    Parameters.Add(pair);
+            }
+            finally { _synchronizing = false; }
+        }
     }
     public string Body
     {
@@ -58,4 +85,42 @@ public sealed class RequestEditorViewModel : ObservableModel
         Parameters = Parameters.Select(p => p.ToModel()).ToList(),
         Headers = Headers.Select(p => p.ToModel()).ToList()
     };
+
+    private void ParametersChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        ObserveParameters();
+        SynchronizeUrl();
+    }
+    private void ParameterChanged(object? sender, PropertyChangedEventArgs e) => SynchronizeUrl();
+    private void SynchronizeUrl()
+    {
+        if (_synchronizing)
+            return;
+        _synchronizing = true;
+        try
+        {
+            Set(ref _url, RequestUrl.WithParameters(_url, Parameters.Select(p => p.ToModel())), nameof(Url));
+        }
+        finally { _synchronizing = false; }
+    }
+    private void ObserveParameters()
+    {
+        var current = Parameters.ToHashSet();
+        foreach (var removed in _observedParameters.Except(current).ToArray())
+        {
+            removed.PropertyChanged -= ParameterChanged;
+            _observedParameters.Remove(removed);
+        }
+        foreach (var added in current.Except(_observedParameters).ToArray())
+        {
+            added.PropertyChanged += ParameterChanged;
+            _observedParameters.Add(added);
+        }
+    }
+    public void Dispose()
+    {
+        Parameters.CollectionChanged -= ParametersChanged;
+        foreach (var pair in _observedParameters)
+            pair.PropertyChanged -= ParameterChanged;
+    }
 }
