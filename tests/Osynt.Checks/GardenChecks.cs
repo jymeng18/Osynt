@@ -1,6 +1,7 @@
 using Osynt.Application.Garden;
 using Osynt.Application.Workspaces;
 using Osynt.Checks.Fakes;
+using Osynt.Checks.Fixtures;
 using Osynt.Domain.Requests;
 using Osynt.Infrastructure.Persistence;
 
@@ -12,24 +13,24 @@ internal static partial class Program
     {
         Check("Every 2xx response grows the garden exactly once; errors and redirects do not", () =>
         {
-            var workspace = new WorkspaceService(new InMemoryWorkspaceStore(), new JsonCollectionSerializer(), "");
+            var workspace = new ApplicationWorkspace(new InMemoryWorkspaceStore(), "");
             foreach (var status in new[] { 200, 201, 204, 299, 300, 304, 400, 404, 500, 0 })
-                workspace.RecordHistory(new RequestDocument(), status, 1);
-            Equal(4L, workspace.Garden.SuccessfulRequests);
-            True(workspace.Garden.LastGrownAt is not null);
+                workspace.History.Record(new RequestDocument(), status, 1);
+            Equal(4L, workspace.Garden.GetState().SuccessfulRequests);
+            True(workspace.Garden.GetState().LastGrownAt is not null);
         });
         Check("Garden progress survives history limits, clearing history, and restarting", () =>
         {
             var store = new InMemoryWorkspaceStore();
-            var workspace = new WorkspaceService(store, new JsonCollectionSerializer(), "");
+            var workspace = new ApplicationWorkspace(store, "");
             for (var i = 0; i < 125; i++)
-                workspace.RecordHistory(new RequestDocument(), 200, 1);
-            Equal(100, workspace.History.Count);
-            Equal(125L, workspace.Garden.SuccessfulRequests);
-            workspace.ClearHistory();
-            var restarted = new WorkspaceService(store, new JsonCollectionSerializer(), "");
-            Equal(0, restarted.History.Count);
-            Equal(125L, restarted.Garden.SuccessfulRequests);
+                workspace.History.Record(new RequestDocument(), 200, 1);
+            Equal(100, workspace.History.GetHistory().Count);
+            Equal(125L, workspace.Garden.GetState().SuccessfulRequests);
+            workspace.History.Clear();
+            var restarted = new ApplicationWorkspace(store, "");
+            Equal(0, restarted.History.GetHistory().Count);
+            Equal(125L, restarted.Garden.GetState().SuccessfulRequests);
         });
         Check("Older workspaces migrate retained successes once", () =>
         {
@@ -40,33 +41,33 @@ internal static partial class Program
                     StatusCode = status
                 });
             var store = new InMemoryWorkspaceStore(state);
-            var workspace = new WorkspaceService(store, new JsonCollectionSerializer(), "");
-            Equal(3L, workspace.Garden.SuccessfulRequests);
-            workspace.RecordHistory(new RequestDocument(), 200, 1);
-            var restarted = new WorkspaceService(store, new JsonCollectionSerializer(), "");
-            Equal(4L, restarted.Garden.SuccessfulRequests);
+            var workspace = new ApplicationWorkspace(store, "");
+            Equal(3L, workspace.Garden.GetState().SuccessfulRequests);
+            workspace.History.Record(new RequestDocument(), 200, 1);
+            var restarted = new ApplicationWorkspace(store, "");
+            Equal(4L, restarted.Garden.GetState().SuccessfulRequests);
         });
         Check("A failed save does not partially grant garden growth", () =>
         {
             var store = new InMemoryWorkspaceStore { FailWrites = true };
-            var workspace = new WorkspaceService(store, new JsonCollectionSerializer(), "");
-            Throws<IOException>(() => workspace.RecordHistory(new RequestDocument(), 200, 1));
-            Equal(0L, workspace.Garden.SuccessfulRequests);
-            Equal(0, workspace.History.Count);
+            var workspace = new ApplicationWorkspace(store, "");
+            Throws<IOException>(() => workspace.History.Record(new RequestDocument(), 200, 1));
+            Equal(0L, workspace.Garden.GetState().SuccessfulRequests);
+            Equal(0, workspace.History.GetHistory().Count);
             store.FailWrites = false;
-            workspace.RecordHistory(new RequestDocument(), 200, 1);
-            Equal(1L, workspace.Garden.SuccessfulRequests);
+            workspace.History.Record(new RequestDocument(), 200, 1);
+            Equal(1L, workspace.Garden.GetState().SuccessfulRequests);
         });
         Check("Garden preferences persist without granting growth", () =>
         {
             var store = new InMemoryWorkspaceStore();
-            var workspace = new WorkspaceService(store, new JsonCollectionSerializer(), "");
-            workspace.UpdateGardenPreferences("dusk", true);
-            var restarted = new WorkspaceService(store, new JsonCollectionSerializer(), "");
-            Equal("dusk", restarted.Garden.Atmosphere);
-            True(restarted.Garden.ReducedMotion);
-            Equal(0L, restarted.Garden.SuccessfulRequests);
-            Throws<ArgumentException>(() => restarted.UpdateGardenPreferences("unknown", false));
+            var workspace = new ApplicationWorkspace(store, "");
+            workspace.Garden.UpdatePreferences("dusk", true);
+            var restarted = new ApplicationWorkspace(store, "");
+            Equal("dusk", restarted.Garden.GetState().Atmosphere);
+            True(restarted.Garden.GetState().ReducedMotion);
+            Equal(0L, restarted.Garden.GetState().SuccessfulRequests);
+            Throws<ArgumentException>(() => restarted.Garden.UpdatePreferences("unknown", false));
         });
         Check("Milestones, levels, and three-step plant growth remain consistent", () =>
         {

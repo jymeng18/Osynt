@@ -5,13 +5,13 @@
     <DockPanel>
       <Button DockPanel.Dock="Right" Classes="icon" Content="+" FontSize="20" Command="{Binding NewRequestCommand}" Margin="10,0,16,0" ToolTip.Tip="New request" />
       <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
-        <ItemsControl ItemsSource="{Binding Tabs}">
+        <ItemsControl ItemsSource="{Binding Requests.Tabs}">
           <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="vm:RequestTab">
               <Border BorderBrush="#E2E4D9" BorderThickness="0,0,1,0">
                 <Grid ColumnDefinitions="*,26">
-                  <Button Classes="tab" Classes.selected="{Binding IsSelected}" Command="{Binding $parent[Window].DataContext.SelectTabCommand}" CommandParameter="{Binding}" Height="42">
+                  <Button Classes="tab" Classes.selected="{Binding IsSelected}" Command="{Binding $parent[Window].DataContext.Requests.SelectCommand}" CommandParameter="{Binding}" Height="42">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                       <TextBlock Text="{Binding Document.Method}" Foreground="{Binding MethodColor}" FontWeight="Bold" FontSize="9" />
                       <TextBlock Text="{Binding TabTitle}" FontSize="12" MaxWidth="165" TextTrimming="CharacterEllipsis" />

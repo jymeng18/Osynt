@@ -19,9 +19,23 @@ public sealed class RequestTab : ObservableModel, IDisposable
     {
         get;
     }
-    public CancellationTokenSource? Cancellation
+    private CancellationTokenSource? _cancellation;
+
+    internal CancellationTokenSource BeginSend()
     {
-        get; set;
+        _cancellation = new CancellationTokenSource();
+        IsSending = true;
+        Error = "";
+        Response = null;
+        return _cancellation;
+    }
+
+    internal void CancelSend() => _cancellation?.Cancel();
+
+    internal void EndSend()
+    {
+        _cancellation = null;
+        IsSending = false;
     }
     public RequestTab(RequestDocument document, bool dirty = false)
     {
@@ -147,7 +161,7 @@ public sealed class RequestTab : ObservableModel, IDisposable
     }
     public void Dispose()
     {
-        Cancellation?.Cancel();
+        CancelSend();
         Document.PropertyChanged -= DocumentChanged;
         Document.Parameters.CollectionChanged -= PairsChanged;
         Document.Headers.CollectionChanged -= PairsChanged;

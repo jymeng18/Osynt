@@ -4,7 +4,7 @@ namespace Osynt.Infrastructure.Http;
 
 internal static class RequestFailureMessages
 {
-    public static HttpRequestException Explain(HttpRequestException error, Uri address)
+    public static string Explain(HttpRequestException error, Uri address)
     {
         var cause = error.GetBaseException();
         var message = cause is SocketException { SocketErrorCode: SocketError.ConnectionRefused }
@@ -14,6 +14,6 @@ internal static class RequestFailureMessages
                 : error.HttpRequestError == HttpRequestError.NameResolutionError
                     ? $"The host “{address.Host}” could not be found. Check the hostname and your connection."
                     : error.Message;
-        return new HttpRequestException($"{message}\n\n{address}", error, error.StatusCode);
+        return $"{message}\n\n{address}";
     }
 }

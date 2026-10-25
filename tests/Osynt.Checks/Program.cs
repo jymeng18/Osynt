@@ -17,6 +17,7 @@ using Osynt.Infrastructure.Demo;
 using Osynt.Infrastructure.Http;
 using Osynt.Infrastructure.Persistence;
 using Osynt.Desktop;
+using Osynt.Desktop.Composition;
 using Osynt.Desktop.ViewModels;
 
 namespace Osynt.Checks;
@@ -43,13 +44,14 @@ internal static partial class Program
         RunWorkspaceChecks(directory, executor, demo);
         RunApplicationChecks();
         RunGardenChecks();
+        RunSendWorkflowChecks();
         RunDesktopChecks(directory, executor, demo, args);
         Console.WriteLine($"\n{_passed} checks passed; {_failed} failed.");
         return _failed == 0 ? 0 : 1;
     }
 
     private static WorkspaceViewModel CreateWorkspace(string path, RequestExecutor executor, string demoBaseUrl) =>
-        new(new WorkspaceService(new WorkspaceStore(path), new JsonCollectionSerializer(), demoBaseUrl), executor);
+        WorkspaceComposition.Create(new WorkspaceStore(path), new JsonCollectionSerializer(), executor, demoBaseUrl);
 
     private static void PumpUntil(Func<bool> complete)
     {

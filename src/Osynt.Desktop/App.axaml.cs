@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Osynt.Application.Workspaces;
+using Osynt.Desktop.Composition;
 using Osynt.Infrastructure.Demo;
 using Osynt.Infrastructure.Http;
 using Osynt.Infrastructure.Persistence;
@@ -29,10 +29,10 @@ public partial class App : Avalonia.Application
             {
                 Timeout = Timeout.InfiniteTimeSpan
             };
-            var workspace = new WorkspaceService(new WorkspaceStore(), new JsonCollectionSerializer(), _demo.BaseUrl);
-            var viewModel = new WorkspaceViewModel(workspace, new RequestExecutor(_client));
+            var viewModel = WorkspaceComposition.Create(new WorkspaceStore(), new JsonCollectionSerializer(),
+                new RequestExecutor(_client), _demo.BaseUrl);
             if (demoError is not null)
-                viewModel.Notice = demoError;
+                viewModel.Status.Notice = demoError;
             desktop.MainWindow = new MainWindow { DataContext = viewModel };
             desktop.Exit += (_, _) => { viewModel.Dispose(); _demo.Dispose(); _client.Dispose(); };
         }

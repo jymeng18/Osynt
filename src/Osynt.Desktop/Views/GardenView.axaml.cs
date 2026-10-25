@@ -76,7 +76,7 @@ public partial class GardenView : UserControl
                         json.RootElement.TryGetProperty("reducedMotion", out var motion) &&
                         atmosphere.ValueKind == JsonValueKind.String && motion.ValueKind is JsonValueKind.True or JsonValueKind.False)
                     {
-                        if (!_workspace.UpdateGardenPreferences(atmosphere.GetString()!, motion.GetBoolean()))
+                        if (!_workspace.Garden.UpdatePreferences(atmosphere.GetString()!, motion.GetBoolean()))
                             _host?.Publish(_workspace.Garden.RenderMessage);
                     }
                     break;
@@ -84,7 +84,7 @@ public partial class GardenView : UserControl
                     _workspace.Garden.IsOpen = false;
                     break;
                 case "send":
-                    _workspace.SendCommand.Execute(null);
+                    _workspace.Sending.SendCommand.Execute(null);
                     break;
                 case "renderer-error":
                     RendererStatus.Text = "The 3D renderer could not start. Your garden progress is still saved. Try restarting Osynt.";
@@ -96,7 +96,7 @@ public partial class GardenView : UserControl
         }
         catch (Exception error) when (error is JsonException or ArgumentException or InvalidOperationException)
         {
-            _workspace.Notice = "The garden couldn't apply this setting. " + error.Message;
+            _workspace.Status.Notice = "The garden couldn't apply this setting. " + error.Message;
         }
     }
 }

@@ -1,9 +1,7 @@
-using Osynt.Application.Abstractions;
-using Osynt.Domain.Requests;
-
 using System.Diagnostics;
-using System.Net.Http.Headers;
-using System.Text;
+using Osynt.Application.Abstractions;
+using Osynt.Application.Requests;
+using Osynt.Domain.Requests;
 
 namespace Osynt.Infrastructure.Http;
 
@@ -14,6 +12,19 @@ public sealed class RequestExecutor(HttpClient client) : IRequestExecutor
     public async Task<ResponseData> SendAsync(RequestDocument document,
         IReadOnlyDictionary<string, string> variables, CancellationToken cancellationToken = default)
     {
+        try
+        {
+            return await ExecuteAsync(document, variables, cancellationToken);
+        }
+        catch (Exception error) when (error is ArgumentException or TimeoutException or InvalidOperationException or IOException)
+        {
+            throw new RequestExecutionException(error.Message, error);
+        }
+    }
+
+    private async Task<ResponseData> ExecuteAsync(RequestDocument document,
+        IReadOnlyDictionary<string, string> variables, CancellationToken cancellationToken)
+    {
         using var request = HttpRequestFactory.Create(document, variables);
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(TimeSpan.FromSeconds(30));
@@ -21,24 +32,11 @@ public sealed class RequestExecutor(HttpClient client) : IRequestExecutor
         try
         {
             using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
-            await using var stream = await response.Content.ReadAsStreamAsync(timeout.Token);
-            using var body = new MemoryStream();
-            var buffer = new byte[16 * 1024];
-            while (body.Length <= MaxResponseBytes)
-            {
-                var count = await stream.ReadAsync(buffer.AsMemory(0, (int)Math.Min(buffer.Length, MaxResponseBytes + 1 - body.Length)), timeout.Token);
-                if (count == 0)
-                    break;
-                body.Write(buffer, 0, count);
-            }
-            var truncated = body.Length > MaxResponseBytes;
-            var bytes = body.ToArray().AsSpan(0, (int)Math.Min(body.Length, MaxResponseBytes)).ToArray();
-            var encoding = GetEncoding(response.Content.Headers.ContentType);
-            var text = encoding.GetString(bytes);
+            var body = await ResponseBodyReader.ReadAsync(response.Content, MaxResponseBytes, timeout.Token);
             var headers = response.Headers.Concat(response.Content.Headers)
                 .Select(h => new KeyValuePair<string, string>(h.Key, string.Join(", ", h.Value))).ToList();
             return new((int)response.StatusCode, response.ReasonPhrase ?? "", timer.ElapsedMilliseconds,
-                bytes.Length, text, headers, truncated);
+                body.SizeBytes, body.Text, headers, body.Truncated);
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
@@ -46,17 +44,7 @@ public sealed class RequestExecutor(HttpClient client) : IRequestExecutor
         }
         catch (HttpRequestException error)
         {
-            throw RequestFailureMessages.Explain(error, request.RequestUri!);
+            throw new RequestExecutionException(RequestFailureMessages.Explain(error, request.RequestUri!), error);
         }
     }
-
-    private static Encoding GetEncoding(MediaTypeHeaderValue? type)
-    {
-        try
-        {
-            return string.IsNullOrEmpty(type?.CharSet) ? Encoding.UTF8 : Encoding.GetEncoding(type.CharSet.Trim('"'));
-        }
-        catch (ArgumentException) { return Encoding.UTF8; }
-    }
-
 }

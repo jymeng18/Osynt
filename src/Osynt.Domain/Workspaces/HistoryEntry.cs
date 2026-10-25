@@ -14,4 +14,12 @@ public sealed class HistoryEntry
     {
         get; set;
     }
+
+    public HistoryEntry Clone() => new()
+    {
+        SentAt = SentAt,
+        Request = Request.Clone(),
+        StatusCode = StatusCode,
+        ElapsedMilliseconds = ElapsedMilliseconds
+    };
 }

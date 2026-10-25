@@ -25,7 +25,7 @@ public partial class MainWindow : Window
             if ((e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta)) && e.Key == Key.W && Workspace is not null)
             {
                 e.Handled = true;
-                await new RequestCloseDialogs(this, Workspace).CloseRequestAsync(Workspace.Selected);
+                await new RequestCloseDialogs(this, Workspace).CloseRequestAsync(Workspace.Requests.Selected);
             }
         };
     }
@@ -57,7 +57,7 @@ public partial class MainWindow : Window
     private void CloseClicked(object? sender, RoutedEventArgs e) => Close();
     private async void WindowClosing(object? sender, WindowClosingEventArgs e)
     {
-        if (_allowClose || Workspace is not { } workspace || workspace.Tabs.All(t => !t.IsDirty))
+        if (_allowClose || Workspace is not { } workspace || workspace.Requests.Tabs.All(t => !t.IsDirty))
             return;
         e.Cancel = true;
         if (_closingPrompt)

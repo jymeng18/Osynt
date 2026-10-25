@@ -30,4 +30,12 @@ public sealed class GardenState
         SuccessfulRequests = checked(SuccessfulRequests + 1);
         LastGrownAt = now;
     }
+
+    public void UpdatePreferences(string atmosphere, bool reducedMotion)
+    {
+        if (atmosphere is not ("day" or "dusk"))
+            throw new ArgumentException("Choose day or dusk.");
+        Atmosphere = atmosphere;
+        ReducedMotion = reducedMotion;
+    }
 }

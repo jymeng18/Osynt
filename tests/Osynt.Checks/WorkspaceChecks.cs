@@ -54,41 +54,41 @@ internal static partial class Program
         Check("Editing a request leaves its saved collection unchanged until Save", () =>
         {
             using var workspace = CreateWorkspace(Path.Combine(directory, "editing"), executor, demo.BaseUrl);
-            workspace.Open(workspace.Collections[0].Requests[0].Document);
-            var original = workspace.Collections[0].Requests[0].Name;
-            workspace.Selected.Document.Name = "My new crop";
-            True(workspace.Selected.IsDirty);
-            Equal(original, workspace.Collections[0].Requests[0].Name);
-            workspace.SaveSelected();
-            True(!workspace.Selected.IsDirty);
-            Equal("My new crop", workspace.Collections[0].Requests[0].Name);
+            workspace.Open(workspace.Library.Collections[0].Requests[0].Document);
+            var original = workspace.Library.Collections[0].Requests[0].Name;
+            workspace.Requests.Selected.Document.Name = "My new crop";
+            True(workspace.Requests.Selected.IsDirty);
+            Equal(original, workspace.Library.Collections[0].Requests[0].Name);
+            workspace.Requests.SaveSelected();
+            True(!workspace.Requests.Selected.IsDirty);
+            Equal("My new crop", workspace.Library.Collections[0].Requests[0].Name);
         });
         Check("Unsaved tabs are protected and saved tabs close", () =>
         {
             using var workspace = CreateWorkspace(Path.Combine(directory, "tabs"), executor, demo.BaseUrl);
             workspace.NewRequest();
-            var tab = workspace.Selected;
-            workspace.Close(tab);
-            True(workspace.Tabs.Contains(tab));
-            workspace.SaveSelected();
-            workspace.Close(tab);
-            True(!workspace.Tabs.Contains(tab));
+            var tab = workspace.Requests.Selected;
+            workspace.Requests.Close(tab);
+            True(workspace.Requests.Tabs.Contains(tab));
+            workspace.Requests.SaveSelected();
+            workspace.Requests.Close(tab);
+            True(!workspace.Requests.Tabs.Contains(tab));
         });
         Check("Import/export round-trips collections and assigns fresh request IDs", () =>
         {
             using var workspace = CreateWorkspace(Path.Combine(directory, "import"), executor, demo.BaseUrl);
-            var original = workspace.Collections[0].Requests[0].Document.Id;
-            workspace.ImportCollections(workspace.ExportCollections());
-            Equal(4, workspace.Collections.Count);
-            True(original != workspace.Collections[2].Requests[0].Document.Id);
-            Throws<JsonException>(() => workspace.ImportCollections("[{\"Name\":\"broken\",\"Requests\":null}]"));
-            Equal(4, workspace.Collections.Count);
+            var original = workspace.Library.Collections[0].Requests[0].Document.Id;
+            workspace.Library.ImportCollections(workspace.Library.ExportCollections());
+            Equal(4, workspace.Library.Collections.Count);
+            True(original != workspace.Library.Collections[2].Requests[0].Document.Id);
+            Throws<JsonException>(() => workspace.Library.ImportCollections("[{\"Name\":\"broken\",\"Requests\":null}]"));
+            Equal(4, workspace.Library.Collections.Count);
         });
         Check("Duplicate environment variable names do not overwrite the environment", () =>
         {
             using var workspace = CreateWorkspace(Path.Combine(directory, "environment"), executor, demo.BaseUrl);
-            Throws<ArgumentException>(() => workspace.UpdateVariables([new() { Key = "base_url", Value = "one" }, new() { Key = "base_url", Value = "two" }]));
-            Equal(demo.BaseUrl, workspace.Variables["base_url"]);
+            Throws<ArgumentException>(() => workspace.Environment.UpdateVariables([new() { Key = "base_url", Value = "one" }, new() { Key = "base_url", Value = "two" }]));
+            Equal(demo.BaseUrl, workspace.Environment.Variables["base_url"]);
         });
 
     }

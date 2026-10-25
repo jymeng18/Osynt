@@ -17,13 +17,13 @@ public sealed class RequestCloseDialogs(Window owner, WorkspaceViewModel workspa
                 return;
             if (choice == "save")
             {
-                workspace.Selected = tab;
-                workspace.SaveSelected();
+                workspace.Requests.Selected = tab;
+                workspace.Requests.SaveSelected();
                 if (tab.IsDirty)
                     return;
             }
         }
-        workspace.DiscardTab(tab);
+        workspace.Requests.Discard(tab);
     }
     public async Task<bool> CanCloseWorkspaceAsync()
     {
@@ -32,14 +32,14 @@ public sealed class RequestCloseDialogs(Window owner, WorkspaceViewModel workspa
             return false;
         if (choice == "save")
         {
-            var selected = workspace.Selected;
-            foreach (var tab in workspace.Tabs.Where(t => t.IsDirty).ToArray())
+            var selected = workspace.Requests.Selected;
+            foreach (var tab in workspace.Requests.Tabs.Where(t => t.IsDirty).ToArray())
             {
-                workspace.Selected = tab;
-                workspace.SaveSelected();
+                workspace.Requests.Selected = tab;
+                workspace.Requests.SaveSelected();
                 if (tab.IsDirty)
                 {
-                    workspace.Selected = selected;
+                    workspace.Requests.Selected = selected;
                     return false;
                 }
             }

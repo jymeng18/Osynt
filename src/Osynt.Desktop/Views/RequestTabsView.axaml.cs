@@ -16,6 +16,6 @@ public partial class RequestTabsView : UserControl
     private void DiscardTabClicked(object? sender, RoutedEventArgs e)
     {
         if (sender is MenuItem { Tag: RequestTab tab } && DataContext is WorkspaceViewModel workspace)
-            workspace.DiscardTab(tab);
+            workspace.Requests.Discard(tab);
     }
 }

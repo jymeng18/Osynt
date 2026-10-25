@@ -6,10 +6,25 @@ namespace Osynt.Desktop.ViewModels;
 
 public sealed class GardenViewModel : ObservableModel
 {
+    private readonly GardenService _garden;
+    private readonly WorkspaceStatus _status;
     private GardenState _state;
     private bool _isOpen;
     private string _lastGrowth = "Every successful request adds a little life.";
-    public GardenViewModel(GardenState state) => _state = state;
+    public GardenViewModel(GardenService garden, WorkspaceStatus status)
+    {
+        _garden = garden;
+        _status = status;
+        _state = garden.GetState();
+    }
+
+    public bool UpdatePreferences(string atmosphere, bool reducedMotion)
+    {
+        if (!_status.TrySave(() => _garden.UpdatePreferences(atmosphere, reducedMotion)))
+            return false;
+        Refresh();
+        return true;
+    }
     public bool IsOpen
     {
         get => _isOpen; set
@@ -36,8 +51,9 @@ public sealed class GardenViewModel : ObservableModel
         reducedMotion = ReducedMotion
     });
 
-    public void Refresh(GardenState state)
+    public void Refresh()
     {
+        var state = _garden.GetState();
         var grew = state.SuccessfulRequests > Successes;
         _state = state;
         if (grew)

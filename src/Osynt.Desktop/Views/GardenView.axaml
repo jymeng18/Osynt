@@ -25,10 +25,10 @@
           <TextBlock Grid.Column="1" Text="{Binding Garden.LastGrowth}" FontSize="10" Foreground="#8E9D7B" MaxWidth="340" TextTrimming="CharacterEllipsis" />
         </Grid>
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="9">
-          <Border Background="#EAF0DF" CornerRadius="5" Padding="11,8"><TextBlock Text="{Binding Selected.Document.Method}" FontSize="10" FontWeight="SemiBold" Foreground="#6E8756" /></Border>
-          <TextBox Grid.Column="1" x:Name="GardenUrlInput" Text="{Binding Selected.Document.Url}" Watermark="Enter an API URL, or try the local demo →" VerticalContentAlignment="Center" />
+          <Border Background="#EAF0DF" CornerRadius="5" Padding="11,8"><TextBlock Text="{Binding Requests.Selected.Document.Method}" FontSize="10" FontWeight="SemiBold" Foreground="#6E8756" /></Border>
+          <TextBox Grid.Column="1" x:Name="GardenUrlInput" Text="{Binding Requests.Selected.Document.Url}" Watermark="Enter an API URL, or try the local demo →" VerticalContentAlignment="Center" />
           <Button Grid.Column="2" Classes="outline" Content="Try demo" Command="{Binding SendGardenDemoCommand}" Padding="14,8" ToolTip.Tip="Send a real request to the local demo API" />
-          <Button Grid.Column="3" x:Name="GardenSendButton" Classes="primary" Content="{Binding Selected.SendLabel}" Command="{Binding SendCommand}" Padding="20,8" />
+          <Button Grid.Column="3" x:Name="GardenSendButton" Classes="primary" Content="{Binding Requests.Selected.SendLabel}" Command="{Binding Sending.SendCommand}" Padding="20,8" />
         </Grid>
       </Grid>
     </Border>

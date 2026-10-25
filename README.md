@@ -32,3 +32,12 @@ The interactive 3D garden runs on Windows with WebView2.
 - Try **Dusk**, drag to orbit, and scroll to zoom. Your progress saves locally.
 
 Built with Avalonia, .NET, Three.js, and Tailwind CSS.
+
+## Development
+
+See [the architecture guide](docs/architecture.md) for layer boundaries, feature ownership,
+and persistence behavior. Run the integration and headless desktop checks with:
+
+```sh
+dotnet run --project tests/Osynt.Checks
+```

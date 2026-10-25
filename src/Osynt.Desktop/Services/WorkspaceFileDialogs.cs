@@ -16,26 +16,26 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
 
     public async Task CopyResponseAsync()
     {
-        if (!workspace.Selected.HasResponse || owner.Clipboard is null)
+        if (!workspace.Requests.Selected.HasResponse || owner.Clipboard is null)
             return;
         try
         {
-            await owner.Clipboard.SetTextAsync(workspace.Selected.ResponseDisplay);
-            workspace.Notice = "Response copied. A little discovery to take with you.";
+            await owner.Clipboard.SetTextAsync(workspace.Requests.Selected.ResponseDisplay);
+            workspace.Status.Notice = "Response copied. A little discovery to take with you.";
         }
         catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.ExternalException)
         {
-            workspace.Notice = "Could not reach the clipboard. Try Save response instead.";
+            workspace.Status.Notice = "Could not reach the clipboard. Try Save response instead.";
         }
     }
     public Task SaveResponseAsync()
     {
-        if (workspace.Selected.Response is not { } response)
+        if (workspace.Requests.Selected.Response is not { } response)
             return Task.CompletedTask;
         var name = response.Body.TrimStart().StartsWith('{') || response.Body.TrimStart().StartsWith('[') ? "response.json" : "response.txt";
-        return SaveTextAsync("Save response", name, workspace.Selected.ResponseDisplay);
+        return SaveTextAsync("Save response", name, workspace.Requests.Selected.ResponseDisplay);
     }
-    public Task ExportAsync() => SaveTextAsync("Export Osynt collections", "osynt-collections.json", workspace.ExportCollections());
+    public Task ExportAsync() => SaveTextAsync("Export Osynt collections", "osynt-collections.json", workspace.Library.ExportCollections());
     public async Task ImportAsync()
     {
         try
@@ -50,11 +50,11 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
                 return;
             await using var stream = await files[0].OpenReadAsync();
             using var reader = new StreamReader(stream);
-            workspace.ImportCollections(await reader.ReadToEndAsync());
+            workspace.Library.ImportCollections(await reader.ReadToEndAsync());
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException)
         {
-            workspace.Notice = $"Could not import this file. Choose an Osynt collection JSON export. {ex.Message}";
+            workspace.Status.Notice = $"Could not import this file. Choose an Osynt collection JSON export. {ex.Message}";
         }
     }
     private async Task SaveTextAsync(string title, string name, string text)
@@ -75,11 +75,11 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
                 stream.SetLength(0);
             await using var writer = new StreamWriter(stream, new UTF8Encoding(false));
             await writer.WriteAsync(text);
-            workspace.Notice = $"Saved {file.Name}. A little piece of progress.";
+            workspace.Status.Notice = $"Saved {file.Name}. A little piece of progress.";
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
-            workspace.Notice = $"Could not save this file: {ex.Message}";
+            workspace.Status.Notice = $"Could not save this file: {ex.Message}";
         }
     }
 }

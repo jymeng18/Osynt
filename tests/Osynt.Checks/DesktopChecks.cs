@@ -41,66 +41,66 @@ internal static partial class Program
         using var uiWorkspace = CreateWorkspace(Path.Combine(directory, "ui"), executor, demo.BaseUrl);
         var window = new MainWindow { DataContext = uiWorkspace };
         window.Show();
-        PumpUntil(() => !uiWorkspace.Selected.IsSending);
+        PumpUntil(() => !uiWorkspace.Requests.Selected.IsSending);
         Check("Desktop opens with a blank GET and no demo parameters or body", () =>
         {
-            Equal("GET", uiWorkspace.Selected.Document.Method);
-            Equal("", uiWorkspace.Selected.Document.Url);
-            Equal(0, uiWorkspace.Selected.Document.Parameters.Count);
-            Equal(0, uiWorkspace.Selected.Document.Headers.Count);
-            Equal("", uiWorkspace.Selected.Document.Body);
-            True(!uiWorkspace.Selected.HasResponse);
+            Equal("GET", uiWorkspace.Requests.Selected.Document.Method);
+            Equal("", uiWorkspace.Requests.Selected.Document.Url);
+            Equal(0, uiWorkspace.Requests.Selected.Document.Parameters.Count);
+            Equal(0, uiWorkspace.Requests.Selected.Document.Headers.Count);
+            Equal("", uiWorkspace.Requests.Selected.Document.Body);
+            True(!uiWorkspace.Requests.Selected.HasResponse);
         });
         Check("Desktop sample GET sends successfully when requested", () =>
         {
-            var initial = uiWorkspace.Selected;
-            uiWorkspace.Open(uiWorkspace.Collections[0].Requests[0].Document);
-            uiWorkspace.DiscardTab(initial);
+            var initial = uiWorkspace.Requests.Selected;
+            uiWorkspace.Open(uiWorkspace.Library.Collections[0].Requests[0].Document);
+            uiWorkspace.Requests.Discard(initial);
             Dispatcher.UIThread.RunJobs();
             Click(window, window.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "SendButton"));
-            PumpUntil(() => !uiWorkspace.Selected.IsSending);
-            Equal(200, uiWorkspace.Selected.Response?.StatusCode ?? 0);
+            PumpUntil(() => !uiWorkspace.Requests.Selected.IsSending);
+            Equal(200, uiWorkspace.Requests.Selected.Response?.StatusCode ?? 0);
             True(window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "Get seasonal crops"));
             True(window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "UrlInput").Text!.Contains("{{base_url}}"));
         });
         Check("Desktop Send button executes POST and preserves response in its tab", () =>
         {
-            var getTab = uiWorkspace.Selected;
-            uiWorkspace.Open(uiWorkspace.Collections[0].Requests[2].Document);
-            uiWorkspace.EditorCommand.Execute("Body");
+            var getTab = uiWorkspace.Requests.Selected;
+            uiWorkspace.Open(uiWorkspace.Library.Collections[0].Requests[2].Document);
+            uiWorkspace.Editor.EditorCommand.Execute("Body");
             Dispatcher.UIThread.RunJobs();
             var sendButton = window.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "SendButton");
             Click(window, sendButton);
-            PumpUntil(() => !uiWorkspace.Selected.IsSending);
-            Equal(201, uiWorkspace.Selected.Response?.StatusCode ?? 0);
-            var postTab = uiWorkspace.Selected;
-            uiWorkspace.Selected = getTab;
-            Equal(200, uiWorkspace.Selected.Response?.StatusCode ?? 0);
-            uiWorkspace.Selected = postTab;
-            Equal(201, uiWorkspace.Selected.Response?.StatusCode ?? 0);
+            PumpUntil(() => !uiWorkspace.Requests.Selected.IsSending);
+            Equal(201, uiWorkspace.Requests.Selected.Response?.StatusCode ?? 0);
+            var postTab = uiWorkspace.Requests.Selected;
+            uiWorkspace.Requests.Selected = getTab;
+            Equal(200, uiWorkspace.Requests.Selected.Response?.StatusCode ?? 0);
+            uiWorkspace.Requests.Selected = postTab;
+            Equal(201, uiWorkspace.Requests.Selected.Response?.StatusCode ?? 0);
         });
         Check("Ctrl+N creates a request and Ctrl+S persists it", () =>
         {
-            var count = uiWorkspace.Tabs.Count;
+            var count = uiWorkspace.Requests.Tabs.Count;
             window.KeyPressQwerty(PhysicalKey.N, RawInputModifiers.Control);
             window.KeyReleaseQwerty(PhysicalKey.N, RawInputModifiers.Control);
             Dispatcher.UIThread.RunJobs();
-            Equal(count + 1, uiWorkspace.Tabs.Count);
-            Equal("", uiWorkspace.Selected.Document.Url);
-            Equal(0, uiWorkspace.Selected.Document.Parameters.Count);
-            uiWorkspace.Selected.Document.Name = "Keyboard garden";
+            Equal(count + 1, uiWorkspace.Requests.Tabs.Count);
+            Equal("", uiWorkspace.Requests.Selected.Document.Url);
+            Equal(0, uiWorkspace.Requests.Selected.Document.Parameters.Count);
+            uiWorkspace.Requests.Selected.Document.Name = "Keyboard garden";
             window.KeyPressQwerty(PhysicalKey.S, RawInputModifiers.Control);
             window.KeyReleaseQwerty(PhysicalKey.S, RawInputModifiers.Control);
             Dispatcher.UIThread.RunJobs();
-            True(!uiWorkspace.Selected.IsDirty);
-            uiWorkspace.DiscardTab(uiWorkspace.Selected);
+            True(!uiWorkspace.Requests.Selected.IsDirty);
+            uiWorkspace.Requests.Discard(uiWorkspace.Requests.Selected);
         });
         Check("Search filters saved requests", () =>
         {
-            uiWorkspace.Search = "villager";
-            Equal(1, uiWorkspace.Collections.Count);
-            Equal("Meet the villagers", uiWorkspace.Collections[0].Requests[0].Name);
-            uiWorkspace.Search = "";
+            uiWorkspace.Library.Search = "villager";
+            Equal(1, uiWorkspace.Library.Collections.Count);
+            Equal("Meet the villagers", uiWorkspace.Library.Collections[0].Requests[0].Name);
+            uiWorkspace.Library.Search = "";
         });
         Check("Sidebar and tab buttons navigate existing requests", () =>
         {
@@ -108,51 +108,51 @@ internal static partial class Program
             AvaloniaHeadlessPlatform.ForceRenderTimerTick();
             var getButton = window.GetVisualDescendants().OfType<Button>().Single(b => b.CommandParameter is LibraryRequest r && r.Name == "Get seasonal crops");
             Click(window, getButton);
-            Equal("Get seasonal crops", uiWorkspace.Selected.Document.Name);
+            Equal("Get seasonal crops", uiWorkspace.Requests.Selected.Document.Name);
             var postButton = window.GetVisualDescendants().OfType<Button>().Single(b => b.CommandParameter is RequestTab t && t.Document.Method == "POST");
             Click(window, postButton);
-            Equal("POST", uiWorkspace.Selected.Document.Method);
-            Equal(2, uiWorkspace.Tabs.Count);
+            Equal("POST", uiWorkspace.Requests.Selected.Document.Method);
+            Equal(2, uiWorkspace.Requests.Tabs.Count);
         });
         Check("Parameter controls add, edit, disable, and remove query rows", () =>
         {
-            uiWorkspace.Selected = uiWorkspace.Tabs[0];
-            uiWorkspace.EditorCommand.Execute("Params");
+            uiWorkspace.Requests.Selected = uiWorkspace.Requests.Tabs[0];
+            uiWorkspace.Editor.EditorCommand.Execute("Params");
             Dispatcher.UIThread.RunJobs();
             var add = window.GetVisualDescendants().OfType<Button>().Single(b => b.Content as string == "+  Add parameter");
             Click(window, add);
-            Equal(2, uiWorkspace.Selected.Document.Parameters.Count);
-            var pair = uiWorkspace.Selected.Document.Parameters[1];
+            Equal(2, uiWorkspace.Requests.Selected.Document.Parameters.Count);
+            var pair = uiWorkspace.Requests.Selected.Document.Parameters[1];
             pair.Key = "extra";
             pair.Value = "a little test";
             pair.Enabled = false;
-            using var message = HttpRequestFactory.Create(uiWorkspace.Selected.Document.Clone(), uiWorkspace.Variables);
+            using var message = HttpRequestFactory.Create(uiWorkspace.Requests.Selected.Document.Clone(), uiWorkspace.Environment.Variables);
             True(!message.RequestUri!.Query.Contains("extra"));
             var remove = window.GetVisualDescendants().OfType<Button>().Single(b => b.CommandParameter == pair);
             Click(window, remove);
-            Equal(1, uiWorkspace.Selected.Document.Parameters.Count);
-            uiWorkspace.SaveSelected();
-            uiWorkspace.Selected = uiWorkspace.Tabs[1];
+            Equal(1, uiWorkspace.Requests.Selected.Document.Parameters.Count);
+            uiWorkspace.Requests.SaveSelected();
+            uiWorkspace.Requests.Selected = uiWorkspace.Requests.Tabs[1];
         });
         Check("A response arriving after switching tabs stays with its original request", () =>
         {
-            var sendingTab = uiWorkspace.Selected;
-            var send = uiWorkspace.SendSelectedAsync();
-            uiWorkspace.Selected = uiWorkspace.Tabs[0];
+            var sendingTab = uiWorkspace.Requests.Selected;
+            var send = uiWorkspace.Sending.SendSelectedAsync();
+            uiWorkspace.Requests.Selected = uiWorkspace.Requests.Tabs[0];
             PumpUntil(() => send.IsCompleted);
             send.GetAwaiter().GetResult();
             True(sendingTab.HasResponse);
             Equal(201, sendingTab.Response!.StatusCode);
-            Equal(200, uiWorkspace.Selected.Response!.StatusCode);
+            Equal(200, uiWorkspace.Requests.Selected.Response!.StatusCode);
         });
         Check("Successful responses without content explicitly show an empty body message", () =>
         {
-            var previous = uiWorkspace.Selected.Response;
-            uiWorkspace.Selected.Response = new(200, "OK", 1, 0, "", []);
+            var previous = uiWorkspace.Requests.Selected.Response;
+            uiWorkspace.Requests.Selected.Response = new(200, "OK", 1, 0, "", []);
             Dispatcher.UIThread.RunJobs();
             True(window.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Text == "No response body").IsEffectivelyVisible);
-            Equal("200 OK", uiWorkspace.Selected.Status);
-            uiWorkspace.Selected.Response = previous;
+            Equal("200 OK", uiWorkspace.Requests.Selected.Status);
+            uiWorkspace.Requests.Selected.Response = previous;
         });
         Check("The compact window keeps request controls and response status on screen", () =>
         {
@@ -171,37 +171,37 @@ internal static partial class Program
         });
         Check("Garden navigation preserves requests and a real demo success grants growth", () =>
         {
-            var previousTab = uiWorkspace.Selected;
+            var previousTab = uiWorkspace.Requests.Selected;
             var previousGrowth = uiWorkspace.Garden.Successes;
             var open = window.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "OpenGardenButton");
             Click(window, open);
             True(uiWorkspace.Garden.IsOpen);
             var demoButton = window.GetVisualDescendants().OfType<Button>().Single(c => c.Command == uiWorkspace.SendGardenDemoCommand);
             Click(window, demoButton);
-            PumpUntil(() => !uiWorkspace.Selected.IsSending);
-            Equal(200, uiWorkspace.Selected.Response!.StatusCode);
+            PumpUntil(() => !uiWorkspace.Requests.Selected.IsSending);
+            Equal(200, uiWorkspace.Requests.Selected.Response!.StatusCode);
             Equal(previousGrowth + 1, uiWorkspace.Garden.Successes);
             True(uiWorkspace.Garden.IsOpen);
-            var demoTab = uiWorkspace.Selected;
+            var demoTab = uiWorkspace.Requests.Selected;
             uiWorkspace.CloseGardenCommand.Execute(null);
             True(uiWorkspace.Garden.ShowRequests);
-            uiWorkspace.DiscardTab(demoTab);
-            uiWorkspace.Selected = previousTab;
+            uiWorkspace.Requests.Discard(demoTab);
+            uiWorkspace.Requests.Selected = previousTab;
         });
         if (args.Contains("--snapshot"))
         {
             var snapshotIndex = Array.IndexOf(args, "--snapshot");
             var path = snapshotIndex + 1 < args.Length ? Path.GetFullPath(args[snapshotIndex + 1]) : Path.GetFullPath("artifacts/osynt-preview.png");
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            uiWorkspace.Selected = uiWorkspace.Tabs[0];
-            uiWorkspace.EditorCommand.Execute("Params");
+            uiWorkspace.Requests.Selected = uiWorkspace.Requests.Tabs[0];
+            uiWorkspace.Editor.EditorCommand.Execute("Params");
             Dispatcher.UIThread.RunJobs();
             AvaloniaHeadlessPlatform.ForceRenderTimerTick();
             using var bitmap = window.CaptureRenderedFrame() ?? throw new InvalidOperationException("The desktop did not render.");
             bitmap.Save(path);
             Console.WriteLine($"Preview saved: {path}");
-            uiWorkspace.Selected = uiWorkspace.Tabs[1];
-            uiWorkspace.EditorCommand.Execute("Body");
+            uiWorkspace.Requests.Selected = uiWorkspace.Requests.Tabs[1];
+            uiWorkspace.Editor.EditorCommand.Execute("Body");
             Dispatcher.UIThread.RunJobs();
             AvaloniaHeadlessPlatform.ForceRenderTimerTick();
             using var postBitmap = window.CaptureRenderedFrame()!;

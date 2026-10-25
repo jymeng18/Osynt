@@ -5,12 +5,12 @@
         WindowStartupLocation="CenterScreen" ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaTitleBarHeightHint="36">
   <Window.KeyBindings>
-    <KeyBinding Gesture="Ctrl+Enter" Command="{Binding SendCommand}" />
-    <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
+    <KeyBinding Gesture="Ctrl+Enter" Command="{Binding Sending.SendCommand}" />
+    <KeyBinding Gesture="Ctrl+S" Command="{Binding Requests.SaveCommand}" />
     <KeyBinding Gesture="Ctrl+N" Command="{Binding NewRequestCommand}" />
     <KeyBinding Gesture="Ctrl+G" Command="{Binding OpenGardenCommand}" />
-    <KeyBinding Gesture="Meta+Enter" Command="{Binding SendCommand}" />
-    <KeyBinding Gesture="Meta+S" Command="{Binding SaveCommand}" />
+    <KeyBinding Gesture="Meta+Enter" Command="{Binding Sending.SendCommand}" />
+    <KeyBinding Gesture="Meta+S" Command="{Binding Requests.SaveCommand}" />
     <KeyBinding Gesture="Meta+N" Command="{Binding NewRequestCommand}" />
     <KeyBinding Gesture="Meta+G" Command="{Binding OpenGardenCommand}" />
   </Window.KeyBindings>
@@ -53,7 +53,7 @@
 
     <Border Grid.Row="2" BorderBrush="#DDE2D0" BorderThickness="0,1,0,0" Background="#EBEFE1">
       <Grid ColumnDefinitions="*,Auto" Margin="16,0">
-        <TextBlock Text="{Binding Notice}" FontSize="10" Foreground="#7C896F" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Notice}" />
+        <TextBlock Text="{Binding Status.Notice}" FontSize="10" Foreground="#7C896F" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Status.Notice}" />
         <TextBlock Grid.Column="1" Text="Local workspace" FontSize="10" Foreground="#8D987E" Margin="15,0,0,0" />
       </Grid>
     </Border>

@@ -18,17 +18,7 @@ public sealed class WorkspaceState
         UseLocalDemo = UseLocalDemo,
         Garden = Garden?.Clone(),
         Variables = new(Variables),
-        Collections = Collections.Select(c => new RequestCollection
-        {
-            Name = c.Name,
-            Requests = c.Requests.Select(r => r.Clone()).ToList()
-        }).ToList(),
-        History = History.Select(h => new HistoryEntry
-        {
-            SentAt = h.SentAt,
-            Request = h.Request.Clone(),
-            StatusCode = h.StatusCode,
-            ElapsedMilliseconds = h.ElapsedMilliseconds
-        }).ToList()
+        Collections = Collections.Select(c => c.Clone()).ToList(),
+        History = History.Select(h => h.Clone()).ToList()
     };
 }

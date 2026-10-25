@@ -1,3 +1,4 @@
+using Osynt.Application.Requests;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text.Json;
@@ -81,7 +82,7 @@ internal static partial class Program
                 }, new Dictionary<string, string>()).GetAwaiter().GetResult();
                 throw new InvalidOperationException("Expected a connection failure.");
             }
-            catch (HttpRequestException error)
+            catch (RequestExecutionException error)
             {
                 True(error.Message.Contains($"127.0.0.1:{port}"));
                 True(error.Message.Contains("Nothing is listening"));

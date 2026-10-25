@@ -7,18 +7,18 @@
         <art:PixelArt Width="27" Height="27" />
         <TextBlock Text="osynt" FontSize="24" FontWeight="SemiBold" Foreground="#4C6340" LetterSpacing="-0.8" />
       </StackPanel>
-      <TextBox Grid.Row="1" x:Name="SearchBox" Text="{Binding Search}" Watermark="Find a request…" Margin="14,0,14,14" Background="#FAFAF3" Padding="9,7">
+      <TextBox Grid.Row="1" x:Name="SearchBox" Text="{Binding Library.Search}" Watermark="Find a request…" Margin="14,0,14,14" Background="#FAFAF3" Padding="9,7">
         <TextBox.InnerLeftContent><TextBlock Text="⌕" FontSize="19" Margin="9,0,0,0" Foreground="#9BA18B" /></TextBox.InnerLeftContent>
       </TextBox>
       <Border Grid.Row="2" Background="#E6E9DD" CornerRadius="7" Margin="14,0,14,12" Padding="3">
         <Grid ColumnDefinitions="*,*">
-          <Button Classes="nav" Classes.selected="{Binding ShowCollections}" Content="Collections" Command="{Binding NavigationCommand}" CommandParameter="Collections" HorizontalAlignment="Stretch" />
-          <Button Grid.Column="1" Classes="nav" Classes.selected="{Binding ShowHistory}" Content="History" Command="{Binding NavigationCommand}" CommandParameter="History" HorizontalAlignment="Stretch" />
+          <Button Classes="nav" Classes.selected="{Binding Library.ShowCollections}" Content="Collections" Command="{Binding Library.NavigationCommand}" CommandParameter="Collections" HorizontalAlignment="Stretch" />
+          <Button Grid.Column="1" Classes="nav" Classes.selected="{Binding Library.ShowHistory}" Content="History" Command="{Binding Library.NavigationCommand}" CommandParameter="History" HorizontalAlignment="Stretch" />
         </Grid>
       </Border>
       <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Margin="8,0,8,10">
         <Grid>
-          <ItemsControl ItemsSource="{Binding Collections}" IsVisible="{Binding ShowCollections}">
+          <ItemsControl ItemsSource="{Binding Library.Collections}" IsVisible="{Binding Library.ShowCollections}">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="vm:LibraryCollection">
                 <StackPanel Margin="0,0,0,10">
@@ -46,9 +46,9 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
-          <StackPanel IsVisible="{Binding ShowHistory}">
-            <TextBlock Text="Your adventures will appear here.&#10;Send a request to get started." FontSize="11" Foreground="#919783" Margin="10,16" LineHeight="20" IsVisible="{Binding !HasHistory}" />
-            <ItemsControl ItemsSource="{Binding VisibleHistory}">
+          <StackPanel IsVisible="{Binding Library.ShowHistory}">
+            <TextBlock Text="Your adventures will appear here.&#10;Send a request to get started." FontSize="11" Foreground="#919783" Margin="10,16" LineHeight="20" IsVisible="{Binding !Library.HasHistory}" />
+            <ItemsControl ItemsSource="{Binding Library.VisibleHistory}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="vm:HistoryItemViewModel">
                   <Button Classes="request" Command="{Binding $parent[Window].DataContext.OpenHistoryCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch">
@@ -64,7 +64,7 @@
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <Button Content="Clear history" FontSize="10" Foreground="#929783" Command="{Binding ClearHistoryCommand}" IsVisible="{Binding HasHistory}" Margin="5,12" />
+            <Button Content="Clear history" FontSize="10" Foreground="#929783" Command="{Binding Library.ClearHistoryCommand}" IsVisible="{Binding Library.HasHistory}" Margin="5,12" />
           </StackPanel>
         </Grid>
       </ScrollViewer>
