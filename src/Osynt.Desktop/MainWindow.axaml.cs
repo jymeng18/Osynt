@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using Osynt.Desktop.Services;
 using Osynt.Desktop.ViewModels;
 
@@ -33,7 +34,8 @@ public partial class MainWindow : Window
     }
     private void TitleBarPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || e.Source is Button)
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed ||
+            e.Source is Control control && (control is Button || control.GetVisualAncestors().Any(v => v is Button)))
             return;
         if (e.ClickCount == 2)
             WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;

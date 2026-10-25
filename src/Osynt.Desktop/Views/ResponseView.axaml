@@ -7,12 +7,12 @@
         <Grid ColumnDefinitions="Auto,*,Auto" Margin="17,0">
           <StackPanel Orientation="Horizontal" Spacing="9"><art:PixelArt Kind="mail" Width="18" Height="18" /><TextBlock Text="Response" FontSize="12" FontWeight="SemiBold" /></StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="18" HorizontalAlignment="Right" IsVisible="{Binding Selected.HasResponse}" Margin="15,0,20,0">
-            <Border Background="#E2EBD7" CornerRadius="4" Padding="8,4" IsVisible="{Binding Selected.IsSuccess}"><TextBlock Text="{Binding Selected.Status}" Foreground="#66804C" FontSize="10" FontWeight="Medium" /></Border>
-            <Border Background="#F1E1D5" CornerRadius="4" Padding="8,4" IsVisible="{Binding Selected.IsFailure}"><TextBlock Text="{Binding Selected.Status}" Foreground="#A47856" FontSize="10" /></Border>
+          <Border Background="#E2EBD7" CornerRadius="4" Padding="8,4" VerticalAlignment="Center" IsVisible="{Binding Selected.IsSuccess}"><TextBlock Text="{Binding Selected.Status}" Foreground="#66804C" FontSize="10" FontWeight="Medium" /></Border>
+          <Border Background="#F1E1D5" CornerRadius="4" Padding="8,4" VerticalAlignment="Center" IsVisible="{Binding Selected.IsFailure}"><TextBlock Text="{Binding Selected.Status}" Foreground="#A47856" FontSize="10" /></Border>
             <TextBlock Text="{Binding Selected.Duration}" FontSize="10" Foreground="#929A82" />
             <TextBlock Text="{Binding Selected.Size}" FontSize="10" Foreground="#929A82" />
           </StackPanel>
-          <Button Grid.Column="2" Classes="icon" Content="⧉" Click="CopyResponseClicked" IsEnabled="{Binding Selected.HasResponse}" ToolTip.Tip="Copy response" Foreground="#96A087" />
+        <Button Grid.Column="2" Classes="icon" Content="Copy" FontSize="9" Click="CopyResponseClicked" IsEnabled="{Binding Selected.HasResponse}" ToolTip.Tip="Copy response" Foreground="#96A087" />
         </Grid>
       </Border>
       <Grid Grid.Row="1">

@@ -26,9 +26,7 @@ public sealed class WorkspaceStore(string? directory = null) : IWorkspaceStore
         {
             var workspace = JsonSerializer.Deserialize<WorkspaceState>(File.ReadAllText(FilePath), WorkspaceJson.Options)
                 ?? throw new JsonException("Empty workspace");
-            if (workspace.Collections is null || workspace.History is null || workspace.Variables is null ||
-                workspace.Collections.Any(c => c is null || c.Requests is null || c.Requests.Any(r =>
-                    r is null || r.Parameters is null || r.Headers is null || r.Name is null || r.Method is null || r.Url is null || r.Body is null)))
+            if (!WorkspaceSchema.IsValid(workspace))
                 throw new JsonException("Invalid workspace structure");
             return workspace;
         }

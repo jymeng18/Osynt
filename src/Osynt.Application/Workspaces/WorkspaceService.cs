@@ -10,7 +10,7 @@ public sealed class WorkspaceService
     public const int HistoryLimit = 100;
     private readonly IWorkspaceStore _store;
     private readonly ICollectionSerializer _serializer;
-    private readonly WorkspaceState _state;
+    private WorkspaceState _state;
     public WorkspaceService(IWorkspaceStore store, ICollectionSerializer serializer, string demoBaseUrl)
     {
         _store = store;
@@ -32,63 +32,78 @@ public sealed class WorkspaceService
 
     public void SaveRequest(RequestDocument request)
     {
-        var collection = _state.Collections.FirstOrDefault(c => c.Requests.Any(r => r.Id == request.Id));
-        if (collection is null)
+        Commit(state =>
         {
-            collection = _state.Collections.FirstOrDefault(c => c.Name == "My requests");
+            var collection = state.Collections.FirstOrDefault(c => c.Requests.Any(r => r.Id == request.Id));
             if (collection is null)
             {
-                collection = new()
+                collection = state.Collections.FirstOrDefault(c => c.Name == "My requests");
+                if (collection is null)
                 {
-                    Name = "My requests"
-                };
-                _state.Collections.Add(collection);
+                    collection = new()
+                    {
+                        Name = "My requests"
+                    };
+                    state.Collections.Add(collection);
+                }
             }
-        }
-        var index = collection.Requests.FindIndex(r => r.Id == request.Id);
-        if (index < 0)
-            collection.Requests.Add(request.Clone());
-        else
-            collection.Requests[index] = request.Clone();
-        _store.Save(_state);
+            var index = collection.Requests.FindIndex(r => r.Id == request.Id);
+            if (index < 0)
+                collection.Requests.Add(request.Clone());
+            else
+                collection.Requests[index] = request.Clone();
+        });
     }
     public void RecordHistory(RequestDocument request, int statusCode, long elapsedMilliseconds)
     {
-        _state.History.Insert(0, new()
+        Commit(state =>
         {
-            Request = request.Clone(),
-            StatusCode = statusCode,
-            ElapsedMilliseconds = elapsedMilliseconds
+            state.History.Insert(0, new()
+            {
+                Request = request.Clone(),
+                StatusCode = statusCode,
+                ElapsedMilliseconds = elapsedMilliseconds
+            });
+            if (state.History.Count > HistoryLimit)
+                state.History.RemoveRange(HistoryLimit, state.History.Count - HistoryLimit);
         });
-        if (_state.History.Count > HistoryLimit)
-            _state.History.RemoveRange(HistoryLimit, _state.History.Count - HistoryLimit);
-        _store.Save(_state);
     }
     public void ClearHistory()
     {
-        _state.History.Clear();
-        _store.Save(_state);
+        Commit(state => state.History.Clear());
     }
     public void UpdateVariables(IEnumerable<RequestPair> pairs)
     {
         var values = pairs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
         if (values.GroupBy(p => p.Key.Trim(), StringComparer.Ordinal).Any(g => g.Count() > 1))
             throw new ArgumentException("Each environment variable needs a unique name.");
-        _state.Variables = values.ToDictionary(p => p.Key.Trim(), p => p.Value);
-        _state.UseLocalDemo = DemoBaseUrl.Length > 0 && _state.Variables.GetValueOrDefault("base_url") == DemoBaseUrl;
-        _store.Save(_state);
+        Commit(state =>
+        {
+            state.Variables = values.ToDictionary(p => p.Key.Trim(), p => p.Value);
+            state.UseLocalDemo = DemoBaseUrl.Length > 0 && state.Variables.GetValueOrDefault("base_url") == DemoBaseUrl;
+        });
     }
     public string ExportCollections() => _serializer.Serialize(_state.Collections);
     public int ImportCollections(string text)
     {
         var collections = _serializer.Deserialize(text);
-        foreach (var collection in collections)
+        Commit(state =>
         {
-            foreach (var request in collection.Requests)
-                request.Id = Guid.NewGuid();
-            _state.Collections.Add(collection);
-        }
-        _store.Save(_state);
+            foreach (var collection in collections)
+            {
+                foreach (var request in collection.Requests)
+                    request.Id = Guid.NewGuid();
+                state.Collections.Add(collection);
+            }
+        });
         return collections.Count;
+    }
+
+    private void Commit(Action<WorkspaceState> change)
+    {
+        var candidate = _state.Clone();
+        change(candidate);
+        _store.Save(candidate);
+        _state = candidate;
     }
 }
