@@ -30,8 +30,8 @@ cancellation, bounded response previews, and a persistent garden.
 
 ## P2 — Polish and accessibility
 
-- [ ] Add accessible labels to icon buttons, query rows, and request controls.
-- [ ] Document keyboard shortcuts and add keyboard navigation checks.
+- [x] Add accessible labels to icon buttons, query rows, and request controls.
+- [x] Document keyboard shortcuts and add keyboard navigation checks.
 - [x] Add visible no-results states and actionable empty-library/history guidance.
 - [ ] Add response timing breakdowns and configurable preview wrapping.
 - [ ] Add theme, font-size, and reduced-motion preferences.
@@ -86,3 +86,7 @@ cancellation, bounded response previews, and a persistent garden.
   for export; truncated saves are labeled as previews. Text decoding handles declared
   charsets and Unicode BOMs. Desktop checks cover case-insensitive search, next/previous
   navigation, highlighted JSON selection, scrolling to distant matches, Ctrl+F, and binary actions.
+- Keyboard/accessibility batch: 135 checks pass. Ctrl+Tab and Ctrl+Shift+Tab wrap between
+  request tabs while preserving edits, including from the body editor; Ctrl+L focuses and
+  selects the URL. Icon controls and input fields have accessible names. The shortcut guide
+  is in `docs/keyboard-shortcuts.md`. GitHub CI passed the response-inspection commit.

@@ -23,6 +23,15 @@ public partial class MainWindow : Window
         Closing += WindowClosing;
         KeyDown += async (_, e) =>
         {
+            if ((e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta)) && e.Key == Key.L &&
+                Workspace is { Garden.ShowRequests: true })
+            {
+                var input = this.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "UrlInput");
+                input.Focus();
+                input.SelectAll();
+                e.Handled = true;
+                return;
+            }
             if ((e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta)) && e.Key == Key.F &&
                 Workspace is { Garden.ShowRequests: true, Requests.Selected.ShowResponseBody: true } workspace)
             {
@@ -86,7 +95,7 @@ public partial class MainWindow : Window
         var dialog = new Window { Title = "Keyboard shortcuts", Width = 420, SizeToContent = SizeToContent.Height, CanResize = false, WindowStartupLocation = WindowStartupLocation.CenterOwner };
         var panel = new StackPanel { Margin = new(30), Spacing = 18 };
         panel.Children.Add(new TextBlock { Text = "Keyboard shortcuts", FontSize = 23, FontWeight = FontWeight.SemiBold });
-        foreach (var (label, shortcut) in new[] { ("Send / cancel request", "Ctrl / ⌘ + Enter"), ("Save request", "Ctrl / ⌘ + S"), ("New request", "Ctrl / ⌘ + N"), ("Close request tab", "Ctrl / ⌘ + W"), ("Find in response", "Ctrl / ⌘ + F"), ("Open garden", "Ctrl / ⌘ + G") })
+        foreach (var (label, shortcut) in new[] { ("Send / cancel request", "Ctrl / ⌘ + Enter"), ("Save request", "Ctrl / ⌘ + S"), ("New request", "Ctrl / ⌘ + N"), ("Close request tab", "Ctrl / ⌘ + W"), ("Find in response", "Ctrl / ⌘ + F"), ("Open garden", "Ctrl / ⌘ + G"), ("Focus request URL", "Ctrl / ⌘ + L"), ("Next / previous tab", "Ctrl + Tab / Ctrl + Shift + Tab") })
         {
             var row = new Grid { ColumnDefinitions = new("*,Auto") };
             row.Children.Add(new TextBlock { Text = label, FontSize = 12 });

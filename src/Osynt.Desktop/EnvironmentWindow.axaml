@@ -10,9 +10,9 @@
     <ScrollViewer Grid.Row="2">
       <ItemsControl x:Name="VariableList"><ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
         <Grid ColumnDefinitions="2*,3*,30" ColumnSpacing="8" Margin="0,0,0,8">
-          <TextBox Text="{Binding Key}" Watermark="name" />
-          <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="value" />
-          <Button Grid.Column="2" Classes="icon" Content="×" Tag="{Binding}" Click="RemoveClicked" />
+          <TextBox Text="{Binding Key}" Watermark="name" AutomationProperties.Name="Variable name" />
+          <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="value" AutomationProperties.Name="Variable value" />
+          <Button Grid.Column="2" Classes="icon" Content="×" Tag="{Binding}" Click="RemoveClicked" AutomationProperties.Name="Remove variable" />
         </Grid>
       </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
     </ScrollViewer>

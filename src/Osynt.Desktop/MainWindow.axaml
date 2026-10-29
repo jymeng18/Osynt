@@ -8,6 +8,8 @@
     <KeyBinding Gesture="Ctrl+Enter" Command="{Binding Sending.SendCommand}" />
     <KeyBinding Gesture="Ctrl+S" Command="{Binding Requests.SaveCommand}" />
     <KeyBinding Gesture="Ctrl+N" Command="{Binding NewRequestCommand}" />
+    <KeyBinding Gesture="Ctrl+Tab" Command="{Binding Requests.NextTabCommand}" />
+    <KeyBinding Gesture="Ctrl+Shift+Tab" Command="{Binding Requests.PreviousTabCommand}" />
     <KeyBinding Gesture="Ctrl+G" Command="{Binding OpenGardenCommand}" />
     <KeyBinding Gesture="Meta+Enter" Command="{Binding Sending.SendCommand}" />
     <KeyBinding Gesture="Meta+S" Command="{Binding Requests.SaveCommand}" />
@@ -25,10 +27,10 @@
           <TextBlock Text="Workspace" FontSize="11" Foreground="#818775" />
         </StackPanel>
         <StackPanel Grid.Column="2" Orientation="Horizontal">
-          <Button Classes="icon" Width="36" Content="?" Click="HelpClicked" ToolTip.Tip="Keyboard shortcuts" />
-          <Button Classes="icon" Width="43" Content="−" Click="MinimizeClicked" ToolTip.Tip="Minimize" />
-          <Button Classes="icon" Width="43" Content="□" Click="MaximizeClicked" ToolTip.Tip="Maximize or restore" />
-          <Button Classes="icon" Width="43" Content="×" Click="CloseClicked" ToolTip.Tip="Close" />
+          <Button Classes="icon" Width="36" Content="?" Click="HelpClicked" ToolTip.Tip="Keyboard shortcuts" AutomationProperties.Name="Keyboard shortcuts" />
+          <Button Classes="icon" Width="43" Content="−" Click="MinimizeClicked" ToolTip.Tip="Minimize" AutomationProperties.Name="Minimize" />
+          <Button Classes="icon" Width="43" Content="□" Click="MaximizeClicked" ToolTip.Tip="Maximize or restore" AutomationProperties.Name="Maximize or restore" />
+          <Button Classes="icon" Width="43" Content="×" Click="CloseClicked" ToolTip.Tip="Close" AutomationProperties.Name="Close" />
         </StackPanel>
       </Grid>
     </Border>

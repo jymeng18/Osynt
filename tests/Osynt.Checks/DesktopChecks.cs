@@ -170,6 +170,38 @@ internal static partial class Program
             Equal("Meet the villagers", uiWorkspace.Library.Collections[0].Requests[0].Name);
             uiWorkspace.Library.Search = "";
         });
+        Check("Keyboard tab navigation wraps without losing edits and Ctrl+L selects the request URL", () =>
+        {
+            var original = uiWorkspace.Requests.Selected;
+            uiWorkspace.NewRequest();
+            var first = uiWorkspace.Requests.Selected;
+            first.Document.Url = "https://example.com/first";
+            uiWorkspace.NewRequest();
+            var second = uiWorkspace.Requests.Selected;
+            second.Document.Url = "https://example.com/second";
+            uiWorkspace.Editor.EditorCommand.Execute("Body");
+            Dispatcher.UIThread.RunJobs();
+            window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "BodyInput").Focus();
+            window.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.Control);
+            window.KeyReleaseQwerty(PhysicalKey.Tab, RawInputModifiers.Control);
+            Dispatcher.UIThread.RunJobs();
+            Equal(uiWorkspace.Requests.Tabs[0], uiWorkspace.Requests.Selected);
+            window.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.Control | RawInputModifiers.Shift);
+            window.KeyReleaseQwerty(PhysicalKey.Tab, RawInputModifiers.Control | RawInputModifiers.Shift);
+            Dispatcher.UIThread.RunJobs();
+            Equal(second, uiWorkspace.Requests.Selected);
+            True(first.IsDirty && second.IsDirty);
+            Equal("https://example.com/first", first.Document.Url);
+            window.KeyPressQwerty(PhysicalKey.L, RawInputModifiers.Control);
+            window.KeyReleaseQwerty(PhysicalKey.L, RawInputModifiers.Control);
+            Dispatcher.UIThread.RunJobs();
+            var url = window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "UrlInput");
+            True(url.IsFocused);
+            Equal(second.Document.Url.Length, Math.Abs(url.SelectionEnd - url.SelectionStart));
+            uiWorkspace.Requests.Discard(second);
+            uiWorkspace.Requests.Discard(first);
+            uiWorkspace.Requests.Selected = original;
+        });
         Check("Sidebar shows actionable no-results text and hides it when the search clears", () =>
         {
             uiWorkspace.Library.Search = "no-request-matches-this";

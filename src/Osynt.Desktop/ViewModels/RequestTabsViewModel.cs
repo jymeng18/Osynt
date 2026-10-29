@@ -19,9 +19,25 @@ public sealed class RequestTabsViewModel : ObservableModel, IDisposable
         Tabs.Add(_selected);
         SelectCommand = new ActionCommand(p => { if (p is RequestTab tab) Selected = tab; });
         SaveCommand = new ActionCommand(_ => SaveSelected());
+        NextTabCommand = new ActionCommand(_ => SelectRelative(1));
+        PreviousTabCommand = new ActionCommand(_ => SelectRelative(-1));
     }
 
     public event Action? Saved;
+    public ICommand NextTabCommand
+    {
+        get;
+    }
+    public ICommand PreviousTabCommand
+    {
+        get;
+    }
+
+    private void SelectRelative(int direction)
+    {
+        if (Tabs.Count > 0)
+            Selected = Tabs[(Tabs.IndexOf(Selected) + direction + Tabs.Count) % Tabs.Count];
+    }
     public ObservableCollection<RequestTab> Tabs { get; } = [];
     public ICommand SelectCommand
     {
