@@ -20,7 +20,7 @@ cancellation, bounded response previews, and a persistent garden.
 - [x] Add Bearer and Basic authentication helpers with environment-variable support.
 - [ ] Import requests from cURL and copy requests as cURL.
 - [ ] Import and export Postman collections with clear unsupported-feature notices.
-- [ ] Duplicate saved requests and move requests between folders.
+- [x] Create folders, duplicate saved requests, and move requests between folders.
 - [x] Search collections by folder name, request method, name, and URL; show empty results clearly.
 - [ ] Find text in responses, copy response bodies/headers, and save responses to disk.
 - [ ] Show response truncation and content type clearly; handle binary previews gracefully.
@@ -67,3 +67,6 @@ cancellation, bounded response previews, and a persistent garden.
 - Authentication batch: 116 checks pass, including server-observed Bearer/Basic headers,
   UTF-8 Basic credentials, explicit header precedence, invalid credential rejection,
   persistence/isolation, and masked desktop input bindings.
+- Organization batch: 122 checks pass. Copies have fresh identities and independent
+  nested payload/authentication data. Moves persist to the chosen folder, include destinations
+  hidden by search, preserve unsaved tab edits, and roll back when saving fails.

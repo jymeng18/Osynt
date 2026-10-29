@@ -130,6 +130,33 @@ public sealed class LibraryViewModel : ObservableModel
 
     public string ExportCollections() => _collections.Export();
 
+    public IReadOnlyList<Osynt.Domain.Workspaces.RequestCollection> GetAllCollections() => _collections.GetCollections();
+
+    public bool CreateCollection(string name)
+    {
+        if (!_status.TrySave(() => _collections.Create(name), "Folder created."))
+            return false;
+        RefreshCollections();
+        return true;
+    }
+
+    public RequestDocument? DuplicateRequest(Guid requestId)
+    {
+        RequestDocument? duplicate = null;
+        if (!_status.TrySave(() => duplicate = _collections.DuplicateRequest(requestId), "Request duplicated."))
+            return null;
+        RefreshCollections();
+        return duplicate;
+    }
+
+    public bool MoveRequest(Guid requestId, Guid destinationId)
+    {
+        if (!_status.TrySave(() => _collections.MoveRequest(requestId, destinationId), "Request moved."))
+            return false;
+        RefreshCollections();
+        return true;
+    }
+
     public bool DeleteRequest(Guid requestId, bool dontAskAgain = false)
     {
         if (!_status.TrySave(() => _collections.DeleteRequest(requestId, dontAskAgain)))

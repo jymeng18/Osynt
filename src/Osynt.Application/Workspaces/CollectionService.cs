@@ -26,6 +26,43 @@ public sealed class CollectionService(WorkspaceSession session, ICollectionSeria
 
     public string Export() => serializer.Serialize(GetCollections());
 
+    public Guid Create(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Enter a folder name.");
+        var collection = new RequestCollection { Name = name.Trim() };
+        session.Commit(state => state.Collections.Add(collection));
+        return collection.Id;
+    }
+
+    public RequestDocument DuplicateRequest(Guid requestId)
+    {
+        RequestDocument? duplicate = null;
+        session.Commit(state =>
+        {
+            var collection = state.Collections.FirstOrDefault(c => c.Requests.Any(r => r.Id == requestId))
+                ?? throw new InvalidOperationException("This request no longer exists.");
+            var index = collection.Requests.FindIndex(r => r.Id == requestId);
+            duplicate = collection.Requests[index].Clone(newId: true);
+            duplicate.Name += " copy";
+            collection.Requests.Insert(index + 1, duplicate);
+        });
+        return duplicate!.Clone();
+    }
+
+    public void MoveRequest(Guid requestId, Guid destinationId) => session.Commit(state =>
+    {
+        var destination = state.Collections.FirstOrDefault(c => c.Id == destinationId)
+            ?? throw new InvalidOperationException("The destination folder no longer exists.");
+        var source = state.Collections.FirstOrDefault(c => c.Requests.Any(r => r.Id == requestId))
+            ?? throw new InvalidOperationException("This request no longer exists.");
+        if (source.Id == destinationId)
+            return;
+        var request = source.Requests.Single(r => r.Id == requestId);
+        source.Requests.Remove(request);
+        destination.Requests.Add(request);
+    });
+
     public void DeleteRequest(Guid requestId, bool dontAskAgain = false) => session.Commit(state =>
     {
         foreach (var collection in state.Collections)

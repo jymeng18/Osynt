@@ -291,6 +291,7 @@ internal static partial class Program
         RunFolderDesktopChecks(directory, executor, demo);
         RunDeletionDesktopChecks(directory, executor, demo);
         RunRequestRenameDesktopChecks(directory, executor, demo);
+        RunRequestOrganizationDesktopChecks(directory, executor, demo);
         RunDeletionPreferenceDesktopChecks(directory, executor, demo);
     }
 }

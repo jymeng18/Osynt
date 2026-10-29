@@ -53,6 +53,8 @@
                           <Button.ContextMenu>
                             <ContextMenu>
                               <MenuItem Header="Rename" Click="RenameRequestClicked" Tag="{Binding}" />
+                              <MenuItem Header="Duplicate" Click="DuplicateRequestClicked" Tag="{Binding}" />
+                              <MenuItem Header="Move to folder…" Click="MoveRequestClicked" Tag="{Binding}" />
                               <MenuItem Header="Delete" Click="DeleteRequestClicked" Tag="{Binding}" />
                             </ContextMenu>
                           </Button.ContextMenu>
@@ -90,6 +92,7 @@
         </StackPanel>
       </ScrollViewer>
       <StackPanel Grid.Row="4">
+        <Button Content="+  New folder" Click="CreateFolderClicked" FontSize="11" Margin="14,0,14,8" HorizontalAlignment="Stretch" IsVisible="{Binding Library.ShowCollections}" />
         <Grid ColumnDefinitions="*,*" Margin="14,0,14,10">
           <Button Content="Import" Click="ImportClicked" FontSize="11" HorizontalAlignment="Stretch" ToolTip.Tip="Import Osynt collections" />
           <Button Grid.Column="1" Content="Export" Click="ExportClicked" FontSize="11" HorizontalAlignment="Stretch" />

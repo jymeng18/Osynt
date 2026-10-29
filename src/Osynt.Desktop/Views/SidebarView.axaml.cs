@@ -8,6 +8,28 @@ namespace Osynt.Desktop.Views;
 public partial class SidebarView : UserControl
 {
     public SidebarView() => InitializeComponent();
+    private async void CreateFolderClicked(object? sender, RoutedEventArgs e)
+    {
+        if (TopLevel.GetTopLevel(this) is Window owner && DataContext is WorkspaceViewModel workspace)
+            await new RenameItemWindow("New folder", "", workspace.Library.CreateCollection).ShowDialog(owner);
+    }
+    private void DuplicateRequestClicked(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem { Tag: LibraryRequest request } || DataContext is not WorkspaceViewModel workspace)
+            return;
+        try
+        {
+            if (workspace.Library.DuplicateRequest(request.Document.Id) is { } duplicate)
+                workspace.Open(duplicate);
+        }
+        catch (InvalidOperationException error) { workspace.Status.Notice = error.Message; }
+    }
+    private async void MoveRequestClicked(object? sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem { Tag: LibraryRequest request } &&
+            TopLevel.GetTopLevel(this) is Window owner && DataContext is WorkspaceViewModel workspace)
+            await new MoveRequestWindow(workspace.Library, request).ShowDialog(owner);
+    }
     private async void RenameClicked(object? sender, RoutedEventArgs e)
     {
         if (sender is MenuItem { Tag: LibraryCollection collection } &&

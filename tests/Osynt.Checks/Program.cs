@@ -48,6 +48,7 @@ internal static partial class Program
         RunRecoveryChecks(directory);
         RunApplicationChecks();
         RunCollectionChecks(directory);
+        RunRequestOrganizationChecks(directory);
         RunLibrarySearchChecks();
         RunDeletionChecks(directory);
         RunRequestRenameChecks(directory);
