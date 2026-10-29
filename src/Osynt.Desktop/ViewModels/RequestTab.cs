@@ -109,8 +109,11 @@ public sealed class RequestTab : ObservableModel, IDisposable
     public string SendLabel => IsSending ? "Cancel" : "Send";
     public string EmptyTitle => IsSending ? "Sending request…" : "Ready for your next request";
     public string EmptyHint => IsSending ? "Waiting for a response." : "Enter a URL and press Send.  Ctrl + Enter";
-    public bool EmptyResponseBody => HasResponse && Response!.Body.Length == 0;
-    public bool ShowResponseBody => HasResponse && !EmptyResponseBody;
+    public bool EmptyResponseBody => HasResponse && Response!.Body.Length == 0 && Response.BinaryBody is not { Length: > 0 };
+    public bool BinaryResponse => HasResponse && Response!.IsBinary && !EmptyResponseBody;
+    public bool ShowResponseBody => HasResponse && !EmptyResponseBody && !BinaryResponse;
+    public bool CanCopyResponse => HasResponse && !BinaryResponse;
+    public string ContentType => HasResponse ? Response!.ContentType is { Length: > 0 } type ? type : "Unknown content type" : "";
     public string ResponseDisplay
     {
         get
@@ -132,7 +135,8 @@ public sealed class RequestTab : ObservableModel, IDisposable
     private void RaiseResponseProperties()
     {
         foreach (var name in new[] { nameof(HasResponse), nameof(ShowEmpty), nameof(HasError), nameof(IsSuccess), nameof(IsFailure), nameof(Status),
-            nameof(Duration), nameof(Size), nameof(SendLabel), nameof(EmptyTitle), nameof(EmptyHint), nameof(ResponseDisplay), nameof(ResponseHeaders), nameof(Truncated), nameof(EmptyResponseBody), nameof(ShowResponseBody) })
+            nameof(Duration), nameof(Size), nameof(SendLabel), nameof(EmptyTitle), nameof(EmptyHint), nameof(ResponseDisplay), nameof(ResponseHeaders), nameof(Truncated), nameof(EmptyResponseBody), nameof(ShowResponseBody),
+            nameof(BinaryResponse), nameof(CanCopyResponse), nameof(ContentType) })
             Raise(name);
     }
     private void DocumentChanged(object? sender, PropertyChangedEventArgs e)

@@ -36,7 +36,7 @@ public sealed class RequestExecutor(HttpClient client) : IRequestExecutor
             var headers = response.Headers.Concat(response.Content.Headers)
                 .Select(h => new KeyValuePair<string, string>(h.Key, string.Join(", ", h.Value))).ToList();
             return new((int)response.StatusCode, response.ReasonPhrase ?? "", timer.ElapsedMilliseconds,
-                body.SizeBytes, body.Text, headers, body.Truncated);
+                body.SizeBytes, body.Text, headers, body.Truncated, body.BinaryBytes);
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {

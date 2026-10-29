@@ -293,6 +293,7 @@ internal static partial class Program
         RunRequestRenameDesktopChecks(directory, executor, demo);
         RunRequestOrganizationDesktopChecks(directory, executor, demo);
         RunCurlDesktopChecks(directory, executor, demo);
+        RunResponseInspectionDesktopChecks(directory, executor, demo);
         RunDeletionPreferenceDesktopChecks(directory, executor, demo);
     }
 }

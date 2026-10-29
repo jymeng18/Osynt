@@ -3,6 +3,7 @@ using System.Text.Json;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Osynt.Desktop.ViewModels;
+using Osynt.Desktop.Presentation;
 
 namespace Osynt.Desktop.Services;
 
@@ -31,7 +32,7 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
 
     public async Task CopyResponseAsync()
     {
-        if (!workspace.Requests.Selected.HasResponse || owner.Clipboard is null)
+        if (!workspace.Requests.Selected.CanCopyResponse || owner.Clipboard is null)
             return;
         try
         {
@@ -43,12 +44,28 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
             workspace.Status.Notice = "Could not reach the clipboard. Try Save response instead.";
         }
     }
+    public async Task CopyResponseHeadersAsync()
+    {
+        if (!workspace.Requests.Selected.HasResponse || owner.Clipboard is null)
+            return;
+        var text = string.Join(Environment.NewLine, workspace.Requests.Selected.ResponseHeaders.Select(h => $"{h.Key}: {h.Value}"));
+        try
+        {
+            await owner.Clipboard.SetTextAsync(text);
+            workspace.Status.Notice = "Response headers copied.";
+        }
+        catch (Exception error) when (error is InvalidOperationException or System.Runtime.InteropServices.ExternalException)
+        {
+            workspace.Status.Notice = "Could not reach the clipboard. Try again.";
+        }
+    }
     public Task SaveResponseAsync()
     {
         if (workspace.Requests.Selected.Response is not { } response)
             return Task.CompletedTask;
-        var name = response.Body.TrimStart().StartsWith('{') || response.Body.TrimStart().StartsWith('[') ? "response.json" : "response.txt";
-        return SaveTextAsync("Save response", name, workspace.Requests.Selected.ResponseDisplay);
+        var bytes = ResponseExport.Bytes(response, workspace.Requests.Selected.ResponseDisplay);
+        return SaveFileAsync(response.Truncated ? "Save response preview" : "Save response", ResponseExport.FileName(response),
+            stream => stream.WriteAsync(bytes).AsTask(), response.Truncated);
     }
     public Task ExportAsync() => SaveTextAsync("Export Osynt collections", "osynt-collections.json", workspace.Library.ExportCollections());
     public async Task ImportAsync()
@@ -72,7 +89,10 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
             workspace.Status.Notice = $"Could not import this file. Choose an Osynt collection JSON export. {ex.Message}";
         }
     }
-    private async Task SaveTextAsync(string title, string name, string text)
+    private Task SaveTextAsync(string title, string name, string text) =>
+        SaveFileAsync(title, name, stream => stream.WriteAsync(new UTF8Encoding(false).GetBytes(text)).AsTask());
+
+    private async Task SaveFileAsync(string title, string name, Func<Stream, Task> write, bool preview = false)
     {
         try
         {
@@ -81,16 +101,15 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
                 Title = title,
                 SuggestedFileName = name,
                 DefaultExtension = Path.GetExtension(name).TrimStart('.'),
-                FileTypeChoices = [JsonFile, FilePickerFileTypes.All]
+                FileTypeChoices = name.EndsWith(".json", StringComparison.OrdinalIgnoreCase) ? [JsonFile, FilePickerFileTypes.All] : [FilePickerFileTypes.All]
             });
             if (file is null)
                 return;
             await using var stream = await file.OpenWriteAsync();
             if (stream.CanSeek)
                 stream.SetLength(0);
-            await using var writer = new StreamWriter(stream, new UTF8Encoding(false));
-            await writer.WriteAsync(text);
-            workspace.Status.Notice = $"Saved {file.Name}.";
+            await write(stream);
+            workspace.Status.Notice = preview ? $"Saved {file.Name} (preview only; the response exceeded 5 MB)." : $"Saved {file.Name}.";
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {

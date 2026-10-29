@@ -22,8 +22,8 @@ cancellation, bounded response previews, and a persistent garden.
 - [ ] Import and export Postman collections with clear unsupported-feature notices.
 - [x] Create folders, duplicate saved requests, and move requests between folders.
 - [x] Search collections by folder name, request method, name, and URL; show empty results clearly.
-- [ ] Find text in responses, copy response bodies/headers, and save responses to disk.
-- [ ] Show response truncation and content type clearly; handle binary previews gracefully.
+- [x] Find text in responses, copy response bodies/headers, and save responses to disk.
+- [x] Show response truncation and content type clearly; handle binary previews gracefully.
 - [ ] Add named environments and an environment selector.
 - [ ] Persist open tabs and recover unsaved drafts after restart.
 - [ ] Provide an explicit redirect policy and show final response URL.
@@ -82,3 +82,7 @@ cancellation, bounded response previews, and a persistent garden.
   a real API, resolved payload/header round trips (including quotes and Unicode), invalid
   command rejection, and unsaved-tab/dialog behavior. See `docs/curl.md` for supported
   options and differences in redirect/session behavior. GitHub CI passed the release-tooling commit.
+- Response inspection batch: 134 checks pass. Binary responses retain bounded, exact bytes
+  for export; truncated saves are labeled as previews. Text decoding handles declared
+  charsets and Unicode BOMs. Desktop checks cover case-insensitive search, next/previous
+  navigation, highlighted JSON selection, scrolling to distant matches, Ctrl+F, and binary actions.

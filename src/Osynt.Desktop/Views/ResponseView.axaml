@@ -13,7 +13,7 @@
             <TextBlock Text="{Binding Requests.Selected.Size}" FontSize="10" Foreground="#929A82" />
           </StackPanel>
         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5">
-            <Button Classes="icon" Content="Copy" FontSize="11" Click="CopyResponseClicked" IsEnabled="{Binding Requests.Selected.HasResponse}" ToolTip.Tip="Copy response" />
+            <Button Classes="icon" Content="Copy" FontSize="11" Click="CopyResponseClicked" IsEnabled="{Binding Requests.Selected.CanCopyResponse}" ToolTip.Tip="Copy response body" />
             <Button Classes="icon" Content="Save" FontSize="11" Click="SaveResponseClicked" IsEnabled="{Binding Requests.Selected.HasResponse}" ToolTip.Tip="Save response to a file" />
           </StackPanel>
         </Grid>
@@ -30,32 +30,39 @@
           <TextBlock Text="Check the address and try again." Foreground="#AFB09B" FontSize="11" />
         </StackPanel>
         <Grid IsVisible="{Binding Requests.Selected.HasResponse}" RowDefinitions="38,*">
-          <Grid ColumnDefinitions="*,Auto" Margin="17,0">
+          <Grid ColumnDefinitions="Auto,*,Auto" Margin="17,0">
             <StackPanel Orientation="Horizontal">
               <Button Classes="section" Classes.selected="{Binding Editor.ResponseBodyActive}" Content="Body" Command="{Binding Editor.ResponsePaneCommand}" CommandParameter="Body" Padding="0,11" Margin="0,0,20,0" FontSize="10" />
               <Button Classes="section" Classes.selected="{Binding Editor.ResponseHeadersActive}" Content="Headers" Command="{Binding Editor.ResponsePaneCommand}" CommandParameter="Headers" Padding="0,11" FontSize="10" />
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="3" IsVisible="{Binding Editor.ResponseBodyActive}">
-              <Button Classes="segment" Classes.selected="{Binding Requests.Selected.Pretty}" Content="Pretty" Command="{Binding Editor.PrettyCommand}" CommandParameter="Pretty" FontSize="11" />
-              <Button Classes="segment" Classes.selected="{Binding Requests.Selected.Raw}" Content="Raw" Command="{Binding Editor.PrettyCommand}" CommandParameter="Raw" FontSize="11" />
+            <TextBlock Grid.Column="1" Text="{Binding Requests.Selected.ContentType}" FontSize="9" Foreground="#929A82" TextTrimming="CharacterEllipsis" Margin="16,0,8,0" VerticalAlignment="Center" ToolTip.Tip="{Binding Requests.Selected.ContentType}" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="3" IsVisible="{Binding Editor.ResponseBodyActive}">
+              <Button Classes="segment" Content="Find" Click="FindClicked" IsEnabled="{Binding Requests.Selected.ShowResponseBody}" FontSize="11" ToolTip.Tip="Find text in response · Ctrl+F" />
+              <Button Classes="segment" Classes.selected="{Binding Requests.Selected.Pretty}" Content="Pretty" Command="{Binding Editor.PrettyCommand}" CommandParameter="Pretty" FontSize="11" IsEnabled="{Binding Requests.Selected.ShowResponseBody}" />
+              <Button Classes="segment" Classes.selected="{Binding Requests.Selected.Raw}" Content="Raw" Command="{Binding Editor.PrettyCommand}" CommandParameter="Raw" FontSize="11" IsEnabled="{Binding Requests.Selected.ShowResponseBody}" />
             </StackPanel>
           </Grid>
           <Grid Grid.Row="1" IsVisible="{Binding Editor.ResponseBodyActive}">
-            <art:CodeViewer Code="{Binding Requests.Selected.ResponseDisplay}" Highlight="{Binding Requests.Selected.Pretty}" IsVisible="{Binding Requests.Selected.ShowResponseBody}" />
+            <art:CodeViewer x:Name="ResponseCode" Code="{Binding Requests.Selected.ResponseDisplay}" Highlight="{Binding Requests.Selected.Pretty}" IsVisible="{Binding Requests.Selected.ShowResponseBody}" />
+            <StackPanel IsVisible="{Binding Requests.Selected.BinaryResponse}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8" Margin="16">
+              <TextBlock Text="Binary response" FontSize="14" Foreground="#7E8D6D" HorizontalAlignment="Center" />
+              <TextBlock Text="Save this response to open it in another app." FontSize="11" Foreground="#929A85" TextWrapping="Wrap" />
+            </StackPanel>
             <StackPanel IsVisible="{Binding Requests.Selected.EmptyResponseBody}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
               <TextBlock Text="No response body" FontSize="14" Foreground="#7E8D6D" HorizontalAlignment="Center" />
               <TextBlock Text="The server returned no content. Check the status and headers above." FontSize="11" Foreground="#929A85" />
             </StackPanel>
           </Grid>
-          <ScrollViewer Grid.Row="1" IsVisible="{Binding Editor.ResponseHeadersActive}" Margin="17,8">
-            <ItemsControl ItemsSource="{Binding Requests.Selected.ResponseHeaders}"><ItemsControl.ItemTemplate><DataTemplate>
+          <Grid Grid.Row="1" IsVisible="{Binding Editor.ResponseHeadersActive}" RowDefinitions="Auto,*" Margin="17,8">
+            <Button Content="Copy headers" Click="CopyHeadersClicked" HorizontalAlignment="Right" FontSize="10" Padding="8,4" />
+            <ScrollViewer Grid.Row="1"><ItemsControl ItemsSource="{Binding Requests.Selected.ResponseHeaders}"><ItemsControl.ItemTemplate><DataTemplate>
               <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1" Padding="3,9"><Grid ColumnDefinitions="210,*"><TextBlock Text="{Binding Key}" FontSize="11" Foreground="#8C8090" /><SelectableTextBlock Grid.Column="1" Text="{Binding Value}" FontSize="11" Foreground="#849374" TextWrapping="Wrap" /></Grid></Border>
-            </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-          </ScrollViewer>
+            </DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
+          </Grid>
         </Grid>
       </Grid>
       <Border Grid.Row="2" IsVisible="{Binding Requests.Selected.Truncated}" Background="#F6EEDB" Padding="14,8">
-        <TextBlock Text="Response preview limited to 5 MB." Foreground="#9A7948" FontSize="11" />
+        <TextBlock Text="Response exceeds 5 MB. Only this preview is available; saved files also contain only the preview." Foreground="#9A7948" FontSize="11" TextWrapping="Wrap" />
       </Border>
     </Grid>
   </Border>

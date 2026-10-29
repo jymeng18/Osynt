@@ -45,6 +45,7 @@ internal static partial class Program
         RunBodyModeChecks(directory, executor);
         RunAuthenticationChecks(directory, executor);
         RunCurlChecks(executor);
+        RunResponseInspectionChecks();
         RunWorkspaceChecks(directory, executor, demo);
         RunRecoveryChecks(directory);
         RunApplicationChecks();
