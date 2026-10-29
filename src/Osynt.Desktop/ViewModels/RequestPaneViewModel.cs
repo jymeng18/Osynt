@@ -22,9 +22,24 @@ public sealed class RequestPaneViewModel : ObservableModel
         RemovePairCommand = new ActionCommand(p => { if (p is RequestPairViewModel pair) RemovePair(pair); });
         PrettyCommand = new ActionCommand(p => _requests.Selected.Raw = p?.ToString() == "Raw");
         FormatBodyCommand = new ActionCommand(_ => FormatBody());
+        AddFormFieldCommand = new ActionCommand(_ => _requests.Selected.Document.FormFields.Add(new()));
+        RemoveFormFieldCommand = new ActionCommand(p =>
+        {
+            if (p is RequestPairViewModel pair)
+                _requests.Selected.Document.FormFields.Remove(pair);
+        });
     }
 
     public IReadOnlyList<string> Methods => RequestMethods.All;
+    public IReadOnlyList<string> BodyModes => RequestBodyModes.All;
+    public ICommand AddFormFieldCommand
+    {
+        get;
+    }
+    public ICommand RemoveFormFieldCommand
+    {
+        get;
+    }
     public bool ParamsActive => _editor == "Params";
     public bool HeadersActive => _editor == "Headers";
     public bool BodyActive => _editor == "Body";
@@ -88,6 +103,8 @@ public sealed class RequestPaneViewModel : ObservableModel
         try
         {
             var document = _requests.Selected.Document;
+            if (!document.JsonBody)
+                return;
             document.Body = JsonPresentation.Format(document.Body);
             _status.Notice = "JSON formatted.";
         }

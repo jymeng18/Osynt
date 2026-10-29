@@ -31,6 +31,20 @@ internal sealed class AspNetApiFixture : IDisposable
             hasBody = context.Request.ContentLength is > 0
         }));
         _application.MapPost("/echo", (JsonElement payload) => Results.Json(payload));
+        _application.MapPost("/text", async (HttpContext context) =>
+        {
+            using var reader = new StreamReader(context.Request.Body);
+            return Results.Json(new
+            {
+                contentType = context.Request.ContentType,
+                body = await reader.ReadToEndAsync()
+            });
+        });
+        _application.MapPost("/form", async (HttpContext context) =>
+        {
+            var form = await context.Request.ReadFormAsync();
+            return Results.Json(form.ToDictionary(p => p.Key, p => p.Value.ToArray()));
+        });
         _application.MapGet("/redirect", () => Results.Redirect("/health"));
         _application.StartAsync().GetAwaiter().GetResult();
         BaseUrl = _application.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();

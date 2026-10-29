@@ -16,7 +16,7 @@ cancellation, bounded response previews, and a persistent garden.
 
 ## P1 — Everyday API workflows
 
-- [ ] Add raw text and form body modes with matching content types.
+- [x] Add raw text and form body modes with matching content types.
 - [ ] Add Bearer and Basic authentication helpers with environment-variable support.
 - [ ] Import requests from cURL and copy requests as cURL.
 - [ ] Import and export Postman collections with clear unsupported-feature notices.
@@ -57,3 +57,7 @@ cancellation, bounded response previews, and a persistent garden.
   recovery, backup retention, failed replacement rollback and cleanup, duplicate identities,
   templated header overrides, repeated custom values, and header injection rejection.
   The first GitHub desktop CI job also passed.
+- Body formats batch: 107 checks pass, including real ASP.NET text/form requests,
+  Unicode and reserved-character encoding, disabled fields, retained drafts, storage
+  and export round trips, and desktop picker/add/remove interactions.
+  The initial GitHub workflow completed successfully for both desktop and garden.

@@ -95,6 +95,33 @@ internal static partial class Program
             uiWorkspace.Requests.Selected = postTab;
             Equal(201, uiWorkspace.Requests.Selected.Response?.StatusCode ?? 0);
         });
+        Check("Body format picker changes the editor and form controls preserve drafts", () =>
+        {
+            var original = uiWorkspace.Requests.Selected;
+            uiWorkspace.NewRequest();
+            uiWorkspace.Editor.EditorCommand.Execute("Body");
+            Dispatcher.UIThread.RunJobs();
+            var picker = window.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "BodyModePicker");
+            picker.SelectedItem = RequestBodyModes.Form;
+            Dispatcher.UIThread.RunJobs();
+            True(uiWorkspace.Requests.Selected.Document.FormBody);
+            var add = window.GetVisualDescendants().OfType<Button>().Single(b => b.Content as string == "+  Add form field");
+            True(add.IsEffectivelyVisible);
+            Click(window, add);
+            var field = uiWorkspace.Requests.Selected.Document.FormFields.Single();
+            field.Key = "crop";
+            field.Value = "Maple";
+            picker.SelectedItem = RequestBodyModes.None;
+            Dispatcher.UIThread.RunJobs();
+            True(!uiWorkspace.Requests.Selected.HasBody);
+            picker.SelectedItem = RequestBodyModes.Form;
+            Dispatcher.UIThread.RunJobs();
+            Equal("Maple", uiWorkspace.Requests.Selected.Document.FormFields.Single().Value);
+            Click(window, window.GetVisualDescendants().OfType<Button>().Single(b => b.CommandParameter == field));
+            Equal(0, uiWorkspace.Requests.Selected.Document.FormFields.Count);
+            uiWorkspace.Requests.Discard(uiWorkspace.Requests.Selected);
+            uiWorkspace.Requests.Selected = original;
+        });
         Check("Ctrl+N creates a request and Ctrl+S persists it", () =>
         {
             var count = uiWorkspace.Requests.Tabs.Count;

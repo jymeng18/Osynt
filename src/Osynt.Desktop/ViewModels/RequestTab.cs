@@ -44,6 +44,7 @@ public sealed class RequestTab : ObservableModel, IDisposable
         Document.PropertyChanged += DocumentChanged;
         Document.Parameters.CollectionChanged += PairsChanged;
         Document.Headers.CollectionChanged += PairsChanged;
+        Document.FormFields.CollectionChanged += PairsChanged;
         ObservePairs();
     }
     public bool IsDirty
@@ -78,7 +79,9 @@ public sealed class RequestTab : ObservableModel, IDisposable
     public bool Pretty => !Raw;
     public string TabTitle => Document.Name;
     public string MethodColor => Document.Method switch { "GET" => "#6E8C50", "POST" => "#BD9652", "DELETE" => "#B87966", _ => "#9A85AA" };
-    public bool HasBody => !string.IsNullOrEmpty(Document.Body);
+    public bool HasBody => Document.FormBody
+        ? Document.FormFields.Any(p => p.Enabled && !string.IsNullOrWhiteSpace(p.Key))
+        : !Document.NoBody && !string.IsNullOrEmpty(Document.Body);
     public ResponseData? Response
     {
         get => _response; set
@@ -143,11 +146,16 @@ public sealed class RequestTab : ObservableModel, IDisposable
     {
         ObservePairs();
         IsDirty = true;
+        Raise(nameof(HasBody));
     }
-    private void PairChanged(object? sender, PropertyChangedEventArgs e) => IsDirty = true;
+    private void PairChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        IsDirty = true;
+        Raise(nameof(HasBody));
+    }
     private void ObservePairs()
     {
-        var current = Document.Parameters.Concat(Document.Headers).ToHashSet();
+        var current = Document.Parameters.Concat(Document.Headers).Concat(Document.FormFields).ToHashSet();
         foreach (var old in _observedPairs.Except(current).ToArray())
         {
             old.PropertyChanged -= PairChanged;
@@ -165,6 +173,7 @@ public sealed class RequestTab : ObservableModel, IDisposable
         Document.PropertyChanged -= DocumentChanged;
         Document.Parameters.CollectionChanged -= PairsChanged;
         Document.Headers.CollectionChanged -= PairsChanged;
+        Document.FormFields.CollectionChanged -= PairsChanged;
         foreach (var pair in _observedPairs)
             pair.PropertyChanged -= PairChanged;
         Document.Dispose();

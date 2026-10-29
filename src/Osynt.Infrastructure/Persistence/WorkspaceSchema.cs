@@ -6,11 +6,12 @@ namespace Osynt.Infrastructure.Persistence;
 internal static class WorkspaceSchema
 {
     public static bool IsValid(RequestDocument? request) =>
-        request is { Name: not null, Url: not null, Body: not null, Parameters: not null, Headers: not null } &&
+        request is { Name: not null, Url: not null, Body: not null, Parameters: not null, Headers: not null, FormFields: not null } &&
         request.Id != Guid.Empty &&
         RequestMethods.All.Contains(request.Method) &&
+        RequestBodyModes.All.Contains(request.BodyMode) &&
         request.TimeoutSeconds is >= 1 and <= 3600 &&
-        request.Parameters.Concat(request.Headers).All(p => p is { Key: not null, Value: not null });
+        request.Parameters.Concat(request.Headers).Concat(request.FormFields).All(p => p is { Key: not null, Value: not null });
 
     public static bool IsValid(RequestCollection? collection) =>
         collection is { Requests: not null } && collection.Id != Guid.Empty &&

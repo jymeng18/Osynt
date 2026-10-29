@@ -13,6 +13,7 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
     private string _method;
     private string _url;
     private string _body;
+    private string _bodyMode;
     private int _timeoutSeconds;
     private bool _synchronizing;
     private readonly HashSet<RequestPairViewModel> _observedParameters = [];
@@ -22,12 +23,14 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
         _name = model.Name;
         _method = model.Method;
         _body = model.Body;
+        _bodyMode = model.BodyMode;
         _timeoutSeconds = model.TimeoutSeconds;
         var rowKeys = model.Parameters.Select(p => p.Key).ToHashSet(StringComparer.Ordinal);
         Parameters = new(RequestUrl.ParseParameters(model.Url).Where(p => !rowKeys.Contains(p.Key))
             .Concat(model.Parameters).Select(RequestPairViewModel.FromModel));
         _url = RequestUrl.WithParameters(model.Url, Parameters.Select(p => p.ToModel()));
         Headers = new(model.Headers.Select(RequestPairViewModel.FromModel));
+        FormFields = new(model.FormFields.Select(RequestPairViewModel.FromModel));
         Parameters.CollectionChanged += ParametersChanged;
         ObserveParameters();
     }
@@ -73,6 +76,29 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
     {
         get => _timeoutSeconds; set => Set(ref _timeoutSeconds, value);
     }
+    public string BodyMode
+    {
+        get => _bodyMode;
+        set
+        {
+            if (!Set(ref _bodyMode, value))
+                return;
+            Raise(nameof(JsonBody));
+            Raise(nameof(TextBody));
+            Raise(nameof(FormBody));
+            Raise(nameof(NoBody));
+            Raise(nameof(BodyWatermark));
+        }
+    }
+    public bool JsonBody => BodyMode == RequestBodyModes.Json;
+    public bool TextBody => BodyMode is RequestBodyModes.Json or RequestBodyModes.Text;
+    public bool FormBody => BodyMode == RequestBodyModes.Form;
+    public bool NoBody => BodyMode == RequestBodyModes.None;
+    public string BodyWatermark => JsonBody ? "Enter JSON…" : "Enter plain text…";
+    public ObservableCollection<RequestPairViewModel> FormFields
+    {
+        get;
+    }
     public ObservableCollection<RequestPairViewModel> Parameters
     {
         get;
@@ -88,6 +114,8 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
         Method = Method,
         Url = Url,
         Body = Body,
+        BodyMode = BodyMode,
+        FormFields = FormFields.Select(p => p.ToModel()).ToList(),
         TimeoutSeconds = TimeoutSeconds,
         Parameters = Parameters.Select(p => p.ToModel()).ToList(),
         Headers = Headers.Select(p => p.ToModel()).ToList()

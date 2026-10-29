@@ -74,9 +74,31 @@
             <TextBlock Grid.Column="1" Text="Standard headers are added automatically" FontSize="10" Foreground="#929B84" HorizontalAlignment="Right" Margin="8,0" />
           </Grid>
         </Grid>
-        <Grid IsVisible="{Binding Editor.BodyActive}" RowDefinitions="31,*">
-          <Grid Background="#F1F3E9" ColumnDefinitions="*,Auto"><TextBlock Text="JSON BODY" Classes="caption" FontSize="8" Margin="15,0" /><Button Grid.Column="1" Content="{}{ }  Format JSON" Command="{Binding Editor.FormatBodyCommand}" FontSize="10" Foreground="#899774" Padding="12,5" /></Grid>
-          <TextBox Grid.Row="1" x:Name="BodyInput" Classes="code" Text="{Binding Requests.Selected.Document.Body}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap" Watermark="Enter JSON…" Padding="16,12" Foreground="#748461" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        <Grid IsVisible="{Binding Editor.BodyActive}" RowDefinitions="36,*">
+          <Grid Background="#F1F3E9" ColumnDefinitions="Auto,*,Auto">
+            <TextBlock Text="BODY" Classes="caption" FontSize="8" Margin="15,0,8,0" />
+            <ComboBox Grid.Column="1" x:Name="BodyModePicker" ItemsSource="{Binding Editor.BodyModes}" SelectedItem="{Binding Requests.Selected.Document.BodyMode}" HorizontalAlignment="Left" MinWidth="100" MinHeight="28" Padding="8,3" FontSize="11" AutomationProperties.Name="Request body format" />
+            <Button Grid.Column="2" Content="{}{ }  Format JSON" Command="{Binding Editor.FormatBodyCommand}" IsVisible="{Binding Requests.Selected.Document.JsonBody}" FontSize="10" Foreground="#899774" Padding="12,5" />
+          </Grid>
+          <TextBox Grid.Row="1" x:Name="BodyInput" Classes="code" Text="{Binding Requests.Selected.Document.Body}" IsVisible="{Binding Requests.Selected.Document.TextBody}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap" Watermark="{Binding Requests.Selected.Document.BodyWatermark}" Padding="16,12" Foreground="#748461" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Request body" />
+          <TextBlock Grid.Row="1" Text="This request sends no body. Your other body drafts are kept when switching formats." IsVisible="{Binding Requests.Selected.Document.NoBody}" TextWrapping="Wrap" Margin="16" FontSize="11" Foreground="#929A85" />
+          <Grid Grid.Row="1" IsVisible="{Binding Requests.Selected.Document.FormBody}" RowDefinitions="28,*,34">
+            <Grid ColumnDefinitions="40,2*,3*,35" Background="#F8F8F1">
+              <TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" />
+              <TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" />
+            </Grid>
+            <ScrollViewer Grid.Row="1"><ItemsControl ItemsSource="{Binding Requests.Selected.Document.FormFields}">
+              <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
+                <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="40,2*,3*,35">
+                  <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" AutomationProperties.Name="Include form field" />
+                  <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Field name" AutomationProperties.Name="Form field name" />
+                  <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Value or {{variable}}" AutomationProperties.Name="Form field value" />
+                  <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.Editor.RemoveFormFieldCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove form field" AutomationProperties.Name="Remove form field" Foreground="#B6BAA9" />
+                </Grid></Border>
+              </DataTemplate></ItemsControl.ItemTemplate>
+            </ItemsControl></ScrollViewer>
+            <Button Grid.Row="2" Content="+  Add form field" Command="{Binding Editor.AddFormFieldCommand}" FontSize="10" Foreground="#8A9A76" Margin="9,0" Padding="8,5" HorizontalAlignment="Left" ToolTip.Tip="Fields are sent as application/x-www-form-urlencoded" />
+          </Grid>
         </Grid>
 
       </Grid>

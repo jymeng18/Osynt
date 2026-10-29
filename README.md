@@ -28,6 +28,8 @@ The interactive 3D garden runs on Windows with WebView2.
 ## Try it
 
 - Paste an API URL and press **Send**, or open a sample from **The little farm**.
+- Choose **Body** to send JSON, plain text, or URL-encoded form fields. Use `{{variables}}`
+  in URLs, headers, and payloads, and configure their values in **Environment**.
 - Click **Your garden** or press **Ctrl+G**. Successful requests grow plants and unlock new features.
 - Try **Dusk**, drag to orbit, and scroll to zoom. Your progress saves locally.
 

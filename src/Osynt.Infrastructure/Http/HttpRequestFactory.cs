@@ -10,6 +10,8 @@ public static class HttpRequestFactory
     {
         if (document.TimeoutSeconds is < 1 or > 3600)
             throw new ArgumentException("Request timeout must be between 1 and 3600 seconds.");
+        if (!RequestBodyModes.All.Contains(document.BodyMode))
+            throw new ArgumentException("Choose a valid request body mode: JSON, Text, Form, or None.");
         var resolved = RequestUrl.NormalizeAddress(TemplateResolver.Resolve(RequestUrl.Address(document.Url), variables));
         if (!Uri.TryCreate(resolved, UriKind.Absolute, out var uri) || uri.Scheme is not ("http" or "https"))
             throw new ArgumentException("Your URL needs to start with http:// or https://.");
@@ -39,8 +41,7 @@ public static class HttpRequestFactory
                 request.Headers.Accept.ParseAdd("*/*");
             if (!overrides.Contains("User-Agent"))
                 request.Headers.UserAgent.ParseAdd("Osynt/0.2.0");
-            if (!string.IsNullOrEmpty(document.Body))
-                request.Content = new StringContent(TemplateResolver.Resolve(document.Body, variables), Encoding.UTF8, "application/json");
+            request.Content = CreateContent(document, variables);
 
             foreach (var pair in headers)
             {
@@ -60,4 +61,15 @@ public static class HttpRequestFactory
     }
 
     private static bool IsHeaderCharacter(char c) => char.IsAsciiLetterOrDigit(c) || "!#$%&'*+-.^_`|~".Contains(c);
+
+    private static HttpContent? CreateContent(RequestDocument document, IReadOnlyDictionary<string, string> variables) => document.BodyMode switch
+    {
+        RequestBodyModes.Form => new FormUrlEncodedContent(document.FormFields
+            .Where(p => p.Enabled && !string.IsNullOrWhiteSpace(p.Key))
+            .Select(p => new KeyValuePair<string, string>(TemplateResolver.Resolve(p.Key, variables), TemplateResolver.Resolve(p.Value, variables)))),
+        RequestBodyModes.None => null,
+        _ when string.IsNullOrEmpty(document.Body) => null,
+        _ => new StringContent(TemplateResolver.Resolve(document.Body, variables), Encoding.UTF8,
+            document.BodyMode == RequestBodyModes.Text ? "text/plain" : "application/json")
+    };
 }
