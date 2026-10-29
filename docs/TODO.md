@@ -7,11 +7,11 @@ cancellation, bounded response previews, and a persistent garden.
 ## P0 — Reliability and delivery
 
 - [x] Add CI for .NET build/integration checks and garden tests.
-- [ ] Make HTTP header handling deterministic: enabled defaults, duplicate headers, and invalid names.
+- [x] Make HTTP header handling deterministic: explicit default suppression, repeated custom headers, resolved overrides, and invalid names.
 - [x] Add configurable per-request timeouts with validation, persistence, and editor controls.
-- [ ] Harden workspace writes with unique temporary files and recoverable backups.
-- [ ] Validate persisted/imported identifiers and reject ambiguous collection structures.
-- [ ] Document local data location, recovery, and sensitive-data handling.
+- [x] Harden workspace writes with unique temporary files and recoverable backups.
+- [x] Validate persisted identifiers, normalize imported identities, and reject ambiguous stored collection structures.
+- [x] Document local data location, recovery, and sensitive-data handling.
 - [ ] Add versioned release packaging and a Windows smoke-test release checklist.
 
 ## P1 — Everyday API workflows
@@ -53,3 +53,7 @@ cancellation, bounded response previews, and a persistent garden.
 - Timeout and CI batch: 95 desktop/application/integration checks pass, including a real
   timeout cancellation and an actual numeric-control binding. Garden unit checks pass.
   CI execution on GitHub and native Windows rendering remain separate from local checks.
+- Recovery and headers batch: 101 checks pass. Coverage includes corrupt/missing primary
+  recovery, backup retention, failed replacement rollback and cleanup, duplicate identities,
+  templated header overrides, repeated custom values, and header injection rejection.
+  The first GitHub desktop CI job also passed.

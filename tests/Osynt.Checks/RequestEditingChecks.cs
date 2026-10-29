@@ -81,5 +81,30 @@ internal static partial class Program
             True(!request.Headers.Contains("User-Agent"));
             True(request.Content is null);
         });
+        Check("Templated standard header names replace defaults and repeated custom headers keep their values", () =>
+        {
+            using var request = HttpRequestFactory.Create(new()
+            {
+                Url = "https://example.com",
+                Headers = [new() { Key = "{{accept_header}}", Value = "application/json" },
+                    new() { Key = "X-Tag", Value = "one" }, new() { Key = "x-tag", Value = "two" }]
+            }, new Dictionary<string, string> { ["accept_header"] = "Accept" });
+            Equal("application/json", request.Headers.Accept.ToString());
+            Equal("one,two", string.Join(",", request.Headers.GetValues("X-Tag")));
+        });
+        Check("Invalid resolved header names and injected values fail before transport", () =>
+        {
+            foreach (var name in new[] { "Bad Header", "Bad:Header", "Bad\r\nHeader", "Café", "" })
+                Throws<ArgumentException>(() => HttpRequestFactory.Create(new()
+                {
+                    Url = "https://example.com",
+                    Headers = [new() { Key = "{{header}}", Value = "test" }]
+                }, new Dictionary<string, string> { ["header"] = name }));
+            Throws<ArgumentException>(() => HttpRequestFactory.Create(new()
+            {
+                Url = "https://example.com",
+                Headers = [new() { Key = "X-Test", Value = "{{value}}" }]
+            }, new Dictionary<string, string> { ["value"] = "hello\r\nInjected: yes" }));
+        });
     }
 }

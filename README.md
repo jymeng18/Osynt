@@ -36,7 +36,9 @@ Built with Avalonia, .NET, Three.js, and Tailwind CSS.
 ## Development
 
 See [the architecture guide](docs/architecture.md) for layer boundaries, feature ownership,
-and persistence behavior. Run the integration and headless desktop checks with:
+and persistence behavior, [local data and recovery](docs/local-data.md) for storage details,
+and [the roadmap](docs/TODO.md) for planned improvements. Each request has a configurable
+timeout of 1–3600 seconds (30 seconds by default). Run the integration and headless desktop checks with:
 
 ```sh
 dotnet run --project tests/Osynt.Checks

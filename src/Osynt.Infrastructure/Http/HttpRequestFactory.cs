@@ -22,19 +22,30 @@ public static class HttpRequestFactory
         var request = new HttpRequestMessage(new HttpMethod(document.Method), builder.Uri);
         try
         {
-            if (!document.Headers.Any(h => h.Key.Trim().Equals("Accept", StringComparison.OrdinalIgnoreCase)))
+            var headers = document.Headers.Where(p => p.Enabled && !string.IsNullOrWhiteSpace(p.Key))
+                .Select(p => new KeyValuePair<string, string>(TemplateResolver.Resolve(p.Key.Trim(), variables),
+                    TemplateResolver.Resolve(p.Value, variables))).ToArray();
+            foreach (var pair in headers)
+            {
+                if (pair.Key.Length == 0 || pair.Key.Any(c => !IsHeaderCharacter(c)))
+                    throw new ArgumentException($"The header name '{pair.Key}' is invalid. Use letters, digits, or HTTP token punctuation without spaces.");
+                if (pair.Value.Contains('\r') || pair.Value.Contains('\n'))
+                    throw new ArgumentException("Header names and values cannot contain line breaks.");
+            }
+            // An explicit disabled standard-header row suppresses that automatic header.
+            var overrides = headers.Select(h => h.Key).Concat(document.Headers.Where(h => !h.Enabled).Select(h => h.Key.Trim()))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            if (!overrides.Contains("Accept"))
                 request.Headers.Accept.ParseAdd("*/*");
-            if (!document.Headers.Any(h => h.Key.Trim().Equals("User-Agent", StringComparison.OrdinalIgnoreCase)))
+            if (!overrides.Contains("User-Agent"))
                 request.Headers.UserAgent.ParseAdd("Osynt/0.2.0");
             if (!string.IsNullOrEmpty(document.Body))
                 request.Content = new StringContent(TemplateResolver.Resolve(document.Body, variables), Encoding.UTF8, "application/json");
 
-            foreach (var pair in document.Headers.Where(p => p.Enabled && !string.IsNullOrWhiteSpace(p.Key)))
+            foreach (var pair in headers)
             {
-                var key = TemplateResolver.Resolve(pair.Key.Trim(), variables);
-                var value = TemplateResolver.Resolve(pair.Value, variables);
-                if (key.Contains('\r') || key.Contains('\n') || value.Contains('\r') || value.Contains('\n'))
-                    throw new ArgumentException("Header names and values cannot contain line breaks.");
+                var key = pair.Key;
+                var value = pair.Value;
                 if (!request.Headers.TryAddWithoutValidation(key, value))
                 {
                     request.Content ??= new ByteArrayContent([]);
@@ -48,4 +59,5 @@ public static class HttpRequestFactory
         catch { request.Dispose(); throw; }
     }
 
+    private static bool IsHeaderCharacter(char c) => char.IsAsciiLetterOrDigit(c) || "!#$%&'*+-.^_`|~".Contains(c);
 }
