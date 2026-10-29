@@ -8,6 +8,7 @@ internal static class WorkspaceSchema
     public static bool IsValid(RequestDocument? request) =>
         request is { Name: not null, Url: not null, Body: not null, Parameters: not null, Headers: not null } &&
         RequestMethods.All.Contains(request.Method) &&
+        request.TimeoutSeconds is >= 1 and <= 3600 &&
         request.Parameters.Concat(request.Headers).All(p => p is { Key: not null, Value: not null });
 
     public static bool IsValid(RequestCollection? collection) =>

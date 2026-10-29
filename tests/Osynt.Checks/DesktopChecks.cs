@@ -63,6 +63,22 @@ internal static partial class Program
             True(window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "Get seasonal crops"));
             True(window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "UrlInput").Text!.Contains("{{base_url}}"));
         });
+        Check("Timeout control edits the selected request and follows tab selection", () =>
+        {
+            var original = uiWorkspace.Requests.Selected;
+            var input = window.GetVisualDescendants().OfType<NumericUpDown>().Single(c => c.Name == "TimeoutInput");
+            input.Value = 75;
+            Dispatcher.UIThread.RunJobs();
+            Equal(75, original.Document.TimeoutSeconds);
+            True(original.IsDirty);
+            uiWorkspace.NewRequest();
+            Dispatcher.UIThread.RunJobs();
+            Equal(30m, input.Value!.Value);
+            uiWorkspace.Requests.Discard(uiWorkspace.Requests.Selected);
+            uiWorkspace.Requests.Selected = original;
+            original.Document.TimeoutSeconds = 30;
+            uiWorkspace.Requests.SaveSelected();
+        });
         Check("Desktop Send button executes POST and preserves response in its tab", () =>
         {
             var getTab = uiWorkspace.Requests.Selected;

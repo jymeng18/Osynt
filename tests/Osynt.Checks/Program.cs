@@ -40,6 +40,7 @@ internal static partial class Program
 
         RunRequestChecks(demo, executor, variables);
         RunRequestEditingChecks();
+        RunTimeoutChecks(directory);
         RunAspNetChecks(executor);
         RunWorkspaceChecks(directory, executor, demo);
         RunApplicationChecks();

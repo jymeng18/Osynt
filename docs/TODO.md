@@ -6,9 +6,9 @@ cancellation, bounded response previews, and a persistent garden.
 
 ## P0 — Reliability and delivery
 
-- [ ] Add CI for .NET build/integration checks and garden tests.
+- [x] Add CI for .NET build/integration checks and garden tests.
 - [ ] Make HTTP header handling deterministic: enabled defaults, duplicate headers, and invalid names.
-- [ ] Add configurable per-request timeouts with validation, persistence, and editor controls.
+- [x] Add configurable per-request timeouts with validation, persistence, and editor controls.
 - [ ] Harden workspace writes with unique temporary files and recoverable backups.
 - [ ] Validate persisted/imported identifiers and reject ambiguous collection structures.
 - [ ] Document local data location, recovery, and sensitive-data handling.
@@ -50,4 +50,6 @@ cancellation, bounded response previews, and a persistent garden.
 
 ## Validation record
 
-Track completed batches and any platform limitations here as work proceeds.
+- Timeout and CI batch: 95 desktop/application/integration checks pass, including a real
+  timeout cancellation and an actual numeric-control binding. Garden unit checks pass.
+  CI execution on GitHub and native Windows rendering remain separate from local checks.

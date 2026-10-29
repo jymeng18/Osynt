@@ -26,6 +26,10 @@
         <Button Classes="section" Classes.selected="{Binding Editor.BodyActive}" Content="Body" Command="{Binding Editor.EditorCommand}" CommandParameter="Body" />
 
       </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="6,0,0,3">
+        <TextBlock Text="Timeout (s)" VerticalAlignment="Center" FontSize="10" />
+        <NumericUpDown x:Name="TimeoutInput" Value="{Binding Requests.Selected.Document.TimeoutSeconds}" Minimum="1" Maximum="3600" Increment="1" FormatString="0" Width="98" MinHeight="28" FontSize="11" Padding="6,2" AutomationProperties.Name="Request timeout in seconds" ToolTip.Tip="Time limit for this request, including reading the response (1–3600 seconds)" />
+      </StackPanel>
     </Grid>
 
     <Border Grid.Row="2" BorderBrush="#E1E5D7" BorderThickness="1" CornerRadius="0,6,6,6" Background="#FFFDF8" ClipToBounds="True">

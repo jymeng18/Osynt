@@ -13,6 +13,7 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
     private string _method;
     private string _url;
     private string _body;
+    private int _timeoutSeconds;
     private bool _synchronizing;
     private readonly HashSet<RequestPairViewModel> _observedParameters = [];
     public RequestEditorViewModel(RequestDocument model)
@@ -21,6 +22,7 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
         _name = model.Name;
         _method = model.Method;
         _body = model.Body;
+        _timeoutSeconds = model.TimeoutSeconds;
         var rowKeys = model.Parameters.Select(p => p.Key).ToHashSet(StringComparer.Ordinal);
         Parameters = new(RequestUrl.ParseParameters(model.Url).Where(p => !rowKeys.Contains(p.Key))
             .Concat(model.Parameters).Select(RequestPairViewModel.FromModel));
@@ -67,6 +69,10 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
     {
         get => _body; set => Set(ref _body, value);
     }
+    public int TimeoutSeconds
+    {
+        get => _timeoutSeconds; set => Set(ref _timeoutSeconds, value);
+    }
     public ObservableCollection<RequestPairViewModel> Parameters
     {
         get;
@@ -82,6 +88,7 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
         Method = Method,
         Url = Url,
         Body = Body,
+        TimeoutSeconds = TimeoutSeconds,
         Parameters = Parameters.Select(p => p.ToModel()).ToList(),
         Headers = Headers.Select(p => p.ToModel()).ToList()
     };

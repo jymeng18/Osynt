@@ -1,0 +1,58 @@
+name: Checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Install headless rendering libraries
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1 libfreetype6
+      - run: dotnet restore Osynt.slnx
+      - run: dotnet build Osynt.slnx --no-restore -m:1
+      - run: dotnet run --project tests/Osynt.Checks --no-build -- --snapshot artifacts/checks/osynt-preview.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: desktop-previews
+          path: artifacts/checks
+          if-no-files-found: ignore
+
+  garden:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: src/Osynt.Garden
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: src/Osynt.Garden/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: garden-previews
+          path: artifacts/garden
+          if-no-files-found: ignore

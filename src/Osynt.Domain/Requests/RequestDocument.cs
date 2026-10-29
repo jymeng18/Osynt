@@ -7,6 +7,7 @@ public sealed class RequestDocument
     public string Method { get; set; } = "GET";
     public string Url { get; set; } = "";
     public string Body { get; set; } = "";
+    public int TimeoutSeconds { get; set; } = 30;
     public List<RequestPair> Parameters { get; set; } = [];
     public List<RequestPair> Headers { get; set; } = [];
     public RequestDocument Clone(bool newId = false) => new()
@@ -16,6 +17,7 @@ public sealed class RequestDocument
         Method = Method,
         Url = Url,
         Body = Body,
+        TimeoutSeconds = TimeoutSeconds,
         Parameters = Parameters.Select(p => p.Clone()).ToList(),
         Headers = Headers.Select(p => p.Clone()).ToList()
     };

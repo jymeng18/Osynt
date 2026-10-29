@@ -27,7 +27,7 @@ public sealed class RequestExecutor(HttpClient client) : IRequestExecutor
     {
         using var request = HttpRequestFactory.Create(document, variables);
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+        timeout.CancelAfter(TimeSpan.FromSeconds(document.TimeoutSeconds));
         var timer = Stopwatch.StartNew();
         try
         {
@@ -40,7 +40,7 @@ public sealed class RequestExecutor(HttpClient client) : IRequestExecutor
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new TimeoutException("This request took longer than 30 seconds. Check the address and try again.");
+            throw new TimeoutException($"This request exceeded its {document.TimeoutSeconds}-second timeout. Adjust the timeout or check the address and try again.");
         }
         catch (HttpRequestException error)
         {

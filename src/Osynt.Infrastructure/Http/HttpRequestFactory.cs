@@ -8,6 +8,8 @@ public static class HttpRequestFactory
 {
     public static HttpRequestMessage Create(RequestDocument document, IReadOnlyDictionary<string, string> variables)
     {
+        if (document.TimeoutSeconds is < 1 or > 3600)
+            throw new ArgumentException("Request timeout must be between 1 and 3600 seconds.");
         var resolved = RequestUrl.NormalizeAddress(TemplateResolver.Resolve(RequestUrl.Address(document.Url), variables));
         if (!Uri.TryCreate(resolved, UriKind.Absolute, out var uri) || uri.Scheme is not ("http" or "https"))
             throw new ArgumentException("Your URL needs to start with http:// or https://.");
