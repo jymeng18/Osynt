@@ -7,7 +7,7 @@
         <art:PixelArt Width="27" Height="27" />
         <TextBlock Text="osynt" FontSize="24" FontWeight="SemiBold" Foreground="#4C6340" LetterSpacing="-0.8" />
       </StackPanel>
-      <TextBox Grid.Row="1" x:Name="SearchBox" Text="{Binding Library.Search}" Watermark="Find a request…" Margin="14,0,14,14" Background="#FAFAF3" Padding="9,7">
+      <TextBox Grid.Row="1" x:Name="SearchBox" Text="{Binding Library.Search}" Watermark="Find a request…" Margin="14,0,14,14" Background="#FAFAF3" Padding="9,7" AutomationProperties.Name="Search requests" ToolTip.Tip="Search by folder, HTTP method, request name, or URL. Separate words narrow the results.">
         <TextBox.InnerLeftContent><TextBlock Text="⌕" FontSize="19" Margin="9,0,0,0" Foreground="#9BA18B" /></TextBox.InnerLeftContent>
       </TextBox>
       <Border Grid.Row="2" Background="#E6E9DD" CornerRadius="7" Margin="14,0,14,12" Padding="3">
@@ -17,7 +17,11 @@
         </Grid>
       </Border>
       <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Margin="8,0,8,10">
-        <Grid>
+        <StackPanel>
+          <StackPanel IsVisible="{Binding Library.EmptyLibrary}" Spacing="8" Margin="12,16">
+            <TextBlock x:Name="LibraryEmptyTitle" Text="{Binding Library.EmptyLibraryTitle}" FontSize="12" Foreground="#7E8D6D" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding Library.EmptyLibraryHint}" FontSize="11" Foreground="#919783" TextWrapping="Wrap" />
+          </StackPanel>
           <ItemsControl ItemsSource="{Binding Library.Collections}" IsVisible="{Binding Library.ShowCollections}">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="vm:LibraryCollection">
@@ -65,7 +69,6 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
           <StackPanel IsVisible="{Binding Library.ShowHistory}">
-            <TextBlock Text="No request history yet." FontSize="11" Foreground="#919783" Margin="10,16" LineHeight="20" IsVisible="{Binding !Library.HasHistory}" />
             <ItemsControl ItemsSource="{Binding Library.VisibleHistory}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="vm:HistoryItemViewModel">
@@ -84,7 +87,7 @@
             </ItemsControl>
             <Button Content="Clear history" FontSize="10" Foreground="#929783" Command="{Binding Library.ClearHistoryCommand}" IsVisible="{Binding Library.HasHistory}" Margin="5,12" />
           </StackPanel>
-        </Grid>
+        </StackPanel>
       </ScrollViewer>
       <StackPanel Grid.Row="4">
         <Grid ColumnDefinitions="*,*" Margin="14,0,14,10">

@@ -145,6 +145,17 @@ internal static partial class Program
             Equal("Meet the villagers", uiWorkspace.Library.Collections[0].Requests[0].Name);
             uiWorkspace.Library.Search = "";
         });
+        Check("Sidebar shows actionable no-results text and hides it when the search clears", () =>
+        {
+            uiWorkspace.Library.Search = "no-request-matches-this";
+            Dispatcher.UIThread.RunJobs();
+            var title = window.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Name == "LibraryEmptyTitle");
+            True(title.IsEffectivelyVisible);
+            Equal("No matching requests", title.Text);
+            uiWorkspace.Library.Search = "";
+            Dispatcher.UIThread.RunJobs();
+            True(!title.IsEffectivelyVisible);
+        });
         Check("Sidebar and tab buttons navigate existing requests", () =>
         {
             Dispatcher.UIThread.RunJobs();

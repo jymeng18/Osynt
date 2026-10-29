@@ -13,6 +13,9 @@ public sealed class LibraryViewModel : ObservableModel
     private Guid _selectedId;
     private string _search = "";
     private bool _showHistory;
+    private readonly Dictionary<Guid, bool> _expansion = [];
+    private bool _collectionsFiltered;
+    private string[] _searchTerms = [];
 
     public LibraryViewModel(CollectionService collections, HistoryService history, WorkspaceStatus status)
     {
@@ -39,16 +42,24 @@ public sealed class LibraryViewModel : ObservableModel
         get;
     }
     public bool HasHistory => History.Count > 0;
+    public bool HasSearch => _searchTerms.Length > 0;
+    public bool EmptyLibrary => ShowHistory ? !VisibleHistory.Any() : Collections.Count == 0;
+    public string EmptyLibraryTitle => HasSearch ? "No matching requests" : ShowHistory ? "No request history yet" : "No collections yet";
+    public string EmptyLibraryHint => HasSearch ? "Try a folder name, method, or part of a URL." :
+        ShowHistory ? "Send a request to see it here." : "Save a request or import a collection to get started.";
     public IEnumerable<HistoryItemViewModel> VisibleHistory => History.Where(h => Matches(h.Request));
     public string Search
     {
         get => _search;
         set
         {
-            if (!Set(ref _search, value))
+            if (_search == value)
                 return;
+            _searchTerms = value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            Set(ref _search, value);
             RefreshCollections();
             Raise(nameof(VisibleHistory));
+            RaiseEmptyState();
         }
     }
     public bool ShowHistory
@@ -58,6 +69,7 @@ public sealed class LibraryViewModel : ObservableModel
         {
             Set(ref _showHistory, value);
             Raise(nameof(ShowCollections));
+            RaiseEmptyState();
         }
     }
     public bool ShowCollections => !ShowHistory;
@@ -71,18 +83,22 @@ public sealed class LibraryViewModel : ObservableModel
 
     public void RefreshCollections()
     {
-        var collapsed = Collections.Where(c => !c.Expanded).Select(c => c.Id).ToHashSet();
+        if (!_collectionsFiltered)
+            foreach (var collection in Collections)
+                _expansion[collection.Id] = collection.Expanded;
         Collections.Clear();
         foreach (var collection in _collections.GetCollections())
         {
-            var requests = collection.Requests.Where(Matches)
+            var requests = collection.Requests.Where(r => Matches(r, collection.Name))
                 .Select(r => new LibraryRequest(r) { IsSelected = _selectedId == r.Id }).ToList();
-            if (requests.Count > 0 || string.IsNullOrEmpty(Search))
+            if (requests.Count > 0 || !HasSearch || MatchesText(collection.Name))
                 Collections.Add(new(collection.Id, collection.Name, requests)
                 {
-                    Expanded = !collapsed.Contains(collection.Id)
+                    Expanded = HasSearch || _expansion.GetValueOrDefault(collection.Id, true)
                 });
         }
+        _collectionsFiltered = HasSearch;
+        RaiseEmptyState();
     }
 
     public void RefreshHistory()
@@ -92,11 +108,19 @@ public sealed class LibraryViewModel : ObservableModel
             History.Add(new(entry));
         Raise(nameof(VisibleHistory));
         Raise(nameof(HasHistory));
+        RaiseEmptyState();
     }
 
-    private bool Matches(RequestDocument request) =>
-        request.Name.Contains(Search, StringComparison.OrdinalIgnoreCase) ||
-        request.Url.Contains(Search, StringComparison.OrdinalIgnoreCase);
+    private bool Matches(RequestDocument request) => Matches(request, "");
+    private bool Matches(RequestDocument request, string folder) => MatchesText($"{folder} {request.Method} {request.Name} {request.Url}");
+    private bool MatchesText(string text) => _searchTerms.All(term => text.Contains(term, StringComparison.OrdinalIgnoreCase));
+    private void RaiseEmptyState()
+    {
+        Raise(nameof(HasSearch));
+        Raise(nameof(EmptyLibrary));
+        Raise(nameof(EmptyLibraryTitle));
+        Raise(nameof(EmptyLibraryHint));
+    }
 
     private void ClearHistory()
     {

@@ -21,7 +21,7 @@ cancellation, bounded response previews, and a persistent garden.
 - [ ] Import requests from cURL and copy requests as cURL.
 - [ ] Import and export Postman collections with clear unsupported-feature notices.
 - [ ] Duplicate saved requests and move requests between folders.
-- [ ] Search collections by folder name, request method, name, and URL; show empty results clearly.
+- [x] Search collections by folder name, request method, name, and URL; show empty results clearly.
 - [ ] Find text in responses, copy response bodies/headers, and save responses to disk.
 - [ ] Show response truncation and content type clearly; handle binary previews gracefully.
 - [ ] Add named environments and an environment selector.
@@ -32,7 +32,7 @@ cancellation, bounded response previews, and a persistent garden.
 
 - [ ] Add accessible labels to icon buttons, query rows, and request controls.
 - [ ] Document keyboard shortcuts and add keyboard navigation checks.
-- [ ] Add visible no-results states and actionable first-run guidance.
+- [x] Add visible no-results states and actionable empty-library/history guidance.
 - [ ] Add response timing breakdowns and configurable preview wrapping.
 - [ ] Add theme, font-size, and reduced-motion preferences.
 - [ ] Keep long operations responsive and surface unexpected errors without losing edits.
@@ -61,3 +61,6 @@ cancellation, bounded response previews, and a persistent garden.
   Unicode and reserved-character encoding, disabled fields, retained drafts, storage
   and export round trips, and desktop picker/add/remove interactions.
   The initial GitHub workflow completed successfully for both desktop and garden.
+- Library search batch: 111 checks pass. Multi-term matching covers folder, method,
+  name, and URL; filtered history and empty folders have explicit results; clearing
+  search restores the previous collapsed folders. Desktop checks verify empty-state visibility.
