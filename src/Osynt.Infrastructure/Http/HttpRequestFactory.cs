@@ -44,6 +44,9 @@ public static class HttpRequestFactory
             if (!overrides.Contains("Authorization"))
                 request.Headers.Authorization = CreateAuthentication(document.Authentication, variables);
             request.Content = CreateContent(document, variables);
+            if (request.Content is not null && overrides.Contains("Content-Type") &&
+                !headers.Any(h => h.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase)))
+                request.Content.Headers.Remove("Content-Type");
 
             foreach (var pair in headers)
             {

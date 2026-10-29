@@ -44,6 +44,7 @@ internal static partial class Program
         RunAspNetChecks(executor);
         RunBodyModeChecks(directory, executor);
         RunAuthenticationChecks(directory, executor);
+        RunCurlChecks(executor);
         RunWorkspaceChecks(directory, executor, demo);
         RunRecoveryChecks(directory);
         RunApplicationChecks();

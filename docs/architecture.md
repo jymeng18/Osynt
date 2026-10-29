@@ -26,12 +26,14 @@ and `ICollectionSerializer`). Internal services are concrete, with explicit cons
 | `GardenService` | Reading garden progress and saving preferences |
 | `SendRequest` | Capturing request/environment snapshots, executing, and recording outcomes |
 | Infrastructure | HTTP, transport diagnostics, bounded response decoding, JSON, files, local demo |
+| `ICurlRequestSerializer` | cURL text conversion at the external-format boundary; never executes commands |
 | `WorkspaceViewModel` | Navigation and refresh coordination between features |
 | `RequestTabsViewModel` | Open/selected tabs, save, close and disposal |
 | `RequestSendingViewModel` | Send/cancel presentation and response/error status |
 | `RequestPaneViewModel` | Editor sections, pair commands and JSON formatting |
 | `LibraryViewModel` | Search, saved collections and history presentation |
 | `EnvironmentViewModel`, `GardenViewModel` | Feature-specific presentation and preference actions |
+| `RequestCommandsViewModel` | Importing cURL into an unsaved tab and generating copyable commands |
 | `WorkspaceStatus` | User-facing notices and save-failure presentation |
 
 Views bind to feature paths such as `Requests.Selected`, `Library.Search`, and

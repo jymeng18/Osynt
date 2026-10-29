@@ -34,6 +34,8 @@ For portable ZIPs and release validation, see [Windows packaging](docs/releasing
 - Use **Auth** for Bearer tokens or Basic credentials, including `{{variables}}`.
 - Organize saved requests with **New folder** and the request context menu's
   **Duplicate** and **Move to folder** actions.
+- Paste a command with **Import cURL**, or use **Copy cURL** to share the current request.
+  See [cURL support](docs/curl.md) for options and handling of credentials.
 - Click **Your garden** or press **Ctrl+G**. Successful requests grow plants and unlock new features.
 - Try **Dusk**, drag to orbit, and scroll to zoom. Your progress saves locally.
 

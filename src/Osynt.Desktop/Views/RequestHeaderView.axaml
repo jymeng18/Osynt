@@ -1,9 +1,11 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Osynt.Desktop.Views.RequestHeaderView">
-  <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" Margin="0,0,0,16">
+  <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="8" Margin="0,0,0,16">
     <TextBox x:Name="RequestName" Classes="title" Text="{Binding Requests.Selected.Document.Name}" Watermark="Untitled request"
              ToolTip.Tip="Rename request" VerticalAlignment="Center" />
-    <Button Grid.Column="1" Click="EnvironmentClicked" Content="Variables" Padding="10,8" ToolTip.Tip="Edit {{variables}}" />
-    <Button Grid.Column="2" Classes="outline" Command="{Binding Requests.SaveCommand}" Content="Save" Padding="16,8" ToolTip.Tip="Save request · Ctrl+S" />
+    <Button Grid.Column="1" Click="ImportCurlClicked" Content="Import cURL" Padding="6,8" FontSize="10" />
+    <Button Grid.Column="2" Click="CopyCurlClicked" Content="Copy cURL" Padding="6,8" FontSize="10" ToolTip.Tip="Copy a command with resolved variables and credentials" />
+    <Button Grid.Column="3" Click="EnvironmentClicked" Content="Variables" Padding="10,8" ToolTip.Tip="Edit {{variables}}" />
+    <Button Grid.Column="4" Classes="outline" Command="{Binding Requests.SaveCommand}" Content="Save" Padding="16,8" ToolTip.Tip="Save request · Ctrl+S" />
   </Grid>
 </UserControl>

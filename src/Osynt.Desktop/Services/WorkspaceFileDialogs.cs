@@ -14,6 +14,21 @@ public sealed class WorkspaceFileDialogs(TopLevel owner, WorkspaceViewModel work
         TopLevel.GetTopLevel(view) is { } owner && view.DataContext is WorkspaceViewModel workspace
             ? new(owner, workspace) : null;
 
+    public async Task CopyCurlAsync()
+    {
+        if (owner.Clipboard is null || await workspace.Commands.ExportCurlAsync() is not { } command)
+            return;
+        try
+        {
+            await owner.Clipboard.SetTextAsync(command);
+            workspace.Status.Notice = "cURL copied, including resolved variables and credentials.";
+        }
+        catch (Exception error) when (error is InvalidOperationException or System.Runtime.InteropServices.ExternalException)
+        {
+            workspace.Status.Notice = "Could not reach the clipboard. Try again.";
+        }
+    }
+
     public async Task CopyResponseAsync()
     {
         if (!workspace.Requests.Selected.HasResponse || owner.Clipboard is null)

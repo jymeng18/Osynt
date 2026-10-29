@@ -9,7 +9,7 @@ public sealed class WorkspaceViewModel : IDisposable
 {
     public WorkspaceViewModel(RequestTabsViewModel requests, RequestSendingViewModel sending,
         RequestPaneViewModel editor, LibraryViewModel library, EnvironmentViewModel environment,
-        GardenViewModel garden, WorkspaceStatus status)
+        GardenViewModel garden, WorkspaceStatus status, RequestCommandsViewModel commands)
     {
         Requests = requests;
         Sending = sending;
@@ -18,6 +18,7 @@ public sealed class WorkspaceViewModel : IDisposable
         Environment = environment;
         Garden = garden;
         Status = status;
+        Commands = commands;
         OpenGardenCommand = new ActionCommand(_ => Garden.IsOpen = true);
         CloseGardenCommand = new ActionCommand(_ => Garden.IsOpen = false);
         SendGardenDemoCommand = new ActionCommand(_ => _ = SendGardenDemoAsync());
@@ -33,6 +34,10 @@ public sealed class WorkspaceViewModel : IDisposable
     }
 
     public RequestTabsViewModel Requests
+    {
+        get;
+    }
+    public RequestCommandsViewModel Commands
     {
         get;
     }

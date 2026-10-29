@@ -60,6 +60,7 @@ public sealed class RequestTabsViewModel : ObservableModel, IDisposable
     }
 
     public void OpenHistory(RequestDocument document) => Add(document.Clone(newId: true), dirty: true);
+    public void OpenImported(RequestDocument document) => Add(document.Clone(newId: true), dirty: true);
 
     private void Add(RequestDocument document, bool dirty = false)
     {

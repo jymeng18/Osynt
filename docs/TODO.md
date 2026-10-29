@@ -18,7 +18,7 @@ cancellation, bounded response previews, and a persistent garden.
 
 - [x] Add raw text and form body modes with matching content types.
 - [x] Add Bearer and Basic authentication helpers with environment-variable support.
-- [ ] Import requests from cURL and copy requests as cURL.
+- [x] Import requests from cURL and copy requests as cURL (supported literal HTTP options).
 - [ ] Import and export Postman collections with clear unsupported-feature notices.
 - [x] Create folders, duplicate saved requests, and move requests between folders.
 - [x] Search collections by folder name, request method, name, and URL; show empty results clearly.
@@ -77,3 +77,8 @@ cancellation, bounded response previews, and a persistent garden.
   watcher loop in the test fixture; the fixture now avoids unrelated configuration files.
   Windows publish intermediates are isolated from Linux outputs. ARM64 runtime checks
   and code signing remain release checklist items; no public release was published.
+- cURL batch: 128 checks pass. Import handles POSIX quoting/continuations, common headers,
+  methods, literal JSON/form/text data, Basic/Bearer credentials, and timeouts. Tests cover
+  a real API, resolved payload/header round trips (including quotes and Unicode), invalid
+  command rejection, and unsaved-tab/dialog behavior. See `docs/curl.md` for supported
+  options and differences in redirect/session behavior. GitHub CI passed the release-tooling commit.

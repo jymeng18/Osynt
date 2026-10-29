@@ -3,6 +3,7 @@ using Osynt.Application.Garden;
 using Osynt.Application.Requests;
 using Osynt.Application.Workspaces;
 using Osynt.Desktop.ViewModels;
+using Osynt.Infrastructure.Http;
 
 namespace Osynt.Desktop.Composition;
 
@@ -19,8 +20,10 @@ public static class WorkspaceComposition
         var status = new WorkspaceStatus { Notice = session.LoadNotice ?? "Ready" };
         var requests = new RequestTabsViewModel(collections, status);
         var sending = new RequestSendingViewModel(new SendRequest(executor, environment, history), requests, status);
+        var environmentViewModel = new EnvironmentViewModel(environment, status);
         return new WorkspaceViewModel(requests, sending, new RequestPaneViewModel(requests, status),
-            new LibraryViewModel(collections, history, status), new EnvironmentViewModel(environment, status),
-            new GardenViewModel(new GardenService(session), status), status);
+            new LibraryViewModel(collections, history, status), environmentViewModel,
+            new GardenViewModel(new GardenService(session), status), status,
+            new RequestCommandsViewModel(new CurlRequestSerializer(), requests, environmentViewModel, status));
     }
 }
