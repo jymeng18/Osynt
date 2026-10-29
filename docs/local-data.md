@@ -21,6 +21,7 @@ one save behind, and unsaved tab edits are currently kept only in memory.
 
 These files and collection exports are plain JSON. Request headers, bodies, URLs, history
 snapshots, and environment variables can contain credentials or other sensitive data.
+Authentication helper fields are also included in saved requests, history, and exports.
 Use environment placeholders such as `{{api_token}}` in saved requests to avoid putting
 the actual token into collection exports. The environment file still stores the token
 locally in plain text. Protect backups and exports as you would the original workspace.

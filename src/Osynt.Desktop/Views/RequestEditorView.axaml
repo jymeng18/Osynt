@@ -24,6 +24,7 @@
           <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Headers" /><TextBlock Text="{Binding Requests.Selected.Document.Headers.Count}" FontSize="9" Foreground="#9AA68C" /></StackPanel>
         </Button>
         <Button Classes="section" Classes.selected="{Binding Editor.BodyActive}" Content="Body" Command="{Binding Editor.EditorCommand}" CommandParameter="Body" />
+        <Button Classes="section" Classes.selected="{Binding Editor.AuthActive}" Content="Auth" Command="{Binding Editor.EditorCommand}" CommandParameter="Auth" />
 
       </StackPanel>
       <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="6,0,0,3">
@@ -34,6 +35,18 @@
 
     <Border Grid.Row="2" BorderBrush="#E1E5D7" BorderThickness="1" CornerRadius="0,6,6,6" Background="#FFFDF8" ClipToBounds="True">
       <Grid>
+        <ScrollViewer IsVisible="{Binding Editor.AuthActive}">
+          <StackPanel Margin="16,12" Spacing="10">
+            <ComboBox x:Name="AuthModePicker" ItemsSource="{Binding Editor.AuthModes}" SelectedItem="{Binding Requests.Selected.Document.AuthMode}" MinWidth="160" AutomationProperties.Name="Authentication type" />
+            <TextBlock Text="No authentication helper. Add custom credentials in Headers if needed." IsVisible="{Binding Requests.Selected.Document.NoAuth}" FontSize="11" Foreground="#929A85" TextWrapping="Wrap" />
+            <TextBox x:Name="BearerTokenInput" Text="{Binding Requests.Selected.Document.BearerToken}" Watermark="Token or {{api_token}}" PasswordChar="●" IsVisible="{Binding Requests.Selected.Document.BearerAuth}" AutomationProperties.Name="Bearer token" />
+            <StackPanel IsVisible="{Binding Requests.Selected.Document.BasicAuth}" Spacing="8">
+              <TextBox x:Name="AuthUsernameInput" Text="{Binding Requests.Selected.Document.AuthUsername}" Watermark="Username or {{username}}" AutomationProperties.Name="Basic authentication username" />
+              <TextBox x:Name="AuthPasswordInput" Text="{Binding Requests.Selected.Document.AuthPassword}" Watermark="Password or {{password}}" PasswordChar="●" AutomationProperties.Name="Basic authentication password" />
+            </StackPanel>
+            <TextBlock Text="Use {{variables}} to keep credentials out of collection exports. Literal credentials are saved locally in plain text. An Authorization header row takes precedence over this helper." FontSize="10" Foreground="#929A85" TextWrapping="Wrap" />
+          </StackPanel>
+        </ScrollViewer>
         <Grid IsVisible="{Binding Editor.ParamsActive}" RowDefinitions="31,*,34">
           <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9">
             <TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" />

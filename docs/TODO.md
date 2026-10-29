@@ -17,7 +17,7 @@ cancellation, bounded response previews, and a persistent garden.
 ## P1 — Everyday API workflows
 
 - [x] Add raw text and form body modes with matching content types.
-- [ ] Add Bearer and Basic authentication helpers with environment-variable support.
+- [x] Add Bearer and Basic authentication helpers with environment-variable support.
 - [ ] Import requests from cURL and copy requests as cURL.
 - [ ] Import and export Postman collections with clear unsupported-feature notices.
 - [ ] Duplicate saved requests and move requests between folders.
@@ -64,3 +64,6 @@ cancellation, bounded response previews, and a persistent garden.
 - Library search batch: 111 checks pass. Multi-term matching covers folder, method,
   name, and URL; filtered history and empty folders have explicit results; clearing
   search restores the previous collapsed folders. Desktop checks verify empty-state visibility.
+- Authentication batch: 116 checks pass, including server-observed Bearer/Basic headers,
+  UTF-8 Basic credentials, explicit header precedence, invalid credential rejection,
+  persistence/isolation, and masked desktop input bindings.

@@ -15,6 +15,10 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
     private string _body;
     private string _bodyMode;
     private int _timeoutSeconds;
+    private string _authMode;
+    private string _bearerToken;
+    private string _authUsername;
+    private string _authPassword;
     private bool _synchronizing;
     private readonly HashSet<RequestPairViewModel> _observedParameters = [];
     public RequestEditorViewModel(RequestDocument model)
@@ -25,6 +29,10 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
         _body = model.Body;
         _bodyMode = model.BodyMode;
         _timeoutSeconds = model.TimeoutSeconds;
+        _authMode = model.Authentication.Mode;
+        _bearerToken = model.Authentication.Token;
+        _authUsername = model.Authentication.Username;
+        _authPassword = model.Authentication.Password;
         var rowKeys = model.Parameters.Select(p => p.Key).ToHashSet(StringComparer.Ordinal);
         Parameters = new(RequestUrl.ParseParameters(model.Url).Where(p => !rowKeys.Contains(p.Key))
             .Concat(model.Parameters).Select(RequestPairViewModel.FromModel));
@@ -94,6 +102,33 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
     public bool TextBody => BodyMode is RequestBodyModes.Json or RequestBodyModes.Text;
     public bool FormBody => BodyMode == RequestBodyModes.Form;
     public bool NoBody => BodyMode == RequestBodyModes.None;
+    public string AuthMode
+    {
+        get => _authMode;
+        set
+        {
+            if (!Set(ref _authMode, value))
+                return;
+            Raise(nameof(BearerAuth));
+            Raise(nameof(BasicAuth));
+            Raise(nameof(NoAuth));
+        }
+    }
+    public bool BearerAuth => AuthMode == RequestAuthentication.Bearer;
+    public bool BasicAuth => AuthMode == RequestAuthentication.Basic;
+    public bool NoAuth => AuthMode == RequestAuthentication.None;
+    public string BearerToken
+    {
+        get => _bearerToken; set => Set(ref _bearerToken, value);
+    }
+    public string AuthUsername
+    {
+        get => _authUsername; set => Set(ref _authUsername, value);
+    }
+    public string AuthPassword
+    {
+        get => _authPassword; set => Set(ref _authPassword, value);
+    }
     public string BodyWatermark => JsonBody ? "Enter JSON…" : "Enter plain text…";
     public ObservableCollection<RequestPairViewModel> FormFields
     {
@@ -116,6 +151,13 @@ public sealed class RequestEditorViewModel : ObservableModel, IDisposable
         Body = Body,
         BodyMode = BodyMode,
         FormFields = FormFields.Select(p => p.ToModel()).ToList(),
+        Authentication = new()
+        {
+            Mode = AuthMode,
+            Token = BearerToken,
+            Username = AuthUsername,
+            Password = AuthPassword
+        },
         TimeoutSeconds = TimeoutSeconds,
         Parameters = Parameters.Select(p => p.ToModel()).ToList(),
         Headers = Headers.Select(p => p.ToModel()).ToList()

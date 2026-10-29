@@ -122,6 +122,31 @@ internal static partial class Program
             uiWorkspace.Requests.Discard(uiWorkspace.Requests.Selected);
             uiWorkspace.Requests.Selected = original;
         });
+        Check("Authentication picker binds credentials to the selected tab and masks secrets", () =>
+        {
+            var original = uiWorkspace.Requests.Selected;
+            uiWorkspace.NewRequest();
+            uiWorkspace.Editor.EditorCommand.Execute("Auth");
+            Dispatcher.UIThread.RunJobs();
+            var picker = window.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "AuthModePicker");
+            picker.SelectedItem = RequestAuthentication.Bearer;
+            Dispatcher.UIThread.RunJobs();
+            var token = window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "BearerTokenInput");
+            True(token.IsEffectivelyVisible && token.PasswordChar != default(char));
+            token.Text = "{{api_token}}";
+            Dispatcher.UIThread.RunJobs();
+            Equal("{{api_token}}", uiWorkspace.Requests.Selected.Document.BearerToken);
+            picker.SelectedItem = RequestAuthentication.Basic;
+            Dispatcher.UIThread.RunJobs();
+            True(!token.IsEffectivelyVisible);
+            var username = window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "AuthUsernameInput");
+            True(username.IsEffectivelyVisible);
+            username.Text = "{{username}}";
+            Dispatcher.UIThread.RunJobs();
+            Equal("{{username}}", uiWorkspace.Requests.Selected.Document.AuthUsername);
+            uiWorkspace.Requests.Discard(uiWorkspace.Requests.Selected);
+            uiWorkspace.Requests.Selected = original;
+        });
         Check("Ctrl+N creates a request and Ctrl+S persists it", () =>
         {
             var count = uiWorkspace.Requests.Tabs.Count;

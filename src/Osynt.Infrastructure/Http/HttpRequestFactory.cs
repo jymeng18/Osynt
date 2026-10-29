@@ -41,6 +41,8 @@ public static class HttpRequestFactory
                 request.Headers.Accept.ParseAdd("*/*");
             if (!overrides.Contains("User-Agent"))
                 request.Headers.UserAgent.ParseAdd("Osynt/0.2.0");
+            if (!overrides.Contains("Authorization"))
+                request.Headers.Authorization = CreateAuthentication(document.Authentication, variables);
             request.Content = CreateContent(document, variables);
 
             foreach (var pair in headers)
@@ -61,6 +63,29 @@ public static class HttpRequestFactory
     }
 
     private static bool IsHeaderCharacter(char c) => char.IsAsciiLetterOrDigit(c) || "!#$%&'*+-.^_`|~".Contains(c);
+
+    private static System.Net.Http.Headers.AuthenticationHeaderValue? CreateAuthentication(RequestAuthentication authentication,
+        IReadOnlyDictionary<string, string> variables)
+    {
+        if (authentication.Mode == RequestAuthentication.None)
+            return null;
+        if (authentication.Mode == RequestAuthentication.Bearer)
+        {
+            var token = TemplateResolver.Resolve(authentication.Token, variables).Trim();
+            if (token.Length == 0 || token.Any(char.IsWhiteSpace) || token.Any(char.IsControl))
+                throw new ArgumentException("Enter a Bearer token without spaces or line breaks, or use an environment variable.");
+            return new("Bearer", token);
+        }
+        if (authentication.Mode == RequestAuthentication.Basic)
+        {
+            var username = TemplateResolver.Resolve(authentication.Username, variables);
+            var password = TemplateResolver.Resolve(authentication.Password, variables);
+            if (username.Contains(':') || username.Any(char.IsControl) || password.Any(char.IsControl))
+                throw new ArgumentException("Basic authentication credentials cannot contain control characters, and usernames cannot contain a colon.");
+            return new("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
+        }
+        throw new ArgumentException("Choose a valid authentication mode: None, Bearer, or Basic.");
+    }
 
     private static HttpContent? CreateContent(RequestDocument document, IReadOnlyDictionary<string, string> variables) => document.BodyMode switch
     {

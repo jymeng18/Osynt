@@ -32,6 +32,7 @@ public sealed class RequestPaneViewModel : ObservableModel
 
     public IReadOnlyList<string> Methods => RequestMethods.All;
     public IReadOnlyList<string> BodyModes => RequestBodyModes.All;
+    public IReadOnlyList<string> AuthModes => RequestAuthentication.Modes;
     public ICommand AddFormFieldCommand
     {
         get;
@@ -43,6 +44,7 @@ public sealed class RequestPaneViewModel : ObservableModel
     public bool ParamsActive => _editor == "Params";
     public bool HeadersActive => _editor == "Headers";
     public bool BodyActive => _editor == "Body";
+    public bool AuthActive => _editor == "Auth";
     public bool ResponseBodyActive => _responsePane == "Body";
     public bool ResponseHeadersActive => _responsePane == "Headers";
     public ICommand EditorCommand
@@ -76,6 +78,7 @@ public sealed class RequestPaneViewModel : ObservableModel
         Raise(nameof(ParamsActive));
         Raise(nameof(HeadersActive));
         Raise(nameof(BodyActive));
+        Raise(nameof(AuthActive));
     }
 
     private void SelectResponsePane(string pane)

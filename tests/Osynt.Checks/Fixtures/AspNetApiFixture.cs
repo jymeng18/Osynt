@@ -46,6 +46,7 @@ internal sealed class AspNetApiFixture : IDisposable
             return Results.Json(form.ToDictionary(p => p.Key, p => p.Value.ToArray()));
         });
         _application.MapGet("/redirect", () => Results.Redirect("/health"));
+        _application.MapGet("/auth", (HttpContext context) => Results.Text(context.Request.Headers.Authorization.ToString()));
         _application.StartAsync().GetAwaiter().GetResult();
         BaseUrl = _application.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
     }

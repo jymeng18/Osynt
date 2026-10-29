@@ -8,6 +8,8 @@ internal static class WorkspaceSchema
     public static bool IsValid(RequestDocument? request) =>
         request is { Name: not null, Url: not null, Body: not null, Parameters: not null, Headers: not null, FormFields: not null } &&
         request.Id != Guid.Empty &&
+        request.Authentication is { Token: not null, Username: not null, Password: not null } &&
+        RequestAuthentication.Modes.Contains(request.Authentication.Mode) &&
         RequestMethods.All.Contains(request.Method) &&
         RequestBodyModes.All.Contains(request.BodyMode) &&
         request.TimeoutSeconds is >= 1 and <= 3600 &&

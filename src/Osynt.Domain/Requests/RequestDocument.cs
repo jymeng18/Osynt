@@ -9,6 +9,7 @@ public sealed class RequestDocument
     public string Body { get; set; } = "";
     public string BodyMode { get; set; } = RequestBodyModes.Json;
     public List<RequestPair> FormFields { get; set; } = [];
+    public RequestAuthentication Authentication { get; set; } = new();
     public int TimeoutSeconds { get; set; } = 30;
     public List<RequestPair> Parameters { get; set; } = [];
     public List<RequestPair> Headers { get; set; } = [];
@@ -21,6 +22,7 @@ public sealed class RequestDocument
         Body = Body,
         BodyMode = BodyMode,
         FormFields = FormFields.Select(p => p.Clone()).ToList(),
+        Authentication = Authentication.Clone(),
         TimeoutSeconds = TimeoutSeconds,
         Parameters = Parameters.Select(p => p.Clone()).ToList(),
         Headers = Headers.Select(p => p.Clone()).ToList()
