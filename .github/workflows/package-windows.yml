@@ -1,0 +1,59 @@
+name: Windows packages
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime: [win-x64, win-arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: src/Osynt.Garden/package-lock.json
+      - name: Build and check bundled garden
+        working-directory: src/Osynt.Garden
+        run: |
+          npm ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run desktop and integration checks on Windows
+        if: matrix.runtime == 'win-x64'
+        run: dotnet run --project tests/Osynt.Checks -- --snapshot artifacts/checks/osynt-preview.png
+      - name: Package portable app
+        id: package
+        run: ./scripts/Package-Windows.ps1 -Runtime ${{ matrix.runtime }}
+      - name: Verify native window startup
+        if: matrix.runtime == 'win-x64'
+        env:
+          OSYNT_SMOKE_EXECUTABLE: ${{ steps.package.outputs.executable }}
+        run: ./scripts/Test-WindowsBuild.ps1 -ExecutablePath $env:OSYNT_SMOKE_EXECUTABLE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Osynt-${{ matrix.runtime }}
+          path: artifacts/packages/*
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.runtime == 'win-x64'
+        with:
+          name: windows-desktop-previews
+          path: artifacts/checks
+          if-no-files-found: ignore

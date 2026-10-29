@@ -12,7 +12,7 @@ cancellation, bounded response previews, and a persistent garden.
 - [x] Harden workspace writes with unique temporary files and recoverable backups.
 - [x] Validate persisted identifiers, normalize imported identities, and reject ambiguous stored collection structures.
 - [x] Document local data location, recovery, and sensitive-data handling.
-- [ ] Add versioned release packaging and a Windows smoke-test release checklist.
+- [x] Add versioned release packaging and a Windows smoke-test release checklist.
 
 ## P1 — Everyday API workflows
 
@@ -70,3 +70,10 @@ cancellation, bounded response previews, and a persistent garden.
 - Organization batch: 122 checks pass. Copies have fresh identities and independent
   nested payload/authentication data. Moves persist to the chosen folder, include destinations
   hidden by search, preserve unsaved tab edits, and roll back when saving fails.
+- Release tooling batch: version 0.4.0 is centralized; x64 and ARM64 portable ZIPs,
+  source/dirty metadata, and SHA-256 checksum files were built and verified locally.
+  All 122 checks pass on both Linux and Windows. Native Windows startup and the
+  WebView2/WebGL probe pass. A diagnostic stack identified a Windows/WSL configuration
+  watcher loop in the test fixture; the fixture now avoids unrelated configuration files.
+  Windows publish intermediates are isolated from Linux outputs. ARM64 runtime checks
+  and code signing remain release checklist items; no public release was published.

@@ -40,7 +40,7 @@ public static class HttpRequestFactory
             if (!overrides.Contains("Accept"))
                 request.Headers.Accept.ParseAdd("*/*");
             if (!overrides.Contains("User-Agent"))
-                request.Headers.UserAgent.ParseAdd("Osynt/0.2.0");
+                request.Headers.UserAgent.ParseAdd($"Osynt/{typeof(HttpRequestFactory).Assembly.GetName().Version!.ToString(3)}");
             if (!overrides.Contains("Authorization"))
                 request.Headers.Authorization = CreateAuthentication(document.Authentication, variables);
             request.Content = CreateContent(document, variables);

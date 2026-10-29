@@ -18,8 +18,11 @@ internal sealed class AspNetApiFixture : IDisposable
     }
     public AspNetApiFixture()
     {
-        var builder = WebApplication.CreateSlimBuilder();
+        // This fixture has no appsettings files. Avoid configuration watchers, including
+        // Windows network-share watchers when the checks are launched from WSL.
+        var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions { ContentRootPath = Path.GetTempPath() });
         builder.Logging.ClearProviders();
+        builder.Services.AddRouting();
         builder.WebHost.UseKestrel().UseUrls("http://127.0.0.1:0");
         _application = builder.Build();
         _application.MapGet("/health", () => Results.Ok());

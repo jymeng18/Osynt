@@ -24,6 +24,7 @@ dotnet run --project src/Osynt.Desktop
 ```
 
 The interactive 3D garden runs on Windows with WebView2.
+For portable ZIPs and release validation, see [Windows packaging](docs/releasing.md).
 
 ## Try it
 
