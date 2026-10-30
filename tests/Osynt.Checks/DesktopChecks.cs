@@ -323,6 +323,7 @@ internal static partial class Program
             AvaloniaHeadlessPlatform.ForceRenderTimerTick();
             using var compactBitmap = window.CaptureRenderedFrame()!;
             compactBitmap.Save(Path.Combine(Path.GetDirectoryName(path)!, "osynt-compact-preview.png"));
+            CaptureEditorInteractionPreviews(window, uiWorkspace, Path.GetDirectoryName(path)!);
         }
         window.Close();
         RunTabCloseChecks(directory, executor, demo);

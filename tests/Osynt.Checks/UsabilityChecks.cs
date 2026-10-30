@@ -42,6 +42,28 @@ internal static partial class Program
             True(!workspace.Library.EmptyLibrary);
             True(window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "SearchBox").IsFocused);
         });
+        Check("Pane tab hover and keyboard focus preserve selection and layout until activation", () =>
+        {
+            workspace.Editor.EditorCommand.Execute("Body");
+            Dispatcher.UIThread.RunJobs();
+            var tabs = window.GetVisualDescendants().OfType<Button>()
+                .Where(b => b.Command == workspace.Editor.EditorCommand).ToArray();
+            var headers = tabs.Single(b => b.CommandParameter as string == "Headers");
+            var bounds = tabs.Select(b => b.Bounds).ToArray();
+            var point = headers.TranslatePoint(new Point(headers.Bounds.Width / 2, headers.Bounds.Height / 2), window)!.Value;
+            window.MouseMove(point);
+            Dispatcher.UIThread.RunJobs();
+            True(workspace.Editor.BodyActive && !workspace.Editor.HeadersActive);
+            headers.Focus(NavigationMethod.Tab);
+            Dispatcher.UIThread.RunJobs();
+            True(headers.IsFocused && workspace.Editor.BodyActive);
+            True(tabs.Select(b => b.Bounds).SequenceEqual(bounds));
+            window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+            window.KeyReleaseQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+            Dispatcher.UIThread.RunJobs();
+            True(workspace.Editor.HeadersActive && !workspace.Editor.BodyActive);
+            True(tabs.Select(b => b.Bounds).SequenceEqual(bounds));
+        });
         Check("Overflowing tabs reveal the selected request and its close button on keyboard navigation", () =>
         {
             for (var i = 0; i < 12; i++)

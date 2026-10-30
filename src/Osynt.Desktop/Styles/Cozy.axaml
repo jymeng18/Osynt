@@ -52,8 +52,40 @@
   <Style Selector="Button.request.selected"><Setter Property="Background" Value="#E5EBD8" /><Setter Property="Foreground" Value="#4B6039" /></Style>
   <Style Selector="Button.tab"><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="14,12" /><Setter Property="Foreground" Value="{StaticResource Muted}" /></Style>
   <Style Selector="Button.tab.selected"><Setter Property="Background" Value="#FFFDF8" /><Setter Property="Foreground" Value="#465B36" /></Style>
-  <Style Selector="Button.section"><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="2,10,2,9" /><Setter Property="Margin" Value="0,0,24,0" /><Setter Property="Foreground" Value="{StaticResource Muted}" /><Setter Property="BorderThickness" Value="0,0,0,2" /><Setter Property="BorderBrush" Value="Transparent" /></Style>
-  <Style Selector="Button.section.selected"><Setter Property="Foreground" Value="#5A7147" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="BorderBrush" Value="#748B5C" /></Style>
+  <!-- Pane tabs have separate hover, selection, and keyboard-focus layers.
+       Generic button presenter states must not replace the active indicator. -->
+  <Style Selector="Button.section">
+    <Setter Property="Height" Value="36" />
+    <Setter Property="Padding" Value="12,6" />
+    <Setter Property="Margin" Value="0,0,4,0" />
+    <Setter Property="VerticalAlignment" Value="Bottom" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Foreground" Value="{StaticResource Muted}" />
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid Background="Transparent">
+          <Border Name="SectionSurface" CornerRadius="5" Margin="0,2,0,4" />
+          <ContentPresenter Name="SectionContent"
+                            Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Padding="{TemplateBinding Padding}" Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+          <Border Name="SectionIndicator" Height="2" Margin="10,0" CornerRadius="1"
+                  VerticalAlignment="Bottom" IsHitTestVisible="False" />
+          <Border Name="SectionFocus" BorderBrush="#657E50" BorderThickness="1" CornerRadius="4"
+                  Margin="1,3,1,5" IsHitTestVisible="False" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="Button.section /template/ Border#SectionFocus"><Setter Property="IsVisible" Value="False" /></Style>
+  <Style Selector="Button.section:focus-visible /template/ Border#SectionFocus"><Setter Property="IsVisible" Value="True" /></Style>
+  <Style Selector="Button.section:pointerover /template/ Border#SectionSurface"><Setter Property="Background" Value="#EDF0E5" /></Style>
+  <Style Selector="Button.section.selected"><Setter Property="Foreground" Value="#435C32" /></Style>
+  <Style Selector="Button.section.selected /template/ Border#SectionSurface"><Setter Property="Background" Value="#E8EEDC" /></Style>
+  <Style Selector="Button.section.selected /template/ Border#SectionIndicator"><Setter Property="Background" Value="#657E50" /></Style>
+  <Style Selector="Button.section.selected:pointerover /template/ Border#SectionSurface"><Setter Property="Background" Value="#DFE8D2" /></Style>
+  <Style Selector="Button.section:pressed /template/ Border#SectionSurface"><Setter Property="Background" Value="#D7E2C8" /></Style>
   <Style Selector="Button.segment"><Setter Property="Padding" Value="10,5" /><Setter Property="Foreground" Value="{StaticResource Muted}" /></Style>
   <Style Selector="Button.segment.selected"><Setter Property="Background" Value="#E6ECD9" /><Setter Property="Foreground" Value="#5A7147" /></Style>
   <Style Selector="TextBox">
@@ -63,9 +95,27 @@
     <Setter Property="SelectionBrush" Value="#DDE7CD" /><Setter Property="FontSize" Value="12" />
   </Style>
   <Style Selector="TextBox.cell"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="CornerRadius" Value="0" /><Setter Property="Padding" Value="10,11" /><Setter Property="FontFamily" Value="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" /></Style>
+  <!-- Reserve the same border space in every state so editing never shifts the text. -->
+  <Style Selector="TextBox.cell /template/ Border#PART_BorderElement">
+    <Setter Property="BorderThickness" Value="0,0,0,2" /><Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+  <Style Selector="TextBox.cell:pointerover /template/ Border#PART_BorderElement"><Setter Property="Background" Value="#F2F5EB" /></Style>
+  <Style Selector="TextBox.cell:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="#F2F5EB" /><Setter Property="BorderBrush" Value="#71875A" />
+    <Setter Property="BorderThickness" Value="0,0,0,2" />
+  </Style>
   <Style Selector="TextBox.title"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="FontSize" Value="19" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Padding" Value="0,4" /><Setter Property="Foreground" Value="#424D3B" /></Style>
   <Style Selector="TextBox.title:pointerover /template/ Border#PART_BorderElement"><Setter Property="Background" Value="#EAEDE0" /></Style>
   <Style Selector="TextBox.code"><Setter Property="FontFamily" Value="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" /><Setter Property="FontSize" Value="12" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="Padding" Value="0" /></Style>
+  <Style Selector="TextBox.editor /template/ Border#PART_BorderElement">
+    <Setter Property="BorderThickness" Value="2,0,0,0" /><Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="TextBox.editor:pointerover /template/ Border#PART_BorderElement"><Setter Property="Background" Value="{StaticResource Paper}" /></Style>
+  <Style Selector="TextBox.editor:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderThickness" Value="2,0,0,0" /><Setter Property="BorderBrush" Value="#71875A" />
+    <Setter Property="Background" Value="{StaticResource Paper}" />
+  </Style>
   <Style Selector="NumericUpDown"><Setter Property="CornerRadius" Value="5" /><Setter Property="BorderBrush" Value="{StaticResource Line}" /><Setter Property="Background" Value="{StaticResource Paper}" /></Style>
   <Style Selector="ComboBox"><Setter Property="CornerRadius" Value="5" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /><Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="#5E7C48" /></Style>
   <Style Selector="CheckBox"><Setter Property="MinWidth" Value="0" /><Setter Property="MinHeight" Value="0" /><Setter Property="VerticalAlignment" Value="Center" /></Style>

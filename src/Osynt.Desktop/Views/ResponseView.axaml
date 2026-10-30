@@ -32,8 +32,8 @@
         <Grid IsVisible="{Binding Requests.Selected.HasResponse}" RowDefinitions="38,*">
           <Grid ColumnDefinitions="Auto,*,Auto" Margin="17,0">
             <StackPanel Orientation="Horizontal">
-              <Button Classes="section" Classes.selected="{Binding Editor.ResponseBodyActive}" Content="Body" Command="{Binding Editor.ResponsePaneCommand}" CommandParameter="Body" Padding="0,11" Margin="0,0,20,0" FontSize="11" />
-              <Button Classes="section" Classes.selected="{Binding Editor.ResponseHeadersActive}" Content="Headers" Command="{Binding Editor.ResponsePaneCommand}" CommandParameter="Headers" Padding="0,11" FontSize="11" />
+              <Button Classes="section" Classes.selected="{Binding Editor.ResponseBodyActive}" Content="Body" Command="{Binding Editor.ResponsePaneCommand}" CommandParameter="Body" />
+              <Button Classes="section" Classes.selected="{Binding Editor.ResponseHeadersActive}" Content="Headers" Command="{Binding Editor.ResponsePaneCommand}" CommandParameter="Headers" />
             </StackPanel>
             <TextBlock Grid.Column="1" Text="{Binding Requests.Selected.ContentType}" FontSize="11" Foreground="{StaticResource Muted}" TextTrimming="CharacterEllipsis" Margin="16,0,8,0" VerticalAlignment="Center" ToolTip.Tip="{Binding Requests.Selected.ContentType}" />
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="3" IsVisible="{Binding Editor.ResponseBodyActive}">
