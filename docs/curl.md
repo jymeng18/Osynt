@@ -1,6 +1,6 @@
 # cURL requests
 
-Use **Import cURL** above the request editor to paste a single command. Osynt parses the
+Use **cURL → Import cURL…** above the request editor to paste a single command. Osynt parses the
 text into a new unsaved tab, preserving the current tab. It never runs the command,
 reads referenced files, or sends the imported request automatically.
 
@@ -29,7 +29,7 @@ Imported requests inherit Osynt's automatic headers and redirect/decompression p
 The default timeout is 30 seconds unless the command supplies a supported `--max-time`.
 Osynt follows redirects; an imported command without `--location` still follows them.
 
-**Copy cURL** builds a POSIX command from the current request using resolved environment
+**cURL → Copy as cURL** builds a POSIX command from the current request using resolved environment
 variables. It includes enabled headers, the outgoing payload, credentials, and timeout.
 Single quotes, newlines, and literal shell characters are quoted for a POSIX shell.
 Treat copied commands as sensitive: they can contain actual tokens and passwords.

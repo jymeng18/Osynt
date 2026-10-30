@@ -40,10 +40,16 @@
       <Grid Grid.Column="1">
       <Grid RowDefinitions="42,*" IsVisible="{Binding Garden.ShowRequests}">
         <views:RequestTabsView />
-        <Grid Grid.Row="1" RowDefinitions="Auto,232,8,*" Margin="22,16,22,16">
+        <Grid Grid.Row="1" x:Name="RequestWorkspace" Margin="20,14,20,14">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="232" MinHeight="210" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" MinHeight="160" />
+          </Grid.RowDefinitions>
           <views:RequestHeaderView />
           <views:RequestEditorView Grid.Row="1" />
-          <GridSplitter Grid.Row="2" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" Background="Transparent" VerticalAlignment="Stretch">
+          <GridSplitter Grid.Row="2" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" Background="Transparent" VerticalAlignment="Stretch" ToolTip.Tip="Drag to resize the request and response panes" AutomationProperties.Name="Resize request and response panes">
             <GridSplitter.Template><ControlTemplate><Grid Background="Transparent"><Border Height="2" Width="30" Background="#D8DECC" CornerRadius="1" HorizontalAlignment="Center" VerticalAlignment="Center" /></Grid></ControlTemplate></GridSplitter.Template>
           </GridSplitter>
           <views:ResponseView Grid.Row="3" />
@@ -55,8 +61,8 @@
 
     <Border Grid.Row="2" BorderBrush="#DDE2D0" BorderThickness="0,1,0,0" Background="#EBEFE1">
       <Grid ColumnDefinitions="*,Auto" Margin="16,0">
-        <TextBlock Text="{Binding Status.Notice}" FontSize="10" Foreground="#7C896F" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Status.Notice}" />
-        <TextBlock Grid.Column="1" Text="Local workspace" FontSize="10" Foreground="#8D987E" Margin="15,0,0,0" />
+        <TextBlock Text="{Binding Status.Notice}" FontSize="11" Foreground="{StaticResource Muted}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Status.Notice}" />
+        <TextBlock Grid.Column="1" Text="Local workspace" FontSize="11" Foreground="{StaticResource Muted}" Margin="15,0,0,0" />
       </Grid>
     </Border>
   </Grid>

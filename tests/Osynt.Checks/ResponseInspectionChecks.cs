@@ -130,7 +130,7 @@ internal static partial class Program
             Dispatcher.UIThread.RunJobs();
             True(window.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Text == "Binary response").IsEffectivelyVisible);
             True(!window.GetVisualDescendants().OfType<Button>().Single(b => b.Content as string == "Copy").IsEnabled);
-            True(window.GetVisualDescendants().OfType<Button>().Single(b => b.Content as string == "Save" && b.IsEffectivelyVisible && b.Classes.Contains("icon")).IsEnabled);
+            True(window.GetVisualDescendants().OfType<Button>().Single(b => b.Content as string == "Save file" && b.IsEffectivelyVisible && b.Classes.Contains("icon")).IsEnabled);
             workspace.Editor.ResponsePaneCommand.Execute("Headers");
             Dispatcher.UIThread.RunJobs();
             True(window.GetVisualDescendants().OfType<Button>().Single(b => b.Content as string == "Copy headers").IsEffectivelyVisible);

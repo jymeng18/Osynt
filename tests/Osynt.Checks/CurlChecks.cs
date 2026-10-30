@@ -102,8 +102,13 @@ internal static partial class Program
         Check("cURL dialog imports a dirty tab without sending and preserves pasted text on validation errors", () =>
         {
             var before = workspace.Requests.Tabs.Count;
-            var button = window.GetVisualDescendants().OfType<Button>().Single(b => b.Content as string == "Import cURL");
+            var button = window.GetVisualDescendants().OfType<Button>().Single(b => b.Content as string == "cURL ▾");
             Click(window, button);
+            var menu = (MenuFlyout)button.Flyout!;
+            True(menu.IsOpen);
+            menu.Items.OfType<MenuItem>().Single(item => item.Header as string == "Import cURL…")
+                .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
+            menu.Hide();
             var dialog = window.OwnedWindows.OfType<ImportCurlWindow>().Single();
             var input = dialog.FindControl<TextBox>("CommandInput")!;
             input.Text = "curl --insecure https://example.com";

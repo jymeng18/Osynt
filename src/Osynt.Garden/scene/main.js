@@ -55,6 +55,13 @@ const raycaster = new THREE.Raycaster(),
   mouse = new THREE.Vector2();
 
 function resetCamera() {
+  // Flush pending orbit inertia before restoring the view, or it keeps moving after reset.
+  if (controls) {
+    const damping = controls.enableDamping;
+    controls.enableDamping = false;
+    controls.update();
+    controls.enableDamping = damping;
+  }
   camera.position.set(21, 23, 28);
   camera.zoom = 1.12;
   camera.lookAt(0, 0.2, 0);
@@ -217,6 +224,7 @@ try {
       drawCalls: renderer.info.render.calls,
       particles: effects.bursts.length,
       camera: camera.position.toArray(),
+      zoom: camera.zoom,
       atmosphere: state.atmosphere,
       reducedMotion: state.reducedMotion,
     }),

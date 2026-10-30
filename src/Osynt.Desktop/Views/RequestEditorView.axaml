@@ -18,18 +18,18 @@
     <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
       <StackPanel Orientation="Horizontal">
         <Button Classes="section" Classes.selected="{Binding Editor.ParamsActive}" Command="{Binding Editor.EditorCommand}" CommandParameter="Params">
-          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Params" /><TextBlock Text="{Binding Requests.Selected.Document.Parameters.Count}" FontSize="9" Foreground="#9AA68C" /></StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Params" /><TextBlock Text="{Binding Requests.Selected.Document.Parameters.Count}" FontSize="11" Foreground="{StaticResource Muted}" /></StackPanel>
         </Button>
         <Button Classes="section" Classes.selected="{Binding Editor.HeadersActive}" Command="{Binding Editor.EditorCommand}" CommandParameter="Headers">
-          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Headers" /><TextBlock Text="{Binding Requests.Selected.Document.Headers.Count}" FontSize="9" Foreground="#9AA68C" /></StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="Headers" /><TextBlock Text="{Binding Requests.Selected.Document.Headers.Count}" FontSize="11" Foreground="{StaticResource Muted}" /></StackPanel>
         </Button>
         <Button Classes="section" Classes.selected="{Binding Editor.BodyActive}" Content="Body" Command="{Binding Editor.EditorCommand}" CommandParameter="Body" />
         <Button Classes="section" Classes.selected="{Binding Editor.AuthActive}" Content="Auth" Command="{Binding Editor.EditorCommand}" CommandParameter="Auth" />
 
       </StackPanel>
       <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="6,0,0,3">
-        <TextBlock Text="Timeout (s)" VerticalAlignment="Center" FontSize="10" />
-        <NumericUpDown x:Name="TimeoutInput" Value="{Binding Requests.Selected.Document.TimeoutSeconds}" Minimum="1" Maximum="3600" Increment="1" FormatString="0" Width="98" MinHeight="28" FontSize="11" Padding="6,2" AutomationProperties.Name="Request timeout in seconds" ToolTip.Tip="Time limit for this request, including reading the response (1–3600 seconds)" />
+        <TextBlock Text="Timeout (s)" VerticalAlignment="Center" FontSize="11" />
+        <NumericUpDown x:Name="TimeoutInput" Value="{Binding Requests.Selected.Document.TimeoutSeconds}" Minimum="1" Maximum="3600" Increment="1" FormatString="0" ShowButtonSpinner="False" Width="64" MinHeight="28" FontSize="11" Padding="8,4" AutomationProperties.Name="Request timeout in seconds" ToolTip.Tip="Time limit for this request, including reading the response (1–3600 seconds)" />
       </StackPanel>
     </Grid>
 
@@ -38,79 +38,79 @@
         <ScrollViewer IsVisible="{Binding Editor.AuthActive}">
           <StackPanel Margin="16,12" Spacing="10">
             <ComboBox x:Name="AuthModePicker" ItemsSource="{Binding Editor.AuthModes}" SelectedItem="{Binding Requests.Selected.Document.AuthMode}" MinWidth="160" AutomationProperties.Name="Authentication type" />
-            <TextBlock Text="No authentication helper. Add custom credentials in Headers if needed." IsVisible="{Binding Requests.Selected.Document.NoAuth}" FontSize="11" Foreground="#929A85" TextWrapping="Wrap" />
+            <TextBlock Text="No authentication helper. Add custom credentials in Headers if needed." IsVisible="{Binding Requests.Selected.Document.NoAuth}" FontSize="11" Foreground="{StaticResource Muted}" TextWrapping="Wrap" />
             <TextBox x:Name="BearerTokenInput" Text="{Binding Requests.Selected.Document.BearerToken}" Watermark="Token or {{api_token}}" PasswordChar="●" IsVisible="{Binding Requests.Selected.Document.BearerAuth}" AutomationProperties.Name="Bearer token" />
             <StackPanel IsVisible="{Binding Requests.Selected.Document.BasicAuth}" Spacing="8">
               <TextBox x:Name="AuthUsernameInput" Text="{Binding Requests.Selected.Document.AuthUsername}" Watermark="Username or {{username}}" AutomationProperties.Name="Basic authentication username" />
               <TextBox x:Name="AuthPasswordInput" Text="{Binding Requests.Selected.Document.AuthPassword}" Watermark="Password or {{password}}" PasswordChar="●" AutomationProperties.Name="Basic authentication password" />
             </StackPanel>
-            <TextBlock Text="Use {{variables}} to keep credentials out of collection exports. Literal credentials are saved locally in plain text. An Authorization header row takes precedence over this helper." FontSize="10" Foreground="#929A85" TextWrapping="Wrap" />
+            <TextBlock Text="Use {{variables}} to keep credentials out of collection exports. Literal credentials are saved locally in plain text. An Authorization header row takes precedence over this helper." FontSize="11" Foreground="{StaticResource Muted}" TextWrapping="Wrap" />
           </StackPanel>
         </ScrollViewer>
         <Grid IsVisible="{Binding Editor.ParamsActive}" RowDefinitions="31,*,34">
           <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9">
-            <TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" />
-            <TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" />
+            <TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="11" Margin="10,0" />
+            <TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="11" Margin="10,0" />
           </Grid>
           <ScrollViewer Grid.Row="1">
             <ItemsControl ItemsSource="{Binding Requests.Selected.Document.Parameters}">
               <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
                 <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1">
                   <Grid ColumnDefinitions="40,2*,3*,35">
-                    <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" AutomationProperties.Name="Include parameter" />
+                    <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" AutomationProperties.Name="Include parameter" />
                     <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Parameter" AutomationProperties.Name="Parameter name" />
-                    <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Value or {{variable}}" AutomationProperties.Name="Parameter value" Foreground="#9B936F" />
-                    <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.Editor.RemovePairCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove parameter" AutomationProperties.Name="Remove parameter" Foreground="#B6BAA9" />
+                    <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Value or {{variable}}" AutomationProperties.Name="Parameter value" Foreground="{StaticResource Muted}" />
+                    <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.Editor.RemovePairCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove parameter" AutomationProperties.Name="Remove parameter" Foreground="{StaticResource Muted}" />
                   </Grid>
                 </Border>
               </DataTemplate></ItemsControl.ItemTemplate>
             </ItemsControl>
           </ScrollViewer>
           <Grid Grid.Row="2" ColumnDefinitions="Auto,*" Margin="9,0">
-            <Button Content="+  Add parameter" Command="{Binding Editor.AddPairCommand}" FontSize="10" Foreground="#8A9A76" Padding="8,5" />
+            <Button Click="AddRowClicked" Content="+  Add parameter" Command="{Binding Editor.AddPairCommand}" FontSize="11" Foreground="{StaticResource Muted}" Padding="8,5" />
           </Grid>
         </Grid>
         <Grid IsVisible="{Binding Editor.HeadersActive}" RowDefinitions="31,*,34">
-          <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9"><TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" /><TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" /></Grid>
+          <Grid ColumnDefinitions="40,2*,3*,35" Background="#F1F3E9"><TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="11" Margin="10,0" /><TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="11" Margin="10,0" /></Grid>
           <ScrollViewer Grid.Row="1"><ItemsControl ItemsSource="{Binding Requests.Selected.Document.Headers}">
             <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
               <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="40,2*,3*,35">
-                <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" AutomationProperties.Name="Include header" />
+                <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" AutomationProperties.Name="Include header" />
                 <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Header name" AutomationProperties.Name="Header name" />
                 <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Header value" AutomationProperties.Name="Header value" />
-                <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.Editor.RemovePairCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove header" AutomationProperties.Name="Remove header" Foreground="#B6BAA9" />
+                <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.Editor.RemovePairCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove header" AutomationProperties.Name="Remove header" Foreground="{StaticResource Muted}" />
               </Grid></Border>
             </DataTemplate></ItemsControl.ItemTemplate>
           </ItemsControl></ScrollViewer>
           <Grid Grid.Row="2" ColumnDefinitions="Auto,*" Margin="9,0">
-            <Button Content="+  Add header" Command="{Binding Editor.AddPairCommand}" FontSize="11" Foreground="#74875E" Padding="8,5" />
-            <TextBlock Grid.Column="1" Text="Standard headers are added automatically" FontSize="10" Foreground="#929B84" HorizontalAlignment="Right" Margin="8,0" />
+            <Button Click="AddRowClicked" Content="+  Add header" Command="{Binding Editor.AddPairCommand}" FontSize="11" Foreground="#74875E" Padding="8,5" />
+            <TextBlock Grid.Column="1" Text="Standard headers are added automatically" TextTrimming="CharacterEllipsis" FontSize="11" Foreground="{StaticResource Muted}" HorizontalAlignment="Right" Margin="8,0" />
           </Grid>
         </Grid>
         <Grid IsVisible="{Binding Editor.BodyActive}" RowDefinitions="36,*">
           <Grid Background="#F1F3E9" ColumnDefinitions="Auto,*,Auto">
-            <TextBlock Text="BODY" Classes="caption" FontSize="8" Margin="15,0,8,0" />
+            <TextBlock Text="BODY" Classes="caption" FontSize="11" Margin="15,0,8,0" />
             <ComboBox Grid.Column="1" x:Name="BodyModePicker" ItemsSource="{Binding Editor.BodyModes}" SelectedItem="{Binding Requests.Selected.Document.BodyMode}" HorizontalAlignment="Left" MinWidth="100" MinHeight="28" Padding="8,3" FontSize="11" AutomationProperties.Name="Request body format" />
-            <Button Grid.Column="2" Content="{}{ }  Format JSON" Command="{Binding Editor.FormatBodyCommand}" IsVisible="{Binding Requests.Selected.Document.JsonBody}" FontSize="10" Foreground="#899774" Padding="12,5" />
+            <Button Grid.Column="2" Content="{}{ }  Format JSON" Command="{Binding Editor.FormatBodyCommand}" IsVisible="{Binding Requests.Selected.Document.JsonBody}" FontSize="11" Foreground="{StaticResource Muted}" Padding="12,5" />
           </Grid>
           <TextBox Grid.Row="1" x:Name="BodyInput" Classes="code" Text="{Binding Requests.Selected.Document.Body}" IsVisible="{Binding Requests.Selected.Document.TextBody}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap" Watermark="{Binding Requests.Selected.Document.BodyWatermark}" Padding="16,12" Foreground="#748461" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Request body" />
-          <TextBlock Grid.Row="1" Text="This request sends no body. Your other body drafts are kept when switching formats." IsVisible="{Binding Requests.Selected.Document.NoBody}" TextWrapping="Wrap" Margin="16" FontSize="11" Foreground="#929A85" />
+          <TextBlock Grid.Row="1" Text="This request sends no body. Your other body drafts are kept when switching formats." IsVisible="{Binding Requests.Selected.Document.NoBody}" TextWrapping="Wrap" Margin="16" FontSize="11" Foreground="{StaticResource Muted}" />
           <Grid Grid.Row="1" IsVisible="{Binding Requests.Selected.Document.FormBody}" RowDefinitions="28,*,34">
             <Grid ColumnDefinitions="40,2*,3*,35" Background="#F8F8F1">
-              <TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="8" Margin="10,0" />
-              <TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="8" Margin="10,0" />
+              <TextBlock Grid.Column="1" Text="KEY" Classes="caption" FontSize="11" Margin="10,0" />
+              <TextBlock Grid.Column="2" Text="VALUE" Classes="caption" FontSize="11" Margin="10,0" />
             </Grid>
             <ScrollViewer Grid.Row="1"><ItemsControl ItemsSource="{Binding Requests.Selected.Document.FormFields}">
               <ItemsControl.ItemTemplate><DataTemplate DataType="vm:RequestPairViewModel">
                 <Border BorderBrush="#EFF0E7" BorderThickness="0,0,0,1"><Grid ColumnDefinitions="40,2*,3*,35">
-                  <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" RenderTransform="scale(0.8)" AutomationProperties.Name="Include form field" />
+                  <CheckBox IsChecked="{Binding Enabled}" HorizontalAlignment="Center" AutomationProperties.Name="Include form field" />
                   <TextBox Grid.Column="1" Classes="cell" Text="{Binding Key}" Watermark="Field name" AutomationProperties.Name="Form field name" />
                   <TextBox Grid.Column="2" Classes="cell" Text="{Binding Value}" Watermark="Value or {{variable}}" AutomationProperties.Name="Form field value" />
-                  <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.Editor.RemoveFormFieldCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove form field" AutomationProperties.Name="Remove form field" Foreground="#B6BAA9" />
+                  <Button Grid.Column="3" Classes="icon" Content="×" Command="{Binding $parent[Window].DataContext.Editor.RemoveFormFieldCommand}" CommandParameter="{Binding}" ToolTip.Tip="Remove form field" AutomationProperties.Name="Remove form field" Foreground="{StaticResource Muted}" />
                 </Grid></Border>
               </DataTemplate></ItemsControl.ItemTemplate>
             </ItemsControl></ScrollViewer>
-            <Button Grid.Row="2" Content="+  Add form field" Command="{Binding Editor.AddFormFieldCommand}" FontSize="10" Foreground="#8A9A76" Margin="9,0" Padding="8,5" HorizontalAlignment="Left" ToolTip.Tip="Fields are sent as application/x-www-form-urlencoded" />
+            <Button Grid.Row="2" Click="AddRowClicked" Content="+  Add form field" Command="{Binding Editor.AddFormFieldCommand}" FontSize="11" Foreground="{StaticResource Muted}" Margin="9,0" Padding="8,5" HorizontalAlignment="Left" ToolTip.Tip="Fields are sent as application/x-www-form-urlencoded" />
           </Grid>
         </Grid>
 

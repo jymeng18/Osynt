@@ -8,6 +8,12 @@ namespace Osynt.Desktop.Views;
 public partial class SidebarView : UserControl
 {
     public SidebarView() => InitializeComponent();
+    private void ClearSearchClicked(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is WorkspaceViewModel workspace)
+            workspace.Library.Search = "";
+        SearchBox.Focus();
+    }
     private async void CreateFolderClicked(object? sender, RoutedEventArgs e)
     {
         if (TopLevel.GetTopLevel(this) is Window owner && DataContext is WorkspaceViewModel workspace)

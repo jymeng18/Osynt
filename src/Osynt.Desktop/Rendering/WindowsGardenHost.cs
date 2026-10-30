@@ -115,12 +115,31 @@ public sealed class WindowsGardenHost : NativeControlHost
     }
     internal async Task<string> CaptureDiagnosticsAsync(string path)
     {
-        if (_controller is null) throw new InvalidOperationException("The renderer is not ready.");
+        if (_controller is null)
+            throw new InvalidOperationException("The renderer is not ready.");
         // This method is only available to the separate Windows integration probe.
         await _controller.CoreWebView2.ExecuteScriptAsync("window.garden.receive({type:'state',successes:75,atmosphere:'day',reducedMotion:true});window.garden.freeze(6);");
         var info = await _controller.CoreWebView2.ExecuteScriptAsync("window.garden.info()");
         await using var image = File.Create(path);
         await _controller.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png, image);
+        var milestones = await _controller.CoreWebView2.ExecuteScriptAsync("""
+            (() => {
+                const button = document.getElementById('open-milestones');
+                const hit = button.getBoundingClientRect();
+                if (document.elementFromPoint(hit.x + hit.width / 2, hit.y + hit.height / 2) !== button) return false;
+                button.click();
+                const dialog = document.getElementById('milestones');
+                const bounds = dialog.getBoundingClientRect();
+                return dialog.open && getComputedStyle(dialog).display !== 'none'
+                    && bounds.width > 0 && bounds.height > 0
+                    && bounds.top >= 0 && bounds.bottom <= innerHeight;
+            })()
+            """);
+        if (milestones != "true")
+            throw new InvalidOperationException("The native Milestones button did not open a visible dialog.");
+        await using var dialogImage = File.Create(Path.ChangeExtension(path, ".milestones.png"));
+        await _controller.CoreWebView2.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png, dialogImage);
+        await _controller.CoreWebView2.ExecuteScriptAsync("document.getElementById('close-milestones').click()");
         return info;
     }
     private void ResizeBrowser()

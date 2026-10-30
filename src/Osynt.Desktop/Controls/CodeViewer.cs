@@ -21,8 +21,8 @@ public sealed partial class CodeViewer : UserControl
     {
         get => GetValue(HighlightProperty); set => SetValue(HighlightProperty, value);
     }
-    private readonly SelectableTextBlock _text = new() { FontFamily = new("Cascadia Code, DejaVu Sans Mono, Consolas, monospace"), FontSize = 12, LineHeight = 21, Foreground = Brush.Parse("#72756B"), VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top };
-    private readonly TextBlock _numbers = new() { FontFamily = new("Cascadia Code, DejaVu Sans Mono, Consolas, monospace"), FontSize = 12, LineHeight = 21, Foreground = Brush.Parse("#BCBEAE"), TextAlignment = TextAlignment.Right, Margin = new(0, 0, 22, 0), VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top };
+    private readonly SelectableTextBlock _text = new() { FontFamily = new("Cascadia Code, DejaVu Sans Mono, Consolas, monospace"), FontSize = 12, LineHeight = 21, Foreground = Brush.Parse("#515C49"), VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top };
+    private readonly TextBlock _numbers = new() { FontFamily = new("Cascadia Code, DejaVu Sans Mono, Consolas, monospace"), FontSize = 12, LineHeight = 21, Foreground = Brush.Parse("#7A826F"), TextAlignment = TextAlignment.Right, Margin = new(0, 0, 22, 0), VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top };
     private readonly TextBox _search = new() { Name = "ResponseSearchInput", Watermark = "Find in response…", MinWidth = 140, FontSize = 11, Padding = new(8, 4) };
     private readonly TextBlock _findStatus = new() { Name = "ResponseFindStatus", FontSize = 10, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, Margin = new(8, 0) };
     private readonly Grid _findBar;
@@ -162,7 +162,7 @@ public sealed partial class CodeViewer : UserControl
             {
                 if (match.Index > position)
                     _text.Inlines!.Add(new Run(Code[position..match.Index]));
-                var color = match.Value.StartsWith('"') ? match.Groups[1].Success ? "#8C7F94" : "#69844E" : "#B58A56";
+                var color = match.Value.StartsWith('"') ? match.Groups[1].Success ? "#776383" : "#527336" : "#94602F";
                 _text.Inlines!.Add(new Run(match.Value) { Foreground = Brush.Parse(color) });
                 position = match.Index + match.Length;
             }

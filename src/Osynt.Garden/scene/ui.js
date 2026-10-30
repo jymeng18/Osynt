@@ -28,13 +28,20 @@ export function createUi(actions) {
   byId("close-milestones").addEventListener("click", () =>
     byId("milestones").close(),
   );
+  byId("milestones").addEventListener("close", () =>
+    byId("open-milestones").focus(),
+  );
   document.addEventListener("keydown", (event) => {
+    // Keep dialog keyboard interaction local; Escape uses the native close behavior.
+    if (byId("milestones").open) return;
     if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
       event.preventDefault();
       notifyHost({ type: "send" });
     }
-    if (event.key === "Escape" && !byId("milestones").open)
-      notifyHost({ type: "back" });
+    if (event.key === "Escape") {
+      if (!byId("plant-card").hidden) byId("plant-card").hidden = true;
+      else notifyHost({ type: "back" });
+    }
   });
   return {
     notifyHost,
@@ -60,11 +67,9 @@ export function createUi(actions) {
       const nextMilestone = milestones.find(([at]) => at > state.successes);
       const at =
         nextMilestone?.[0] ?? (Math.floor(state.successes / 100) + 1) * 100;
-      byId("next-name").textContent =
-        nextMilestone?.[1] ?? "More plants";
+      byId("next-name").textContent = nextMilestone?.[1] ?? "More plants";
       byId("next-description").textContent =
-        nextMilestone?.[2] ??
-        "Successful requests add and grow plants.";
+        nextMilestone?.[2] ?? "Successful requests add and grow plants.";
       byId("remaining").textContent = `${at - state.successes} to go`;
       byId("milestone-fraction").textContent = `${state.successes} / ${at}`;
       byId("milestone-progress").style.width =
@@ -72,6 +77,7 @@ export function createUi(actions) {
       byId("milestone-list").replaceChildren(
         ...milestones.map(([required, name, detail]) => {
           const row = document.createElement("div");
+          row.setAttribute("role", "listitem");
           row.className = "flex items-center gap-3 rounded-lg px-3 py-2.5";
           const icon = document.createElement("span");
           icon.className =
@@ -83,11 +89,16 @@ export function createUi(actions) {
             description = document.createElement("p");
           title.className = "text-xs font-medium";
           title.textContent = name;
-          description.className = "mt-0.5 text-[10px] text-[#98a28a]";
+          description.className = "mt-0.5 text-xs text-[#68735f]";
           description.textContent = detail;
-          text.append(title, description);
+          const progress = document.createElement("p");
+          progress.className = "mt-1 text-xs text-[#526b40]";
+          progress.textContent =
+            state.successes >= required
+              ? "Unlocked"
+              : `${required - state.successes} more successful ${required - state.successes === 1 ? "request" : "requests"}`;
+          text.append(title, description, progress);
           row.append(icon, text);
-          row.style.opacity = state.successes >= required ? "1" : ".58";
           return row;
         }),
       );

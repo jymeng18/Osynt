@@ -35,7 +35,7 @@ See [keyboard shortcuts](docs/keyboard-shortcuts.md) for tab navigation and edit
 - Use **Auth** for Bearer tokens or Basic credentials, including `{{variables}}`.
 - Organize saved requests with **New folder** and the request context menu's
   **Duplicate** and **Move to folder** actions.
-- Paste a command with **Import cURL**, or use **Copy cURL** to share the current request.
+- Open the **cURL** menu to **Import cURL** or **Copy as cURL** to share the current request.
   See [cURL support](docs/curl.md) for options and handling of credentials.
 - Find response text with **Ctrl+F** (⌘+F on macOS), copy headers from the **Headers** pane,
   or **Save** a text or binary response. Responses larger than 5 MB are limited previews,

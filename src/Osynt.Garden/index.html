@@ -71,8 +71,7 @@
         <canvas id="scene" aria-label="Your garden island"></canvas>
         <div class="vignette" aria-hidden="true"></div>
         <div class="scene-label">
-          <span class="live-dot"></span
-          ><span id="scene-name">GARDEN</span>
+          <span class="live-dot"></span><span id="scene-name">GARDEN</span>
         </div>
         <div class="atmosphere" role="group" aria-label="Garden atmosphere">
           <button
@@ -84,12 +83,7 @@
           >
             ☀ <span>Daylight</span>
           </button>
-          <button
-            id="dusk"
-            title="Dusk"
-            aria-label="Dusk"
-            aria-pressed="false"
-          >
+          <button id="dusk" title="Dusk" aria-label="Dusk" aria-pressed="false">
             ☾ <span>Dusk</span>
           </button>
         </div>
@@ -137,8 +131,7 @@
         </div>
         <div id="loading">
           <div class="loader-sprout">♧</div>
-          <strong>Loading garden…</strong
-          ><span>Preparing your garden</span>
+          <strong>Loading garden…</strong><span>Preparing your garden</span>
         </div>
         <div id="render-error" hidden>
           <strong>Garden unavailable</strong>
@@ -184,34 +177,47 @@
           </div>
           <button
             id="open-milestones"
+            aria-haspopup="dialog"
+            aria-controls="milestones"
             class="rounded-lg border border-[#e1e5d8] px-3 py-2 text-[10px] text-[#839574] transition hover:bg-[#edf2e3]"
           >
-            Milestones ↗
+            Milestones
           </button>
         </div>
       </footer>
     </div>
     <dialog
       id="milestones"
+      aria-labelledby="milestones-title"
+      aria-describedby="milestones-help"
       class="m-auto w-[470px] rounded-2xl border border-[#dce5d1] bg-[#fffdf5] p-7 text-olive-ink shadow-2xl backdrop:bg-[#283d2a]/20 backdrop:backdrop-blur-sm"
     >
-      <div class="mb-5 flex items-center justify-between">
+      <div class="milestones-heading flex items-center justify-between">
         <div>
           <p class="text-[8px] font-semibold tracking-[.17em] text-[#9aa78a]">
-            ONE GOOD RESPONSE AT A TIME
+            GROWTH &amp; UNLOCKS
           </p>
-          <h2 class="mt-2 font-garden text-2xl">A garden to grow into.</h2>
+          <h2 id="milestones-title" class="mt-2 font-garden text-2xl">
+            Garden milestones
+          </h2>
         </div>
         <button
           id="close-milestones"
+          autofocus
           aria-label="Close milestones"
           class="h-8 w-8 rounded-lg text-xl text-[#94a180] hover:bg-[#edf2e3]"
         >
           ×
         </button>
       </div>
-      <div id="milestone-list" class="space-y-1"></div>
-      <p class="mt-5 text-[10px] leading-relaxed text-[#98a28a]">
+      <div
+        id="milestone-list"
+        class="space-y-1"
+        role="list"
+        aria-label="Garden unlocks"
+        tabindex="0"
+      ></div>
+      <p id="milestones-help" class="text-xs leading-relaxed text-[#68735f]">
         Every 2xx response adds growth. Your garden stays with you, even when
         you clear request history.
       </p>

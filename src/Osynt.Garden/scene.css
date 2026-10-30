@@ -27,6 +27,33 @@ button:focus-visible {
   outline: 2px solid #7a9466;
   outline-offset: 3px;
 }
+#milestones {
+  width: min(470px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  overflow: hidden;
+  padding: 24px;
+}
+#milestones[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.milestones-heading,
+#milestones-help {
+  flex-shrink: 0;
+}
+#milestone-list {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  border-block: 1px solid #e1e5d8;
+  padding-block: 8px;
+}
+#milestone-list:focus-visible {
+  outline: 2px solid #7a9466;
+  outline-offset: 2px;
+}
 #garden {
   position: relative;
   width: 100%;

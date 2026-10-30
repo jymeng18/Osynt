@@ -317,6 +317,12 @@ internal static partial class Program
             AvaloniaHeadlessPlatform.ForceRenderTimerTick();
             using var postBitmap = window.CaptureRenderedFrame()!;
             postBitmap.Save(Path.Combine(Path.GetDirectoryName(path)!, "osynt-post-preview.png"));
+            window.Width = 980;
+            window.Height = 640;
+            Dispatcher.UIThread.RunJobs();
+            AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+            using var compactBitmap = window.CaptureRenderedFrame()!;
+            compactBitmap.Save(Path.Combine(Path.GetDirectoryName(path)!, "osynt-compact-preview.png"));
         }
         window.Close();
         RunTabCloseChecks(directory, executor, demo);
@@ -327,5 +333,6 @@ internal static partial class Program
         RunCurlDesktopChecks(directory, executor, demo);
         RunResponseInspectionDesktopChecks(directory, executor, demo);
         RunDeletionPreferenceDesktopChecks(directory, executor, demo);
+        RunUsabilityChecks(directory, executor, demo);
     }
 }

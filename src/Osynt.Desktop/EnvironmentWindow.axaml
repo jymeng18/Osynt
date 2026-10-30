@@ -4,7 +4,7 @@
   <Grid Margin="28" RowDefinitions="Auto,Auto,*,Auto,Auto">
     <StackPanel Spacing="8" Margin="0,0,0,24">
       <TextBlock Text="Environment variables" FontSize="24" FontWeight="SemiBold" />
-      <TextBlock Text="Use {{name}} to insert a variable in a request." FontSize="12" Foreground="#969D87" />
+      <TextBlock Text="Use {{name}} to insert a variable in a request." FontSize="12" Foreground="{StaticResource Muted}" />
     </StackPanel>
     <Grid Grid.Row="1" ColumnDefinitions="2*,3*,30" Margin="10,0,0,10"><TextBlock Text="VARIABLE" Classes="caption" /><TextBlock Grid.Column="1" Text="VALUE" Classes="caption" /></Grid>
     <ScrollViewer Grid.Row="2">
@@ -19,7 +19,7 @@
     <TextBlock Grid.Row="3" x:Name="ErrorLabel" TextWrapping="Wrap" Foreground="#B78261" FontSize="11" Margin="0,8" />
     <Grid Grid.Row="4" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="9" Margin="0,16,0,0">
       <Button Content="+ Variable" Click="AddClicked" />
-      <Button Grid.Column="1" Content="Use local demo" Click="ResetClicked" Foreground="#8B9A77" FontSize="11" />
+      <Button Grid.Column="1" Content="Use local demo" Click="ResetClicked" Foreground="{StaticResource Muted}" FontSize="11" />
       <Button Grid.Column="3" Content="Cancel" Click="CancelClicked" />
       <Button Grid.Column="4" Classes="primary" Content="Save environment" Click="SaveClicked" />
     </Grid>

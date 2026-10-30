@@ -14,7 +14,11 @@ internal static class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine("This probe runs on Windows."); return 1; }
+        if (!OperatingSystem.IsWindows())
+        {
+            Console.Error.WriteLine("This probe runs on Windows.");
+            return 1;
+        }
         OutputPath = args.Length == 1 ? Path.GetFullPath(args[0]) : Path.Combine(Path.GetTempPath(), "osynt-windows-garden.png");
         Directory.CreateDirectory(Path.GetDirectoryName(OutputPath)!);
         return AppBuilder.Configure<ProbeApplication>().UsePlatformDetect().StartWithClassicDesktopLifetime(args);
@@ -33,18 +37,29 @@ public sealed class ProbeApplication : Avalonia.Application
             var host = new WindowsGardenHost();
             var window = new Window
             {
-                Width = 1120, Height = 760, ShowInTaskbar = false, CanResize = false,
-                WindowStartupLocation = WindowStartupLocation.Manual, Position = new PixelPoint(-24000, -24000),
-                SystemDecorations = SystemDecorations.None, Content = host, Title = "Osynt renderer verification"
+                Width = 756,
+                Height = 480,
+                ShowInTaskbar = false,
+                CanResize = false,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Position = new PixelPoint(-24000, -24000),
+                SystemDecorations = SystemDecorations.None,
+                Content = host,
+                Title = "Osynt renderer verification"
             };
             lifetime.MainWindow = window;
             var finished = false;
             void Fail(string message)
             {
-                if (finished) return;
+                if (finished)
+                    return;
                 finished = true;
                 Console.Error.WriteLine(message);
-                File.WriteAllText(Program.OutputPath + ".json", JsonSerializer.Serialize(new { ok = false, error = message }));
+                File.WriteAllText(Program.OutputPath + ".json", JsonSerializer.Serialize(new
+                {
+                    ok = false,
+                    error = message
+                }));
                 lifetime.Shutdown(1);
             }
             host.RendererFailed += (_, message) => Fail(message);
@@ -53,16 +68,25 @@ public sealed class ProbeApplication : Avalonia.Application
                 try
                 {
                     using var payload = JsonDocument.Parse(message);
-                    if (!payload.RootElement.TryGetProperty("type", out var type)) return;
-                    if (type.GetString() == "renderer-error") { Fail(message); return; }
-                    if (type.GetString() != "ready" || finished) return;
+                    if (!payload.RootElement.TryGetProperty("type", out var type))
+                        return;
+                    if (type.GetString() == "renderer-error")
+                    {
+                        Fail(message);
+                        return;
+                    }
+                    if (type.GetString() != "ready" || finished)
+                        return;
                     var info = await host.CaptureDiagnosticsAsync(Program.OutputPath);
                     using var result = JsonDocument.Parse(info);
                     if (!result.RootElement.GetProperty("renderer").GetString()!.Contains("WebGL") ||
                         result.RootElement.GetProperty("successes").GetInt32() != 75)
-                    { Fail("The native renderer did not report a valid 3D frame."); return; }
+                    {
+                        Fail("The native renderer did not report a valid 3D frame.");
+                        return;
+                    }
                     File.WriteAllText(Program.OutputPath + ".json", info);
-                    Console.WriteLine("PASS Native Windows WebView2, WebGL scene, bundled assets, and single-file loader");
+                    Console.WriteLine("PASS Native Windows WebView2, WebGL scene, visible Milestones dialog, bundled assets, and single-file loader");
                     Console.WriteLine(info);
                     finished = true;
                     lifetime.Shutdown(0);
