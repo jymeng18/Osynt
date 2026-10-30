@@ -87,12 +87,18 @@
             <TextBlock Grid.Column="1" Text="Standard headers are added automatically" TextTrimming="CharacterEllipsis" FontSize="11" Foreground="{StaticResource Muted}" HorizontalAlignment="Right" Margin="8,0" />
           </Grid>
         </Grid>
-        <Grid IsVisible="{Binding Editor.BodyActive}" RowDefinitions="36,*">
-          <Grid Background="#F1F3E9" ColumnDefinitions="Auto,*,Auto">
-            <TextBlock Text="BODY" Classes="caption" FontSize="11" Margin="15,0,8,0" />
-            <ComboBox Grid.Column="1" x:Name="BodyModePicker" ItemsSource="{Binding Editor.BodyModes}" SelectedItem="{Binding Requests.Selected.Document.BodyMode}" HorizontalAlignment="Left" MinWidth="100" MinHeight="28" Padding="8,3" FontSize="11" AutomationProperties.Name="Request body format" />
-            <Button Grid.Column="2" Content="{}{ }  Format JSON" Command="{Binding Editor.FormatBodyCommand}" IsVisible="{Binding Requests.Selected.Document.JsonBody}" FontSize="11" Foreground="{StaticResource Muted}" Padding="12,5" />
-          </Grid>
+        <Grid IsVisible="{Binding Editor.BodyActive}" RowDefinitions="44,*">
+          <Border Background="#F1F3E9" BorderBrush="#E1E5D7" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="Auto,112,*,Auto" ColumnSpacing="10" Margin="12,5">
+              <TextBlock Text="Format" FontSize="12" Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
+              <ComboBox Grid.Column="1" x:Name="BodyModePicker" ItemsSource="{Binding Editor.BodyModes}" SelectedItem="{Binding Requests.Selected.Document.BodyMode}"
+                        Height="32" MinHeight="32" HorizontalAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center"
+                        Padding="10,4" FontSize="12" FontWeight="Normal" Foreground="{StaticResource Ink}"
+                        Background="{StaticResource Paper}" BorderBrush="#D7DDCD" BorderThickness="1" AutomationProperties.Name="Request body format" />
+              <Button Grid.Column="3" Content="Format JSON" Command="{Binding Editor.FormatBodyCommand}" IsVisible="{Binding Requests.Selected.Document.JsonBody}"
+                      Height="32" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="10,0" FontSize="12" Foreground="{StaticResource Muted}" />
+            </Grid>
+          </Border>
           <TextBox Grid.Row="1" x:Name="BodyInput" Classes="code editor" Text="{Binding Requests.Selected.Document.Body}" IsVisible="{Binding Requests.Selected.Document.TextBody}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap" Watermark="{Binding Requests.Selected.Document.BodyWatermark}" Padding="16,12" Foreground="#748461" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Request body" />
           <TextBlock Grid.Row="1" Text="This request sends no body. Your other body drafts are kept when switching formats." IsVisible="{Binding Requests.Selected.Document.NoBody}" TextWrapping="Wrap" Margin="16" FontSize="11" Foreground="{StaticResource Muted}" />
           <Grid Grid.Row="1" IsVisible="{Binding Requests.Selected.Document.FormBody}" RowDefinitions="28,*,34">
