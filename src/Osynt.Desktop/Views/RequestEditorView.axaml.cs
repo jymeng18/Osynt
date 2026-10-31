@@ -8,7 +8,11 @@ namespace Osynt.Desktop.Views;
 
 public partial class RequestEditorView : UserControl
 {
-    public RequestEditorView() => InitializeComponent();
+    public RequestEditorView()
+    {
+        InitializeComponent();
+        _ = new Osynt.Desktop.Controls.VariableCompletion(this);
+    }
     private void AddRowClicked(object? sender, RoutedEventArgs e)
     {
         // The button command adds the row after Click. Wait for its controls to be laid out.

@@ -63,6 +63,33 @@ internal static partial class Program
             True(window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "Get seasonal crops"));
             True(window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "UrlInput").Text!.Contains("{{base_url}}"));
         });
+        Check("Variable completion inserts names and preserves surrounding URL text", () =>
+        {
+            var input = window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "UrlInput");
+            var original = input.Text;
+            input.Focus();
+            input.Text = "{{bas}}/health";
+            input.CaretIndex = 5;
+            Dispatcher.UIThread.RunJobs();
+            var editor = window.GetVisualDescendants().OfType<Osynt.Desktop.Views.RequestEditorView>().Single();
+            var popup = editor.FindControl<Avalonia.Controls.Primitives.Popup>("VariablePopup")!;
+            True(popup.IsOpen);
+            var options = editor.FindControl<ListBox>("VariableSuggestions")!;
+            True(options.Items.Cast<string>().Contains("base_url"));
+            True(options.Bounds.Height > 0);
+            window.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.None);
+            window.KeyReleaseQwerty(PhysicalKey.Tab, RawInputModifiers.None);
+            Equal("{{base_url}}/health", input.Text);
+            input.Text = "{{bas";
+            input.CaretIndex = 5;
+            Dispatcher.UIThread.RunJobs();
+            window.KeyPressQwerty(PhysicalKey.Escape, RawInputModifiers.None);
+            window.KeyReleaseQwerty(PhysicalKey.Escape, RawInputModifiers.None);
+            Equal("{{bas", input.Text);
+            input.Text = original;
+            input.CaretIndex = input.Text!.Length;
+            Dispatcher.UIThread.RunJobs();
+        });
         Check("Timeout control edits the selected request and follows tab selection", () =>
         {
             var original = uiWorkspace.Requests.Selected;
