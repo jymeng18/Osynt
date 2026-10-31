@@ -42,6 +42,33 @@ internal static partial class Program
         var window = new MainWindow { DataContext = uiWorkspace };
         window.Show();
         PumpUntil(() => !uiWorkspace.Requests.Selected.IsSending);
+        Check("Workflow editor selects response fields, saves captures, and runs from the desktop", () =>
+        {
+            using var workflowWorkspace = Osynt.Desktop.Composition.WorkspaceComposition.Create(
+                new Osynt.Checks.Fakes.InMemoryWorkspaceStore(), new JsonCollectionSerializer(),
+                new Osynt.Checks.Fakes.StubRequestExecutor((_, _, _) => Task.FromResult(
+                    new Osynt.Domain.Requests.ResponseData(200, "OK", 1, 0, "{\"access_token\":\"desktop-token\"}", []))), "");
+            workflowWorkspace.Requests.Selected.Document.Url = "https://example.test/register";
+            workflowWorkspace.Sending.SendSelectedAsync().GetAwaiter().GetResult();
+            var workflowWindow = new Osynt.Desktop.WorkflowWindow(workflowWorkspace);
+            _ = workflowWindow.ShowDialog(window);
+            Dispatcher.UIThread.RunJobs();
+            void Press(Window owner, string label) => owner.GetVisualDescendants().OfType<Button>()
+                .Single(b => b.Content as string == label).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Press(workflowWindow, "Add current tab");
+            Press(workflowWindow, "Select JSON fields…");
+            Dispatcher.UIThread.RunJobs();
+            var picker = workflowWindow.OwnedWindows.Single();
+            Equal("/access_token", picker.GetVisualDescendants().OfType<ListBox>().Single().SelectedItem as string);
+            picker.GetVisualDescendants().OfType<TextBox>().Single().Text = "access_token";
+            Press(picker, "Capture field");
+            Press(workflowWindow, "Save");
+            Equal("access_token", workflowWorkspace.Workflows.List().Single().Steps.Single().Captures.Single().Variable);
+            Press(workflowWindow, "Run workflow");
+            PumpUntil(() => workflowWorkspace.Environment.Variables.ContainsKey("access_token"));
+            Equal("desktop-token", workflowWorkspace.Environment.Variables["access_token"]);
+            workflowWindow.Close();
+        });
         Check("Desktop opens with a blank GET and no demo parameters or body", () =>
         {
             Equal("GET", uiWorkspace.Requests.Selected.Document.Method);

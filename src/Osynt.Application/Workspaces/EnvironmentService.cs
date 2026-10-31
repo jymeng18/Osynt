@@ -8,6 +8,13 @@ public sealed class EnvironmentService(WorkspaceSession session)
     public IReadOnlyDictionary<string, string> GetVariables() =>
         session.Read(state => new Dictionary<string, string>(state.Variables));
 
+    public void Capture(IReadOnlyDictionary<string, string> values) => session.Commit(state =>
+    {
+        foreach (var (name, value) in values)
+            state.Variables[name] = value;
+        state.UseLocalDemo = DemoBaseUrl.Length > 0 && state.Variables.GetValueOrDefault("base_url") == DemoBaseUrl;
+    });
+
     public void Update(IEnumerable<RequestPair> pairs)
     {
         var values = pairs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();

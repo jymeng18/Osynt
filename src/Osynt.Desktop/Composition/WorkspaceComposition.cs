@@ -21,9 +21,11 @@ public static class WorkspaceComposition
         var requests = new RequestTabsViewModel(collections, status);
         var sending = new RequestSendingViewModel(new SendRequest(executor, environment, history), requests, status);
         var environmentViewModel = new EnvironmentViewModel(environment, status);
-        return new WorkspaceViewModel(requests, sending, new RequestPaneViewModel(requests, status),
+        var workspace = new WorkspaceViewModel(requests, sending, new RequestPaneViewModel(requests, status),
             new LibraryViewModel(collections, history, status), environmentViewModel,
             new GardenViewModel(new GardenService(session), status), status,
             new RequestCommandsViewModel(new CurlRequestSerializer(), requests, environmentViewModel, status));
+        workspace.Workflows = new Osynt.Application.Workflows.WorkflowService(session, new SendRequest(executor, environment, history), environment);
+        return workspace;
     }
 }

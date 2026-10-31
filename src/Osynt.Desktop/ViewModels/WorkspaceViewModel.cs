@@ -33,6 +33,8 @@ public sealed class WorkspaceViewModel : IDisposable
         Library.Select(Requests.Selected.Document.Id);
     }
 
+    public Osynt.Application.Workflows.WorkflowService Workflows { get; internal set; } = null!;
+
     public RequestTabsViewModel Requests
     {
         get;

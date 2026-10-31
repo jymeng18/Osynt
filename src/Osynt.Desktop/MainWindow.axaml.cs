@@ -90,6 +90,12 @@ public partial class MainWindow : Window
         }
         finally { _closingPrompt = false; }
     }
+    private async void WorkflowsClicked(object? sender, RoutedEventArgs e)
+    {
+        if (Workspace is { } workspace)
+            await new WorkflowWindow(workspace).ShowDialog(this);
+    }
+
     private async void HelpClicked(object? sender, RoutedEventArgs e)
     {
         var dialog = new Window { Title = "Keyboard shortcuts", Width = 420, SizeToContent = SizeToContent.Height, CanResize = false, WindowStartupLocation = WindowStartupLocation.CenterOwner };

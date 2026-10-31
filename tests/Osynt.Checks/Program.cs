@@ -57,6 +57,7 @@ internal static partial class Program
         RunDeletionPreferenceChecks();
         RunGardenChecks();
         RunSendWorkflowChecks();
+        RunWorkflowChecks(directory);
         RunDesktopChecks(directory, executor, demo, args);
         Console.WriteLine($"\n{_passed} checks passed; {_failed} failed.");
         return _failed == 0 ? 0 : 1;

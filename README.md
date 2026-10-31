@@ -33,6 +33,8 @@ See [keyboard shortcuts](docs/keyboard-shortcuts.md) for tab navigation and edit
 - Choose **Body** to send JSON, plain text, or URL-encoded form fields. Use `{{variables}}`
   in URLs, headers, and payloads, and configure their values in **Environment**.
 - Use **Auth** for Bearer tokens or Basic credentials, including `{{variables}}`.
+- Open **Workflows** to chain requests and select JSON response fields to capture as
+  environment variables. See [workflows](docs/workflows.md) for a register → API → logout example.
 - Organize saved requests with **New folder** and the request context menu's
   **Duplicate** and **Move to folder** actions.
 - Open the **cURL** menu to **Import cURL** or **Copy as cURL** to share the current request.

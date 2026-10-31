@@ -11,6 +11,12 @@ public sealed class EnvironmentViewModel(EnvironmentService environment, Workspa
     public string Label => Variables.GetValueOrDefault("base_url") == DemoBaseUrl && DemoAvailable
         ? "Local demo" : "Custom environment";
 
+    public void Refresh()
+    {
+        Raise(nameof(Variables));
+        Raise(nameof(Label));
+    }
+
     public bool UpdateVariables(IEnumerable<RequestPair> pairs)
     {
         if (!status.TrySave(() => environment.Update(pairs), "Environment saved."))

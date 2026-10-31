@@ -24,6 +24,8 @@ and `ICollectionSerializer`). Internal services are concrete, with explicit cons
 | `HistoryService` | Bounded history and the matching garden growth in one commit |
 | `EnvironmentService` | Validating variables and tracking the local demo environment |
 | `GardenService` | Reading garden progress and saving preferences |
+| `WorkflowService` | Persisting ordered request copies, sequencing runs, and committing response captures |
+| `ResponseFields` | Enumerating JSON fields and validating atomic capture sets |
 | `SendRequest` | Capturing request/environment snapshots, executing, and recording outcomes |
 | Infrastructure | HTTP, transport diagnostics, bounded response decoding, JSON, files, local demo |
 | `ICurlRequestSerializer` | cURL text conversion at the external-format boundary; never executes commands |
