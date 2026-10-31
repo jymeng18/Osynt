@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Osynt.Desktop.Controls.VariableCompletionView" IsHitTestVisible="True">
+  <Popup x:Name="VariablePopup" Placement="BottomEdgeAlignedLeft" VerticalOffset="4" IsLightDismissEnabled="True">
+    <Border x:Name="VariablePopupSurface" Background="#FFFDF8" BorderBrush="#CBD6BE" BorderThickness="1"
+            CornerRadius="7" Padding="5" Width="380" MaxHeight="330" BoxShadow="0 5 18 0 #20000000">
+      <Grid RowDefinitions="Auto,*,Auto">
+        <TextBlock Text="Variables" FontWeight="SemiBold" FontSize="11" Foreground="#68735F" Margin="9,6" />
+        <ListBox Grid.Row="1" x:Name="VariableSuggestions" MaxHeight="248" Background="Transparent" BorderThickness="0" Focusable="False"
+                 AutomationProperties.Name="Variable suggestions">
+          <ListBox.Styles>
+            <Style Selector="ListBoxItem"><Setter Property="Padding" Value="9,7" /><Setter Property="CornerRadius" Value="4" /></Style>
+            <Style Selector="ListBoxItem:selected /template/ ContentPresenter"><Setter Property="Background" Value="#E8EEDC" /></Style>
+          </ListBox.Styles>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid ColumnDefinitions="24,*" RowDefinitions="Auto,Auto" RowSpacing="4">
+                <TextBlock Text="{}{}" Foreground="#657E50" FontWeight="SemiBold" />
+                <Grid Grid.Column="1" ColumnDefinitions="*,Auto">
+                  <TextBlock Text="{Binding Name}" FontFamily="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" FontSize="12" Foreground="#3F493B" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Grid.Column="1" Text="{Binding Source}" FontSize="10" Foreground="#68735F" Margin="8,0,0,0" />
+                </Grid>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Preview}" FontSize="11" Foreground="#68735F" TextTrimming="CharacterEllipsis" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock Grid.Row="1" x:Name="EmptySuggestions" Text="No matching variables. Add one in Environment or capture a response value." TextWrapping="Wrap" Margin="9,10" FontSize="12" Foreground="#68735F" IsVisible="False" />
+        <TextBlock Grid.Row="2" Text="↑ ↓ select   ·   Enter / Tab insert   ·   Esc dismiss" FontSize="10" Foreground="#68735F" Margin="9,7,9,3" />
+      </Grid>
+    </Border>
+  </Popup>
+</UserControl>

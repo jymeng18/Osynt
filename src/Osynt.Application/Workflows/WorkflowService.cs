@@ -1,6 +1,7 @@
 using Osynt.Application.Requests;
 using Osynt.Application.Workspaces;
 using Osynt.Domain.Workflows;
+using Osynt.Domain.Requests;
 
 namespace Osynt.Application.Workflows;
 
@@ -10,7 +11,7 @@ public sealed class WorkflowService(WorkspaceSession session, SendRequest sender
     public IReadOnlyList<Workflow> List() => session.Read(s => s.Workflows.Select(w => w.Clone()).ToList());
     public void Save(Workflow workflow)
     {
-        Validate(workflow);
+        Validate(workflow, false);
         session.Commit(s =>
         {
             var index = s.Workflows.FindIndex(w => w.Id == workflow.Id);
@@ -21,11 +22,11 @@ public sealed class WorkflowService(WorkspaceSession session, SendRequest sender
         });
     }
     public void Delete(Guid id) => session.Commit(s => s.Workflows.RemoveAll(w => w.Id == id));
-    private static void Validate(Workflow workflow)
+    private static void Validate(Workflow workflow, bool forRun = true)
     {
-        if (string.IsNullOrWhiteSpace(workflow.Name))
+        if (forRun && string.IsNullOrWhiteSpace(workflow.Name))
             throw new ArgumentException("Enter a workflow name.");
-        if (workflow.Steps.Count == 0)
+        if (forRun && !workflow.Steps.Any(s => s.Enabled))
             throw new ArgumentException("Add at least one request.");
         foreach (var step in workflow.Steps)
         {
@@ -35,6 +36,39 @@ public sealed class WorkflowService(WorkspaceSession session, SendRequest sender
                 throw new ArgumentException("Capture variable names must be unique within a step.");
         }
     }
+    public async Task<SendRequestResult> SendStepAsync(WorkflowStep step, CancellationToken token = default, Action<SendRequestResult>? received = null)
+    {
+        var result = await sender.ExecuteAsync(step.Request, token);
+        received?.Invoke(result);
+        if (result.PersistenceError is not null)
+            throw new IOException("Could not save request history.");
+        if (result.Response is { StatusCode: >= 200 and < 300 } response && step.Captures.Count > 0)
+            environment.Capture(ResponseFields.Extract(response, step.Captures));
+        return result;
+    }
+
+    public void SaveCapture(Workflow workflow, int stepIndex, ResponseData response, ResponseCapture capture)
+    {
+        var values = ResponseFields.Extract(response, [capture]);
+        var candidate = workflow.Clone();
+        var step = candidate.Steps[stepIndex];
+        step.Captures.RemoveAll(c => c.Variable == capture.Variable);
+        step.Captures.Add(capture);
+        Validate(candidate, false);
+        session.Commit(state =>
+        {
+            var index = state.Workflows.FindIndex(w => w.Id == candidate.Id);
+            if (index < 0)
+                state.Workflows.Add(candidate.Clone());
+            else
+                state.Workflows[index] = candidate.Clone();
+            foreach (var (name, value) in values)
+                state.Variables[name] = value;
+            state.UseLocalDemo = session.DemoBaseUrl.Length > 0 && state.Variables.GetValueOrDefault("base_url") == session.DemoBaseUrl;
+        });
+        workflow.Steps[stepIndex].Captures = step.Captures;
+    }
+
     public async Task RunAsync(Workflow workflow, Action<int, SendRequestResult> completed, CancellationToken token = default)
     {
         if (Interlocked.Exchange(ref running, 1) != 0)
@@ -47,6 +81,8 @@ public sealed class WorkflowService(WorkspaceSession session, SendRequest sender
             {
                 token.ThrowIfCancellationRequested();
                 var step = snapshot.Steps[i];
+                if (!step.Enabled)
+                    continue;
                 var result = await sender.ExecuteAsync(step.Request, token);
                 completed(i, result);
                 token.ThrowIfCancellationRequested();

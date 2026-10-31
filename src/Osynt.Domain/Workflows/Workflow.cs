@@ -12,9 +12,10 @@ public sealed class Workflow
 
 public sealed class WorkflowStep
 {
+    public bool Enabled { get; set; } = true;
     public RequestDocument Request { get; set; } = new();
     public List<ResponseCapture> Captures { get; set; } = [];
-    public WorkflowStep Clone() => new() { Request = Request.Clone(), Captures = Captures.Select(c => c with { }).ToList() };
+    public WorkflowStep Clone() => new() { Enabled = Enabled, Request = Request.Clone(), Captures = Captures.Select(c => c with { }).ToList() };
 }
 
 // JSON Pointer identifies fields unambiguously, including keys containing dots or slashes.

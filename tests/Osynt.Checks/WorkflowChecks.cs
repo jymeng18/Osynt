@@ -74,6 +74,41 @@ internal static partial class Program
                 Equal("old", environment.GetVariables()["token"]);
             }
         });
+        Check("Capture setup saves both its value and workflow atomically and drafts retain skipped steps", () =>
+        {
+            var store = new InMemoryWorkspaceStore();
+            var session = new WorkspaceSession(store, "http://demo.test");
+            var environment = new EnvironmentService(session);
+            var sent = new List<string>();
+            var executor = new StubRequestExecutor((request, _, _) =>
+            {
+                sent.Add(request.Name);
+                return Task.FromResult(SuccessResponse());
+            });
+            var service = new WorkflowService(session, new SendRequest(executor, environment, new HistoryService(session, TimeProvider.System)), environment);
+            var workflow = new Workflow { Name = "", Steps = [] };
+            service.Save(workflow);
+            Equal("", service.List().Single().Name);
+            workflow.Name = "Capture setup";
+            workflow.Steps = [new() { Request = new() { Name = "Skipped" }, Enabled = false }, new() { Request = new() { Name = "Included" } }];
+            service.Save(workflow);
+            var response = new ResponseData(200, "OK", 1, 0, "{\"url\":\"https://api.test\",\"token\":\"new-token\"}", []);
+            store.FailWrites = true;
+            Throws<IOException>(() => service.SaveCapture(workflow, 1, response, new("/token", "access_token")));
+            Equal(0, workflow.Steps[1].Captures.Count);
+            True(!environment.GetVariables().ContainsKey("access_token"));
+            store.FailWrites = false;
+            service.SaveCapture(workflow, 1, response, new("/url", "base_url"));
+            Equal("https://api.test", environment.GetVariables()["base_url"]);
+            True(!store.State!.UseLocalDemo);
+            Equal("base_url", store.State.Workflows.Single().Steps[1].Captures.Single().Variable);
+            var reopened = new WorkspaceSession(store, "http://demo.test");
+            Equal("https://api.test", new EnvironmentService(reopened).GetVariables()["base_url"]);
+            workflow.Steps[1].Captures.Clear();
+            service.RunAsync(workflow, (_, _) => { }).GetAwaiter().GetResult();
+            Equal("Included", string.Join(',', sent));
+            True(!service.List().Single().Steps[0].Enabled);
+        });
         Check("HTTP failure and cancellation stop workflow execution", () =>
         {
             var session = new WorkspaceSession(new InMemoryWorkspaceStore(), "");

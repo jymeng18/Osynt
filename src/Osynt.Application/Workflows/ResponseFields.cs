@@ -28,6 +28,36 @@ public static class ResponseFields
         return fields;
     }
 
+    public sealed record Field(string Pointer, string Value, string SuggestedName);
+
+    public static IReadOnlyList<Field> Describe(ResponseData response)
+    {
+        using var json = Parse(response);
+        var fields = new List<Field>();
+        void Walk(JsonElement element, string pointer, string name)
+        {
+            if (element.ValueKind == JsonValueKind.Object)
+                foreach (var property in element.EnumerateObject())
+                    Walk(property.Value, pointer + "/" + property.Name.Replace("~", "~0").Replace("/", "~1"), property.Name);
+            else if (element.ValueKind == JsonValueKind.Array)
+            {
+                var index = 0;
+                foreach (var item in element.EnumerateArray())
+                    Walk(item, pointer + "/" + index++, name);
+            }
+            else if (element.ValueKind != JsonValueKind.Null)
+            {
+                var value = element.ValueKind == JsonValueKind.String ? element.GetString()! : element.GetRawText();
+                if (value.Length == 0)
+                    return;
+                var suggested = System.Text.RegularExpressions.Regex.Replace(name, @"[^\p{L}\p{N}_-]", "_");
+                fields.Add(new Field(pointer, value, suggested.Length == 0 ? "response_value" : suggested));
+            }
+        }
+        Walk(json.RootElement, "", "response_value");
+        return fields;
+    }
+
     public static Dictionary<string, string> Extract(ResponseData response, IReadOnlyList<ResponseCapture> captures)
     {
         using var json = Parse(response);

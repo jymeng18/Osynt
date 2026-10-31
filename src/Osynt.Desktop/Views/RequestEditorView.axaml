@@ -2,40 +2,7 @@
      xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
      x:Class="Osynt.Desktop.Views.RequestEditorView">
   <Grid RowDefinitions="Auto,Auto,*">
-    <Popup x:Name="VariablePopup" Placement="BottomEdgeAlignedLeft" VerticalOffset="5" IsLightDismissEnabled="True">
-      <Border x:Name="VariablePopupSurface" Background="#FFFDF8" BorderBrush="#DCE1CF" BorderThickness="1"
-              CornerRadius="8" Padding="5" Width="320" ClipToBounds="True">
-        <Border.Transitions>
-          <Transitions><DoubleTransition Property="Opacity" Duration="0:0:0.14" /></Transitions>
-        </Border.Transitions>
-        <StackPanel>
-          <TextBlock Text="VARIABLES" Foreground="#68735F" FontSize="10" LetterSpacing="1" Margin="9,7,9,6" />
-          <ListBox x:Name="VariableSuggestions" MaxHeight="220" Background="Transparent" BorderThickness="0" Focusable="False">
-            <ListBox.Styles>
-              <Style Selector="ListBoxItem">
-                <Setter Property="Padding" Value="9,7" />
-                <Setter Property="CornerRadius" Value="4" />
-                <Setter Property="MinHeight" Value="32" />
-              </Style>
-              <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-                <Setter Property="Background" Value="#E8EEDC" />
-              </Style>
-            </ListBox.Styles>
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                  <TextBlock Text="{}{}" Foreground="#657E50" FontWeight="SemiBold" />
-                  <TextBlock Text="{Binding}" Foreground="#3F493B" FontFamily="Cascadia Code, DejaVu Sans Mono, Consolas, monospace" FontSize="12" />
-                </StackPanel>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-          <Border BorderBrush="#E4E3D7" BorderThickness="0,1,0,0" Margin="4,5,4,0" Padding="5,7,5,3">
-            <TextBlock Text="↑ ↓ navigate   ·   Tab to insert   ·   Esc to close" FontSize="10" Foreground="#68735F" />
-          </Border>
-        </StackPanel>
-      </Border>
-    </Popup>
+    <art:VariableCompletionView x:Name="CompletionView" />
     <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="10" Margin="0,0,0,9">
       <Border BorderBrush="#DCE1CF" BorderThickness="1" CornerRadius="7" Background="#FFFDF8">
         <Grid ColumnDefinitions="104,1,*">

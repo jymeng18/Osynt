@@ -1,0 +1,99 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:art="using:Osynt.Desktop.Controls" x:Class="Osynt.Desktop.WorkflowWindow"
+        Title="Workflows" Width="1100" Height="800" MinWidth="920" MinHeight="600"
+        WindowStartupLocation="CenterOwner" Background="#F9F7F1">
+  <Grid RowDefinitions="Auto,*,Auto">
+    <art:VariableCompletionView x:Name="CompletionView" />
+    <Border Background="#FFFDF8" BorderBrush="#E4E3D7" BorderThickness="0,0,0,1" Padding="22,16">
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="18">
+        <TextBlock Text="Workflows" FontSize="20" FontWeight="SemiBold" />
+        <TextBox Grid.Column="1" x:Name="WorkflowName" Watermark="Workflow name" AutomationProperties.Name="Workflow name" MaxWidth="360" HorizontalAlignment="Left" MinWidth="200" />
+        <TextBlock Grid.Column="2" x:Name="SaveStatus" Text="All changes saved" FontSize="11" Foreground="#68735F" VerticalAlignment="Center" />
+        <Button Grid.Column="3" x:Name="RetrySave" Content="Retry save" IsVisible="False" />
+      </Grid>
+    </Border>
+    <Grid Grid.Row="1" ColumnDefinitions="280,*">
+      <Border Background="#F1F2E8" BorderBrush="#E4E3D7" BorderThickness="0,0,1,0" Padding="14">
+        <Grid x:Name="SequenceEditing" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" RowSpacing="12">
+          <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="5">
+            <ComboBox x:Name="WorkflowPicker" HorizontalAlignment="Stretch" AutomationProperties.Name="Workflow" />
+            <Button Grid.Column="1" x:Name="NewWorkflow" Content="+" ToolTip.Tip="New workflow" AutomationProperties.Name="New workflow" />
+            <Button Grid.Column="2" x:Name="DeleteWorkflow" Content="×" ToolTip.Tip="Delete workflow" AutomationProperties.Name="Delete workflow" />
+          </Grid>
+          <TextBlock Grid.Row="1" Text="RUN ORDER" FontSize="10" LetterSpacing="1" Foreground="#68735F" />
+          <TextBlock Grid.Row="2" x:Name="SequenceHint" Text="Add requests below to build your sequence." TextWrapping="Wrap" FontSize="11" Foreground="#68735F" />
+          <ListBox Grid.Row="3" x:Name="StepList" Background="Transparent" BorderThickness="0" AutomationProperties.Name="Workflow steps" />
+          <StackPanel Grid.Row="4" Spacing="7">
+            <ComboBox x:Name="RequestPicker" HorizontalAlignment="Stretch" AutomationProperties.Name="Request or folder to add" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="6">
+              <Button x:Name="AddRequest" Content="Add to workflow" HorizontalAlignment="Stretch" FontSize="11" />
+              <Button Grid.Column="1" x:Name="AddCurrent" Content="Add current tab" HorizontalAlignment="Stretch" FontSize="11" />
+            </Grid>
+          </StackPanel>
+          <Grid Grid.Row="5" ColumnDefinitions="*,*,Auto" ColumnSpacing="6">
+            <Button x:Name="MoveUp" Content="↑" ToolTip.Tip="Move step up" AutomationProperties.Name="Move step up" />
+            <Button Grid.Column="1" x:Name="MoveDown" Content="↓" ToolTip.Tip="Move step down" AutomationProperties.Name="Move step down" />
+            <Button Grid.Column="2" x:Name="RemoveStep" Content="Remove" FontSize="11" />
+          </Grid>
+        </Grid>
+      </Border>
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Margin="24,18" Spacing="14">
+          <StackPanel x:Name="EmptyInspector" Spacing="12" Margin="18,60">
+            <TextBlock Text="Build your request sequence" FontSize="22" />
+            <TextBlock Text="Add a folder to start with its requests, or add the current tab. Select a step to edit it and save values from its response." TextWrapping="Wrap" Foreground="#68735F" MaxWidth="460" HorizontalAlignment="Left" />
+          </StackPanel>
+          <StackPanel x:Name="StepInspector" Spacing="14" IsVisible="False">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Spacing="4">
+                <TextBlock x:Name="StepTitle" FontSize="19" FontWeight="SemiBold" />
+                <TextBlock Text="Edit this step · changes save automatically" FontSize="11" Foreground="#68735F" />
+              </StackPanel>
+              <Button Grid.Column="1" x:Name="SendStep" Content="Send step" Classes="primary" />
+            </Grid>
+            <Grid ColumnDefinitions="94,*" ColumnSpacing="8">
+              <ComboBox x:Name="StepMethod" ItemsSource="{Binding Editor.Methods}" HorizontalAlignment="Stretch" AutomationProperties.Name="Step method" />
+              <TextBox Grid.Column="1" x:Name="StepUrl" Classes="variables" Watermark="Request URL · type {{ for variables" AutomationProperties.Name="Step URL" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,130,*" ColumnSpacing="10">
+              <TextBlock Text="Auth" VerticalAlignment="Center" FontSize="12" />
+              <ComboBox Grid.Column="1" x:Name="StepAuth" ItemsSource="{Binding Editor.AuthModes}" HorizontalAlignment="Stretch" AutomationProperties.Name="Step authentication" />
+              <TextBox Grid.Column="2" x:Name="StepToken" Classes="variables" Watermark="Bearer token · type {{" AutomationProperties.Name="Step bearer token" />
+            </Grid>
+            <Grid x:Name="BasicCredentials" ColumnDefinitions="*,*" ColumnSpacing="8" IsVisible="False">
+              <TextBox x:Name="StepUsername" Classes="variables" Watermark="Username" AutomationProperties.Name="Step Basic username" />
+              <TextBox Grid.Column="1" x:Name="StepPassword" Classes="variables" Watermark="Password" PasswordChar="●" AutomationProperties.Name="Step Basic password" />
+            </Grid>
+            <Expander Header="Request body" IsExpanded="False" HorizontalAlignment="Stretch">
+              <TextBox x:Name="StepBody" Classes="variables code" AcceptsReturn="True" AcceptsTab="True" MinHeight="120" MaxHeight="240" TextWrapping="NoWrap" AutomationProperties.Name="Step request body" />
+            </Expander>
+            <Border BorderBrush="#E4E3D7" BorderThickness="0,1,0,0" />
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Text="Response → variables" FontSize="15" FontWeight="SemiBold" />
+              <TextBlock Grid.Column="1" x:Name="ResponseStatus" FontSize="11" Foreground="#68735F" />
+            </Grid>
+            <TextBlock x:Name="ResponseHint" Text="Send this step to see its JSON fields, then select a value to reuse." TextWrapping="Wrap" FontSize="12" Foreground="#68735F" />
+            <TextBox x:Name="FieldSearch" Watermark="Find a response field…" IsVisible="False" AutomationProperties.Name="Find response field" />
+            <ListBox x:Name="ResponseFields" Height="190" IsVisible="False" Background="#FFFDF8" BorderBrush="#DCE1CF" BorderThickness="1" CornerRadius="6" AutomationProperties.Name="JSON response fields" />
+            <Grid x:Name="CaptureEditor" ColumnDefinitions="*,Auto" ColumnSpacing="8" IsVisible="False">
+              <TextBox x:Name="CaptureVariable" Watermark="Variable name" AutomationProperties.Name="Capture variable name" />
+              <Button Grid.Column="1" x:Name="SetVariable" Content="Set as variable" Classes="primary" />
+            </Grid>
+            <StackPanel x:Name="CaptureList" Spacing="7" />
+            <TextBlock Text="Use {{name}} in any later step. Ctrl+Space opens variable suggestions." TextWrapping="Wrap" FontSize="11" Foreground="#68735F" />
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+    <Border Grid.Row="2" BorderBrush="#E4E3D7" BorderThickness="0,1,0,0" Padding="20,12" Background="#FFFDF8">
+      <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+        <StackPanel Spacing="4">
+          <TextBlock x:Name="RunStatus" Text="Ready when you are" FontSize="12" TextWrapping="Wrap" />
+          <TextBlock x:Name="RunSummary" FontSize="11" Foreground="#68735F" />
+        </StackPanel>
+        <Button Grid.Column="1" x:Name="CancelRun" Content="Stop" IsEnabled="False" />
+        <Button Grid.Column="2" x:Name="RunWorkflow" Content="Run workflow" Classes="primary" IsEnabled="False" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>
