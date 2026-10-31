@@ -1,4 +1,8 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
+using Avalonia.Input;
+using Avalonia.VisualTree;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Osynt.Checks.Fakes;
@@ -98,8 +102,17 @@ internal static partial class Program
             Dispatcher.UIThread.RunJobs();
             InvokeRequestMenu(window, duplicate.Document.Id, "Move to folder…");
             var dialog = window.OwnedWindows.OfType<MoveRequestWindow>().Single();
-            var picker = dialog.FindControl<ComboBox>("FolderPicker")!;
+            var picker = dialog.FindControl<ListBox>("FolderPicker")!;
             Equal(2, picker.Items.Count);
+            True(!dialog.FindControl<Button>("MoveButton")!.IsEnabled);
+            picker.SelectedItem = picker.Items.OfType<MoveRequestWindow.FolderChoice>().Single(c => c.IsCurrent);
+            True(!dialog.FindControl<Button>("MoveButton")!.IsEnabled);
+            dialog.FindControl<TextBox>("FolderSearch")!.Text = "no such folder";
+            Dispatcher.UIThread.RunJobs();
+            Equal(0, picker.Items.Count);
+            True(dialog.FindControl<TextBlock>("EmptyLabel")!.IsVisible);
+            dialog.FindControl<TextBox>("FolderSearch")!.Text = "";
+            Dispatcher.UIThread.RunJobs();
             picker.SelectedItem = picker.Items.OfType<MoveRequestWindow.FolderChoice>().Single(c => c.Id == destination.Id);
             Click(dialog, DialogButton(dialog, "Move"));
             PumpUntil(() => !window.OwnedWindows.Contains(dialog));
@@ -127,6 +140,41 @@ internal static partial class Program
             Click(dialog, DialogButton(dialog, "Cancel"));
             Equal(before + 1, workspace.Library.Collections.Count);
         });
+        Check("Dragging a request highlights and expands the destination and preserves open edits", () =>
+        {
+            var source = workspace.Library.Collections.First(c => c.Requests.Count > 0);
+            var destination = workspace.Library.Collections.First(c => c.Id != source.Id);
+            var request = source.Requests[0];
+            workspace.Open(request.Document);
+            var tab = workspace.Requests.Selected;
+            tab.Document.Body = "drag draft";
+            destination.Expanded = false;
+            Dispatcher.UIThread.RunJobs();
+            var row = RequestRow(window, request.Document.Id);
+            var target = window.GetVisualDescendants().OfType<Button>().Single(b => b.DataContext == destination && b.Classes.Contains("collection"));
+            var start = row.TranslatePoint(new Point(40, row.Bounds.Height / 2), window)!.Value;
+            var end = target.TranslatePoint(new Point(40, target.Bounds.Height / 2), window)!.Value;
+            window.MouseDown(start, MouseButton.Left);
+            window.MouseMove(new Point(start.X + 10, start.Y), RawInputModifiers.LeftMouseButton);
+            Dispatcher.UIThread.RunJobs();
+            True(row.Classes.Contains("dragging"), "Drag did not start after crossing the pointer threshold.");
+            var dragData = new DataTransfer();
+            dragData.Add(DataTransferItem.CreateText(request.Name));
+            window.DragDrop(end, Avalonia.Input.Raw.RawDragEventType.DragEnter, dragData, DragDropEffects.Move);
+            window.DragDrop(end, Avalonia.Input.Raw.RawDragEventType.DragOver, dragData, DragDropEffects.Move);
+            // Headless dispatcher timers advance when native input is delivered.
+            Thread.Sleep(650);
+            window.DragDrop(end, Avalonia.Input.Raw.RawDragEventType.DragOver, dragData, DragDropEffects.Move);
+            Dispatcher.UIThread.RunJobs();
+            True(destination.Expanded);
+            True(target.GetVisualAncestors().OfType<StackPanel>().Any(p => p.Classes.Contains("drop-target")));
+            window.DragDrop(end, Avalonia.Input.Raw.RawDragEventType.Drop, dragData, DragDropEffects.Move);
+            window.MouseUp(end, MouseButton.Left);
+            PumpUntil(() => workspace.Library.GetAllCollections().Single(c => c.Id == destination.Id).Requests.Any(r => r.Id == request.Document.Id));
+            Equal(tab, workspace.Requests.Selected);
+            Equal("drag draft", tab.Document.Body);
+            True(tab.IsDirty);
+        });
         foreach (var tab in workspace.Requests.Tabs)
             tab.IsDirty = false;
         window.Close();
@@ -142,7 +190,7 @@ internal static partial class Program
             var dialog = new MoveRequestWindow(failing.Library, request);
             _ = dialog.ShowDialog(owner);
             Dispatcher.UIThread.RunJobs();
-            dialog.FindControl<ComboBox>("FolderPicker")!.SelectedItem = dialog.FindControl<ComboBox>("FolderPicker")!.Items
+            dialog.FindControl<ListBox>("FolderPicker")!.SelectedItem = dialog.FindControl<ListBox>("FolderPicker")!.Items
                 .OfType<MoveRequestWindow.FolderChoice>().Single(c => c.Id == destination.Id);
             store.FailWrites = true;
             Click(dialog, DialogButton(dialog, "Move"));

@@ -1,15 +1,37 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="Osynt.Desktop.MoveRequestWindow" Title="Move request" Width="420"
-        SizeToContent="Height" CanResize="False" WindowStartupLocation="CenterOwner">
-  <StackPanel Margin="24" Spacing="16">
-    <TextBlock Text="Move request" FontSize="21" FontWeight="SemiBold" />
-    <TextBlock x:Name="RequestLabel" TextWrapping="Wrap" FontSize="12" />
-    <ComboBox x:Name="FolderPicker" HorizontalAlignment="Stretch" AutomationProperties.Name="Destination folder" />
-    <TextBlock Text="Moves the saved request. Unsaved edits stay in their open tab." FontSize="11" Foreground="#929A85" TextWrapping="Wrap" />
-    <TextBlock x:Name="ErrorLabel" TextWrapping="Wrap" Foreground="#B78261" FontSize="11" IsVisible="False" />
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-      <Button Content="Cancel" Click="CancelClicked" IsCancel="True" />
-      <Button Content="Move" Click="MoveClicked" Classes="primary" IsDefault="True" />
+        x:Class="Osynt.Desktop.MoveRequestWindow" Title="Move to folder" Width="480" Height="510"
+        MinHeight="420" MinWidth="420" WindowStartupLocation="CenterOwner">
+  <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto" RowSpacing="12">
+    <TextBlock Text="Move to folder" FontSize="21" FontWeight="SemiBold" />
+    <StackPanel Grid.Row="1" Spacing="5">
+      <TextBlock x:Name="RequestLabel" TextWrapping="Wrap" FontSize="13" FontWeight="SemiBold" />
+      <TextBlock x:Name="SourceLabel" FontSize="11" Foreground="#68735F" />
     </StackPanel>
-  </StackPanel>
+    <TextBox Grid.Row="2" x:Name="FolderSearch" Watermark="Find a folder…" TextChanged="SearchChanged" AutomationProperties.Name="Find destination folder" />
+    <Grid Grid.Row="3">
+      <ListBox x:Name="FolderPicker" SelectionChanged="DestinationChanged" AutomationProperties.Name="Destination folder" Background="#FFFDF8" BorderBrush="#DCE1CF" BorderThickness="1" CornerRadius="6">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid ColumnDefinitions="*,Auto" Margin="5,7">
+              <StackPanel Spacing="4">
+                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding Detail}" FontSize="11" Foreground="#68735F" />
+              </StackPanel>
+              <TextBlock Grid.Column="1" Text="{Binding Marker}" FontSize="11" Foreground="#68735F" Margin="12,0,0,0" VerticalAlignment="Center" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <TextBlock x:Name="EmptyLabel" Text="No matching folders" IsVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#68735F" />
+    </Grid>
+    <StackPanel Grid.Row="4" Spacing="5">
+      <TextBlock x:Name="DestinationLabel" Text="Choose a different folder above." FontSize="12" TextWrapping="Wrap" />
+      <TextBlock Text="Your open tab and unsaved edits will stay as they are." FontSize="11" Foreground="#68735F" TextWrapping="Wrap" />
+    </StackPanel>
+    <TextBlock Grid.Row="5" x:Name="ErrorLabel" TextWrapping="Wrap" Foreground="#B78261" FontSize="11" IsVisible="False" />
+    <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="Cancel" Click="CancelClicked" IsCancel="True" />
+      <Button x:Name="MoveButton" Content="Move" Click="MoveClicked" Classes="primary" IsDefault="True" IsEnabled="False" />
+    </StackPanel>
+  </Grid>
 </Window>

@@ -35,8 +35,9 @@ See [keyboard shortcuts](docs/keyboard-shortcuts.md) for tab navigation and edit
 - Use **Auth** for Bearer tokens or Basic credentials, including `{{variables}}`.
 - Open **Workflows** to chain requests and select JSON response fields to capture as
   environment variables. See [workflows](docs/workflows.md) for a register → API → logout example.
-- Organize saved requests with **New folder** and the request context menu's
-  **Duplicate** and **Move to folder** actions.
+- Drag saved requests onto folders to move them; hold over a collapsed folder to expand it.
+  The **Move to folder** menu also offers a searchable destination list. Use **New folder**
+  and **Duplicate** to organize more requests.
 - Open the **cURL** menu to **Import cURL** or **Copy as cURL** to share the current request.
   See [cURL support](docs/curl.md) for options and handling of credentials.
 - Find response text with **Ctrl+F** (⌘+F on macOS), copy headers from the **Headers** pane,

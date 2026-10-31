@@ -1,6 +1,14 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Osynt.Desktop.ViewModels" xmlns:art="using:Osynt.Desktop.Controls"
              x:Class="Osynt.Desktop.Views.SidebarView">
+  <UserControl.Styles>
+    <Style Selector="StackPanel.folder-drop">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Transitions"><Transitions><BrushTransition Property="Background" Duration="0:0:0.12" /></Transitions></Setter>
+    </Style>
+    <Style Selector="StackPanel.folder-drop.drop-target"><Setter Property="Background" Value="#DEE9CF" /></Style>
+    <Style Selector="Button.request.dragging"><Setter Property="Opacity" Value="0.45" /></Style>
+  </UserControl.Styles>
   <Border Background="#F1F2E8" BorderBrush="#E0E3D6" BorderThickness="0,0,1,0">
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
       <StackPanel Orientation="Horizontal" Spacing="9" Margin="20,20,20,20">
@@ -17,7 +25,7 @@
           <Button Grid.Column="1" Classes="nav" Classes.selected="{Binding Library.ShowHistory}" Content="History" Command="{Binding Library.NavigationCommand}" CommandParameter="History" HorizontalAlignment="Stretch" />
         </Grid>
       </Border>
-      <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Margin="8,0,8,10">
+      <ScrollViewer x:Name="LibraryScroll" Grid.Row="3" VerticalScrollBarVisibility="Auto" Margin="8,0,8,10">
         <StackPanel>
           <StackPanel IsVisible="{Binding Library.EmptyLibrary}" Spacing="8" Margin="12,16">
             <TextBlock x:Name="LibraryEmptyTitle" Text="{Binding Library.EmptyLibraryTitle}" FontSize="12" Foreground="#7E8D6D" TextWrapping="Wrap" />
@@ -26,7 +34,7 @@
           <ItemsControl ItemsSource="{Binding Library.Collections}" IsVisible="{Binding Library.ShowCollections}">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="vm:LibraryCollection">
-                <StackPanel Margin="0,0,0,10">
+                <StackPanel Classes="folder-drop" Margin="0,0,0,10" DragDrop.AllowDrop="True" DragDrop.DragOver="FolderDragOver" DragDrop.DragLeave="FolderDragLeave" DragDrop.Drop="FolderDrop">
                   <Button Classes="collection" Command="{Binding ToggleCommand}" HorizontalAlignment="Stretch">
                     <Button.ContextMenu>
                       <ContextMenu>
